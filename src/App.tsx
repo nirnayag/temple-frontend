@@ -34,6 +34,7 @@ import Register from './components/auth/Register';
 import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import { ProtectedRoute, AdminRoute, PublicRoute } from './components/auth/ProtectedRoute';
+import ProfileEdit from './components/profile/ProfileEdit';
 
 // Auth service
 import authService from './services/auth';
@@ -49,13 +50,37 @@ interface DropdownMenu {
 }
 
 const App: React.FC = () => {
-  const isLoggedIn = authService.isLoggedIn();
-  const isAdmin = authService.isAdmin();
-  const currentUser = authService.getCurrentUser();
+  const [isAuthenticated, setIsAuthenticated] = React.useState(authService.isLoggedIn());
+  const [isAdminUser, setIsAdminUser] = React.useState(authService.isAdmin());
+  const [currentUser, setCurrentUser] = React.useState(authService.getCurrentUser());
   
   // State for managing dropdown menus
   const [anchorEl, setAnchorEl] = React.useState<{ [key: string]: HTMLElement | null }>({});
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
+
+  // Update auth state when the component mounts and when auth state changes
+  React.useEffect(() => {
+    const updateAuthState = () => {
+      setIsAuthenticated(authService.isLoggedIn());
+      setIsAdminUser(authService.isAdmin());
+      setCurrentUser(authService.getCurrentUser());
+    };
+
+    // Initial auth state
+    updateAuthState();
+    
+    // Listen for auth state changes
+    const handleAuthChange = () => {
+      updateAuthState();
+    };
+    
+    window.addEventListener('auth_state_change', handleAuthChange);
+    
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('auth_state_change', handleAuthChange);
+    };
+  }, []);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, menuId: string) => {
     setAnchorEl({
@@ -72,8 +97,13 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
-    authService.logout();
-    window.location.href = '/';
+    // The logout method will handle redirecting and auth state updates through events
+    authService.logout(true);
+    
+    // These state updates are now handled by the auth change event listener
+    // setIsAuthenticated(false);
+    // setIsAdminUser(false);
+    // setCurrentUser(null);
   };
 
   // Dropdown menus configuration - matching SSVT
@@ -239,8 +269,26 @@ const App: React.FC = () => {
                         <Typography textAlign="center">{menu.title}</Typography>
                       </MenuItem>
                     ))}
-                    {isLoggedIn ? (
-                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    {isAuthenticated ? (
+                      <>
+                        <MenuItem component={Link} to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                          Dashboard
+                        </MenuItem>
+                        <MenuItem component={Link} to="/profile/edit" onClick={() => setMobileMenuOpen(false)}>
+                          My Profile
+                        </MenuItem>
+                        {isAdminUser && (
+                          <MenuItem component={Link} to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                            Admin Panel
+                          </MenuItem>
+                        )}
+                        <MenuItem onClick={() => {
+                          setMobileMenuOpen(false);
+                          handleLogout();
+                        }}>
+                          Logout
+                        </MenuItem>
+                      </>
                     ) : (
                       <>
                         <MenuItem component={Link} to="/login" onClick={() => setMobileMenuOpen(false)}>
@@ -332,7 +380,7 @@ const App: React.FC = () => {
                   </Button>
 
                   {/* Authentication */}
-                  {isLoggedIn ? (
+                  {isAuthenticated ? (
                     <>
                       <Button
                         sx={{ color: 'text.primary', display: 'flex', alignItems: 'center', px: 2 }}
@@ -351,15 +399,23 @@ const App: React.FC = () => {
                         }}
                         sx={{ mt: 1 }}
                       >
-                        <MenuItem component={Link} to="/profile" onClick={() => handleCloseMenu('account')}>
-                          Profile
+                        <MenuItem component={Link} to="/dashboard" onClick={() => handleCloseMenu('account')}>
+                          Dashboard
                         </MenuItem>
-                        {isAdmin && (
+                        <MenuItem component={Link} to="/profile/edit" onClick={() => handleCloseMenu('account')}>
+                          Edit Profile
+                        </MenuItem>
+                        {isAdminUser && (
                           <MenuItem component={Link} to="/admin/dashboard" onClick={() => handleCloseMenu('account')}>
                             Admin Panel
                           </MenuItem>
                         )}
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        <MenuItem onClick={() => {
+                          handleCloseMenu('account');
+                          handleLogout();
+                        }}>
+                          Logout
+                        </MenuItem>
                       </Menu>
                     </>
                   ) : (
@@ -403,6 +459,8 @@ const App: React.FC = () => {
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<UserDashboard />} />
+                <Route path="/profile" element={<Navigate to="/profile/edit" replace />} />
+                <Route path="/profile/edit" element={<ProfileEdit />} />
                 <Route path="/devotees" element={<DevoteesList />} />
                 <Route path="/donations" element={<DonationsList />} />
               </Route>
