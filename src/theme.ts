@@ -1,42 +1,42 @@
 import { createTheme } from '@mui/material/styles';
 
-// Temple-specific theme colors
+// Create a theme instance
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#800020', // Maroon - traditional temple color
-      light: '#a64d69',
-      dark: '#5c0000',
+      main: '#800020', // Maroon - traditional color for Hindu temples
+      light: '#a33c55',
+      dark: '#5d0000',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#D4AF37', // Gold accent
-      light: '#ffe169',
-      dark: '#9f8000',
+      main: '#ff9800', // Orange/Gold - another traditional color
+      light: '#ffc947',
+      dark: '#c66900',
       contrastText: '#000000',
     },
     background: {
-      default: '#ffffff',
-      paper: '#f8f9fa',
+      default: '#f5f5f5',
+      paper: '#ffffff',
     },
     text: {
       primary: '#333333',
-      secondary: '#6c757d',
+      secondary: '#666666',
     },
   },
   typography: {
-    fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     h1: {
-      fontWeight: 700,
+      fontWeight: 600,
     },
     h2: {
-      fontWeight: 700,
+      fontWeight: 600,
     },
     h3: {
       fontWeight: 600,
     },
     h4: {
-      fontWeight: 600,
+      fontWeight: 500,
     },
     h5: {
       fontWeight: 500,
@@ -49,41 +49,29 @@ const theme = createTheme({
       fontWeight: 500,
     },
   },
+  shape: {
+    borderRadius: 8,
+  },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          padding: '8px 16px',
-        },
-        contained: {
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-          },
+          borderRadius: 30,
+          paddingLeft: 20,
+          paddingRight: 20,
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          overflow: 'hidden',
-          transition: 'all 0.3s ease',
-        },
-      },
-    },
-    MuiCardHeader: {
-      styleOverrides: {
-        root: {
-          padding: '16px 24px',
-        },
-      },
-    },
-    MuiCardContent: {
-      styleOverrides: {
-        root: {
-          padding: '24px',
+          boxShadow: '0 4px 12px 0 rgba(0,0,0,0.05)',
+          borderRadius: 12,
+          transition: 'all 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: '0 8px 24px 0 rgba(0,0,0,0.1)',
+          },
         },
       },
     },
