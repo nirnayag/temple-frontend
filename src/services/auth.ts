@@ -13,10 +13,27 @@ interface AuthResponse {
   message?: string;
 }
 
+// Create a custom event for auth state changes
+const AUTH_STATE_CHANGE_EVENT = 'auth_state_change';
+
+// Function to dispatch auth change event
+const dispatchAuthEvent = (isAuthenticated: boolean) => {
+  const event = new CustomEvent(AUTH_STATE_CHANGE_EVENT, { 
+    detail: { isAuthenticated } 
+  });
+  window.dispatchEvent(event);
+};
+
 // Token handling
 const getToken = (): string | null => localStorage.getItem('temple_token');
-const setToken = (token: string): void => localStorage.setItem('temple_token', token);
-const removeToken = (): void => localStorage.removeItem('temple_token');
+const setToken = (token: string): void => {
+  localStorage.setItem('temple_token', token);
+  dispatchAuthEvent(true);
+};
+const removeToken = (): void => {
+  localStorage.removeItem('temple_token');
+  dispatchAuthEvent(false);
+};
 
 // User data handling
 const getUser = (): User | null => {
@@ -29,7 +46,15 @@ const removeUser = (): void => localStorage.removeItem('temple_user');
 // Auth service
 const authService = {
   // Register a new user
-  register: async (userData: Partial<User & { password: string }>): Promise<AuthResponse> => {
+  register: async (userData: Partial<User & { 
+    password: string, 
+    name?: string, 
+    phone?: string, 
+    address?: string,
+    city?: string,
+    state?: string,
+    country?: string
+  }>): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/register', userData);
     if (response.data.token) {
       setToken(response.data.token);
@@ -63,9 +88,16 @@ const authService = {
   },
   
   // Logout user
-  logout: (): void => {
+  logout: (redirect: boolean = true): void => {
     removeToken();
     removeUser();
+    
+    // Optionally redirect to home page after logout
+    if (redirect) {
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+    }
   },
   
   // Get current user profile

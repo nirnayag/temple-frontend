@@ -10,6 +10,7 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   
   const navigate = useNavigate();
   
@@ -21,26 +22,38 @@ const Login = () => {
     }));
   };
   
+  const validateForm = () => {
+    if (!credentials.username || !credentials.password) {
+      setError('Please enter both username and password');
+      return false;
+    }
+    return true;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     
     try {
-      const { username, password } = credentials;
-      
-      if (!username || !password) {
-        throw new Error('Please enter both username and password');
-      }
-      
       const response = await authService.login(credentials);
       
-      // Redirect based on user role
-      if (response.user.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      setSuccess('Login successful! Redirecting...');
+      
+      // Redirect based on user role after a short delay
+      setTimeout(() => {
+        if (response.user.role === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
+      }, 1000);
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
@@ -52,16 +65,17 @@ const Login = () => {
   return (
     <Container>
       <Row className="justify-content-center">
-        <Col md={6}>
-          <Card className="mt-5">
+        <Col md={6} lg={5}>
+          <Card className="mt-5 mb-4 shadow-sm">
             <Card.Header className="bg-temple text-white">
-              <h3 className="mb-0">Login</h3>
+              <h3 className="mb-0">Login to Your Account</h3>
             </Card.Header>
             <Card.Body>
               {error && <Alert variant="danger">{error}</Alert>}
+              {success && <Alert variant="success">{success}</Alert>}
               
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="username">
+                <Form.Group className="mb-4" controlId="username">
                   <Form.Label>Username</Form.Label>
                   <Form.Control
                     type="text"
@@ -73,7 +87,7 @@ const Login = () => {
                   />
                 </Form.Group>
                 
-                <Form.Group className="mb-3" controlId="password">
+                <Form.Group className="mb-4" controlId="password">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
@@ -85,11 +99,22 @@ const Login = () => {
                   />
                 </Form.Group>
                 
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <Form.Check
+                    type="checkbox"
+                    id="rememberMe"
+                    label="Remember me"
+                  />
+                  <Link to="/forgot-password" className="text-primary text-decoration-none">
+                    Forgot Password?
+                  </Link>
+                </div>
+                
                 <Button 
                   variant="primary" 
                   type="submit" 
                   disabled={loading} 
-                  className="w-100"
+                  className="w-100 py-2"
                 >
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
