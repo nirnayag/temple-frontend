@@ -11,8 +11,7 @@ import DonationsList from './components/donations/DonationsList';
 import PriestsList from './components/temple/PriestsList';
 import PujaServices from './components/temple/PujaServices';
 import AboutTemple from './components/temple/AboutTemple';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import MobileOTPAuth from './components/auth/MobileOTPAuth';
 import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import { ProtectedRoute, AdminRoute, PublicRoute } from './components/auth/ProtectedRoute';
@@ -127,7 +126,6 @@ function App() {
                 ) : (
                   <>
                     <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                    <Nav.Link as={Link} to="/register">Register</Nav.Link>
                   </>
                 )}
               </Nav>
@@ -139,8 +137,8 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route element={<PublicRoute />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<MobileOTPAuth />} />
+              <Route path="/register" element={<Navigate to="/login" replace />} />
             </Route>
             
             {/* Routes accessible to everyone */}
