@@ -15,9 +15,25 @@ const removeUser = () => localStorage.removeItem('temple_user');
 
 // Auth service
 const authService = {
-  // Register a new user
-  register: async (userData) => {
-    const response = await api.post('/auth/register', userData);
+  // Request OTP
+  requestOTP: async (mobileNumber) => {
+    const response = await api.post('/otp-auth/request-otp', { mobileNumber });
+    return response.data;
+  },
+  
+  // Verify OTP - for existing users
+  verifyOTP: async (mobileNumber, otp) => {
+    const response = await api.post('/otp-auth/verify-otp', { mobileNumber, otp });
+    if (response.data.token) {
+      setToken(response.data.token);
+      setUser(response.data.user);
+    }
+    return response.data;
+  },
+  
+  // Verify OTP and register - for new users
+  verifyOTPAndRegister: async (mobileNumber, otp, userData) => {
+    const response = await api.post('/otp-auth/verify-otp', { mobileNumber, otp, userData });
     if (response.data.token) {
       setToken(response.data.token);
       setUser(response.data.user);
@@ -39,14 +55,13 @@ const authService = {
     return response.data;
   },
   
-  // Login user
-  login: async (credentials) => {
-    const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      setToken(response.data.token);
-      setUser(response.data.user);
-    }
-    return response.data;
+  // Legacy methods - redirect to OTP auth
+  register: async () => {
+    throw new Error('Traditional registration is not supported. Please use OTP authentication.');
+  },
+  
+  login: async () => {
+    throw new Error('Traditional login is not supported. Please use OTP authentication.');
   },
   
   // Logout user

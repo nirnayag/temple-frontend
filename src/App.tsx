@@ -29,8 +29,7 @@ import DonationsList from './components/donations/DonationsList';
 import PriestsList from './components/temple/PriestsList';
 import PujaServices from './components/temple/PujaServices';
 import AboutTemple from './components/temple/AboutTemple';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import MobileOTPAuth from './components/auth/MobileOTPAuth';
 import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import { ProtectedRoute, AdminRoute, PublicRoute } from './components/auth/ProtectedRoute';
@@ -291,12 +290,13 @@ const App: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <MenuItem component={Link} to="/login" onClick={() => setMobileMenuOpen(false)}>
-                          Login
-                        </MenuItem>
-                        <MenuItem component={Link} to="/register" onClick={() => setMobileMenuOpen(false)}>
-                          Register
-                        </MenuItem>
+                        {!isAuthenticated && (
+                          <>
+                            <MenuItem component={Link} to="/login" onClick={() => setMobileMenuOpen(false)}>
+                              Login
+                            </MenuItem>
+                          </>
+                        )}
                       </>
                     )}
                   </Menu>
@@ -379,13 +379,13 @@ const App: React.FC = () => {
                     Online-Puja
                   </Button>
 
-                  {/* Authentication */}
+                  {/* Auth buttons */}
                   {isAuthenticated ? (
                     <>
-                      <Button
-                        sx={{ color: 'text.primary', display: 'flex', alignItems: 'center', px: 2 }}
-                        onClick={(e) => handleOpenMenu(e, 'account')}
+                      <Button 
+                        color="inherit"
                         endIcon={<KeyboardArrowDownIcon />}
+                        onClick={(e) => handleOpenMenu(e, 'account')}
                       >
                         {currentUser?.username || 'Account'}
                       </Button>
@@ -419,22 +419,13 @@ const App: React.FC = () => {
                       </Menu>
                     </>
                   ) : (
-                    <>
-                      <Button
-                        component={Link}
-                        to="/login"
-                        sx={{ color: 'text.primary', display: 'block', px: 2 }}
-                      >
-                        Login
-                      </Button>
-                      <Button
-                        component={Link}
-                        to="/register"
-                        sx={{ color: 'text.primary', display: 'block', px: 2 }}
-                      >
-                        Register
-                      </Button>
-                    </>
+                    <Button 
+                      color="inherit"
+                      component={Link}
+                      to="/login"
+                    >
+                      Login
+                    </Button>
                   )}
                 </Box>
               </Toolbar>
@@ -445,8 +436,8 @@ const App: React.FC = () => {
             <Routes>
               {/* Public Routes */}
               <Route element={<PublicRoute />}>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<MobileOTPAuth />} />
+                <Route path="/register" element={<Navigate to="/login" replace />} />
               </Route>
               
               {/* Routes accessible to everyone */}

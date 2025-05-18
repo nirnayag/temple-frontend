@@ -2,8 +2,9 @@ import api from './api';
 
 interface User {
   _id: string;
-  username: string;
-  email: string;
+  username?: string;
+  email?: string;
+  mobileNumber: string;
   role: string;
 }
 
@@ -11,6 +12,23 @@ interface AuthResponse {
   token: string;
   user: User;
   message?: string;
+  isNewUser?: boolean;
+  requiresRegistration?: boolean;
+}
+
+interface OTPRequestResponse {
+  message: string;
+  userExists: boolean;
+}
+
+interface UserRegistrationData {
+  name: string;
+  email?: string;
+  username?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
 }
 
 // Create a custom event for auth state changes
@@ -45,17 +63,33 @@ const removeUser = (): void => localStorage.removeItem('temple_user');
 
 // Auth service
 const authService = {
-  // Register a new user
-  register: async (userData: Partial<User & { 
-    password: string, 
-    name?: string, 
-    phone?: string, 
-    address?: string,
-    city?: string,
-    state?: string,
-    country?: string
-  }>): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/auth/register', userData);
+  // Request OTP
+  requestOTP: async (mobileNumber: string): Promise<OTPRequestResponse> => {
+    const response = await api.post<OTPRequestResponse>('/otp-auth/request-otp', { mobileNumber });
+    return response.data;
+  },
+  
+  // Verify OTP - for existing users
+  verifyOTP: async (mobileNumber: string, otp: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/otp-auth/verify-otp', { mobileNumber, otp });
+    if (response.data.token) {
+      setToken(response.data.token);
+      setUser(response.data.user);
+    }
+    return response.data;
+  },
+  
+  // Verify OTP and register - for new users
+  verifyOTPAndRegister: async (
+    mobileNumber: string, 
+    otp: string, 
+    userData: UserRegistrationData
+  ): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/otp-auth/verify-otp', { 
+      mobileNumber, 
+      otp, 
+      userData 
+    });
     if (response.data.token) {
       setToken(response.data.token);
       setUser(response.data.user);
@@ -64,7 +98,10 @@ const authService = {
   },
   
   // Register an admin (requires admin secret key)
-  registerAdmin: async (userData: Partial<User & { password: string }>, adminSecretKey: string): Promise<AuthResponse> => {
+  registerAdmin: async (
+    userData: { name: string; email?: string; mobileNumber: string; username?: string; address?: string },
+    adminSecretKey: string
+  ): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/register/admin', userData, {
       headers: {
         'admin-secret-key': adminSecretKey
@@ -77,14 +114,13 @@ const authService = {
     return response.data;
   },
   
-  // Login user
-  login: async (credentials: { username: string; password: string }): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/auth/login', credentials);
-    if (response.data.token) {
-      setToken(response.data.token);
-      setUser(response.data.user);
-    }
-    return response.data;
+  // Legacy methods - redirect to OTP auth
+  register: async (): Promise<never> => {
+    throw new Error('Traditional registration is not supported. Please use OTP authentication.');
+  },
+  
+  login: async (): Promise<never> => {
+    throw new Error('Traditional login is not supported. Please use OTP authentication.');
   },
   
   // Logout user
@@ -106,7 +142,7 @@ const authService = {
     if (!token) return null;
     
     try {
-      const response = await api.get<User>('/auth/profile', {
+      const response = await api.get('/auth/profile', {
         headers: {
           Authorization: `Bearer ${token}`
         }
