@@ -1,7 +1,48 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import {
+  Container,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Avatar,
+  Chip,
+  Paper,
+  styled
+} from '@mui/material';
+import { t } from '../../utils/translationUtils';
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  backgroundColor: '#E2DFD2',
+  borderRadius: '15px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)'
+  }
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  width: 150,
+  height: 150,
+  border: '3px solid #d35400',
+  margin: '0 auto 16px'
+}));
+
+const StyledChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: '#d35400',
+  color: '#E2DFD2',
+  margin: '4px',
+  '&:hover': {
+    backgroundColor: '#b34700'
+  }
+}));
 
 const PriestsList = () => {
+  const { t } = useTranslation();
+
   // Sample priests data based directly on SSVT website
   const priests = [
     {
@@ -61,53 +102,119 @@ const PriestsList = () => {
   ];
 
   return (
-    <Container className="my-5">
-      <h1 className="section-heading mb-4">Our Temple Priests</h1>
-      <p className="text-center mb-5">
-        Our priests are highly trained in various Vedic traditions and perform all rituals 
-        with devotion and precision according to the sacred texts. They conduct daily pujas,
-        special ceremonies, and provide spiritual guidance to devotees.
-      </p>
+    <Box sx={{ bgcolor: '#E2DFD2', minHeight: '100vh', py: 8 }}>
+      <Container>
+        <Typography
+          variant="h3"
+          component="h1"
+          align="center"
+          gutterBottom
+          sx={{ color: '#d35400', fontWeight: 'bold', mb: 4 }}
+        >
+          {t('priests.title')}
+        </Typography>
+        
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{ color: '#4a4a4a', mb: 6, maxWidth: '800px', mx: 'auto' }}
+        >
+          {t('priests.description')}
+        </Typography>
 
-      {priests.map(priest => (
-        <Card className="mb-5 border-0 shadow-sm" key={priest.id}>
-          <Card.Body>
-            <h3 className="mb-3 text-temple">{priest.name}</h3>
-            <Row>
-              <Col md={3} className="text-center mb-4 mb-md-0">
-                <img
-                  src={priest.image}
-                  alt={priest.name}
-                  className="priest-image"
-                />
-                <p className="mt-3 priest-title">{priest.title}</p>
-              </Col>
-              <Col md={9}>
-                <p className="mb-3">{priest.background}</p>
-                <p>
-                  <strong>Languages:</strong> {priest.languages.join(", ")}
-                </p>
-                <p className="mt-2 mb-0">
-                  <strong>Origin:</strong> {priest.origin}
-                </p>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+        <Grid container spacing={4}>
+          {priests.map(priest => (
+            <Grid item xs={12} key={priest.id}>
+              <StyledCard>
+                <CardContent>
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} md={3} sx={{ textAlign: 'center' }}>
+                      <StyledAvatar
+                        src={priest.image}
+                        alt={priest.name}
+                      />
+                      <Typography
+                        variant="h6"
+                        sx={{ color: '#d35400', fontWeight: 'bold', mb: 1 }}
+                      >
+                        {priest.title}
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={12} md={9}>
+                      <Typography
+                        variant="h5"
+                        component="h2"
+                        sx={{ color: '#4a4a4a', fontWeight: 'bold', mb: 2 }}
+                      >
+                        {priest.name}
+                      </Typography>
+                      
+                      <Typography
+                        variant="body1"
+                        paragraph
+                        sx={{ color: '#666666', mb: 2 }}
+                      >
+                        {priest.background}
+                      </Typography>
+                      
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ color: '#4a4a4a', fontWeight: 'bold', mb: 1 }}
+                        >
+                          {t('priests.languages')}:
+                        </Typography>
+                        <Box>
+                          {priest.languages.map((language, index) => (
+                            <StyledChip
+                              key={index}
+                              label={language}
+                              size="small"
+                            />
+                          ))}
+                        </Box>
+                      </Box>
+                      
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ color: '#4a4a4a' }}
+                      >
+                        <strong>{t('priests.origin')}:</strong> {priest.origin}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </StyledCard>
+            </Grid>
+          ))}
+        </Grid>
 
-      <div className="mt-5 p-4 bg-light rounded">
-        <h3 className="text-temple mb-3">Request Priest Services</h3>
-        <p>
-          Our priests are available to perform various religious ceremonies at the temple 
-          or at your residence. Please use our puja services page to schedule ceremonies or 
-          contact the temple office for more information.
-        </p>
-        <p className="mb-0">
-          <strong>Contact:</strong> priest-services@temple.org | (123) 456-7890
-        </p>
-      </div>
-    </Container>
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 6,
+            p: 4,
+            bgcolor: '#d35400',
+            color: '#E2DFD2',
+            borderRadius: '15px',
+            textAlign: 'center'
+          }}
+        >
+          <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+            {t('priests.services.title')}
+          </Typography>
+          
+          <Typography paragraph sx={{ mb: 2 }}>
+            {t('priests.services.description')}
+          </Typography>
+          
+          <Typography>
+            <strong>{t('priests.services.contact')}:</strong> priest-services@temple.org | (123) 456-7890
+          </Typography>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 
