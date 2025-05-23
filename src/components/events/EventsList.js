@@ -1,9 +1,130 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Alert, Form, Row, Col } from 'react-bootstrap';
+import { Card, Button, Alert, Form, Row, Col, Badge, Container } from 'react-bootstrap';
 import { eventService } from '../../services/api';
 import authService from '../../services/auth';
+import { useTranslation } from 'react-i18next';
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserAlt, FaFilter } from 'react-icons/fa';
+import styled from 'styled-components';
+
+// Styled components for enhanced UI
+const StyledCard = styled(Card)`
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+  border: none;
+  background-color: #f5e6d3;
+  color: #4a4a4a;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  border-radius: 15px;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .card-header {
+    border-bottom: none;
+    padding: 1.25rem;
+    background-color: #d35400 !important;
+    color: #f5e6d3;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  p {
+    color: #5d4037;
+    margin-bottom: 1.5rem;
+  }
+`;
+
+const EventIcon = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  color: #5d4037;
+  
+  svg {
+    margin-right: 0.75rem;
+    color: #d35400;
+  }
+`;
+
+const FilterContainer = styled.div`
+  background: #f5e6d3;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: #4a4a4a;
+  border: 1px solid #e0c9a6;
+
+  h5 {
+    color: #d35400;
+    margin-bottom: 1rem;
+  }
+
+  select {
+    background-color: #f5e6d3;
+    color: #4a4a4a;
+    border: 1px solid #e0c9a6;
+    border-radius: 8px;
+    padding: 0.5rem;
+    
+    &:focus {
+      background-color: #f5e6d3;
+      color: #4a4a4a;
+      border-color: #d35400;
+      box-shadow: 0 0 0 0.2rem rgba(211, 84, 0, 0.25);
+    }
+
+    option {
+      background-color: #f5e6d3;
+      color: #4a4a4a;
+    }
+  }
+`;
+
+const EventTypeBadge = styled(Badge)`
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  background-color: #f5e6d3 !important;
+  color: #d35400 !important;
+  border: 1px solid #d35400;
+  border-radius: 8px;
+`;
+
+const EventsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CardFooter = styled.div`
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0c9a6;
+`;
 
 const EventsList = () => {
+  const { t } = useTranslation();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +144,7 @@ const EventsList = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching events:', err);
-      setError('Failed to load events. Please try again later.');
+      setError(t('events.errors.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -47,111 +168,177 @@ const EventsList = () => {
     return events.filter(event => event.eventType === filter);
   };
 
+  const getEventTypeColor = (type) => {
+    switch (type) {
+      case 'puja':
+        return 'primary';
+      case 'festival':
+        return 'success';
+      case 'discourse':
+        return 'info';
+      case 'community':
+        return 'warning';
+      default:
+        return 'secondary';
+    }
+  };
+
   // Sort events by date (upcoming first)
   const sortedEvents = getFilteredEvents().sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
 
   if (loading) {
-    return <div className="text-center py-5">Loading events...</div>;
+    return (
+      <Container className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">{t('common.loading')}</span>
+        </div>
+      </Container>
+    );
   }
 
   return (
-    <Card>
-      <Card.Header className="bg-temple">
-        <div className="d-flex justify-content-between align-items-center">
-          <h3 className="mb-0">Temple Events</h3>
-          {isLoggedIn && isAdmin && (
-            <Button variant="light">Add New Event</Button>
+    <Container fluid className="px-4">
+      <Card className="border-0 shadow-sm mb-5" style={{ backgroundColor: '#f5e6d3', borderRadius: '15px' }}>
+        <Card.Header className="bg-temple text-white" style={{ backgroundColor: '#d35400', borderRadius: '15px 15px 0 0' }}>
+          <div className="d-flex justify-content-between align-items-center">
+            <h3 className="mb-0">{t('events.title')}</h3>
+            {isLoggedIn && isAdmin && (
+              <Button 
+                variant="light" 
+                size="sm" 
+                style={{ 
+                  backgroundColor: '#f5e6d3', 
+                  color: '#d35400',
+                  borderRadius: '8px',
+                  padding: '0.5rem 1rem'
+                }}
+              >
+                {t('events.addNew')}
+              </Button>
+            )}
+          </div>
+        </Card.Header>
+        <Card.Body style={{ backgroundColor: '#f5e6d3', color: '#4a4a4a', padding: '2rem' }}>
+          {error && (
+            <Alert variant="danger">
+              {error}
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                className="ms-3"
+                onClick={fetchEvents}
+              >
+                {t('common.tryAgain')}
+              </Button>
+            </Alert>
           )}
-        </div>
-      </Card.Header>
-      <Card.Body>
-        {error && (
-          <Alert variant="danger">
-            {error}
-            <Button 
-              variant="outline-danger" 
-              size="sm" 
-              className="ms-3"
-              onClick={fetchEvents}
+          
+          <FilterContainer>
+            <div className="d-flex align-items-center mb-3">
+              <FaFilter className="me-2" />
+              <h5 className="mb-0">{t('events.filter')}</h5>
+            </div>
+            <Form.Select 
+              value={filter} 
+              onChange={handleFilterChange}
+              className="shadow-sm"
             >
-              Try Again
-            </Button>
-          </Alert>
-        )}
-        
-        <Form.Group className="mb-4">
-          <Form.Label>Filter Events</Form.Label>
-          <Form.Select 
-            value={filter} 
-            onChange={handleFilterChange}
-          >
-            <option value="all">All Events</option>
-            <option value="upcoming">Upcoming Events</option>
-            <option value="past">Past Events</option>
-            <option value="puja">Pujas</option>
-            <option value="festival">Festivals</option>
-            <option value="discourse">Discourses</option>
-            <option value="community">Community Events</option>
-          </Form.Select>
-        </Form.Group>
-        
-        {sortedEvents.length === 0 ? (
-          <Alert variant="info">
-            No events found matching your criteria.
-          </Alert>
-        ) : (
-          <Row>
-            {sortedEvents.map(event => {
-              const isPast = new Date(event.date) < new Date();
-              
-              return (
-                <Col md={6} lg={4} key={event._id} className="mb-4">
-                  <Card className={`event-card ${isPast ? 'border-secondary' : 'border-primary'}`}>
-                    <Card.Header className={isPast ? 'bg-secondary text-white' : 'bg-primary text-white'}>
-                      <h5 className="mb-0">{event.title}</h5>
+              <option value="all">{t('events.filters.all')}</option>
+              <option value="upcoming">{t('events.filters.upcoming')}</option>
+              <option value="past">{t('events.filters.past')}</option>
+              <option value="puja">{t('events.filters.puja')}</option>
+              <option value="festival">{t('events.filters.festival')}</option>
+              <option value="discourse">{t('events.filters.discourse')}</option>
+              <option value="community">{t('events.filters.community')}</option>
+            </Form.Select>
+          </FilterContainer>
+          
+          {sortedEvents.length === 0 ? (
+            <Alert variant="info" style={{ 
+              backgroundColor: '#f5e6d3', 
+              color: '#4a4a4a', 
+              borderColor: '#d35400',
+              borderRadius: '10px'
+            }}>
+              {t('events.noEvents')}
+            </Alert>
+          ) : (
+            <EventsGrid>
+              {sortedEvents.map(event => {
+                const isPast = new Date(event.date) < new Date();
+                
+                return (
+                  <StyledCard key={event._id} className={isPast ? 'bg-light' : ''}>
+                    <Card.Header className={isPast ? 'bg-secondary' : 'bg-primary'} style={{ backgroundColor: isPast ? '#e0c9a6' : '#d35400' }}>
+                      <div className="d-flex justify-content-between align-items-start">
+                        <h5 className="mb-0">{event.title}</h5>
+                        <EventTypeBadge bg={getEventTypeColor(event.eventType)}>
+                          {t(`events.types.${event.eventType}`)}
+                        </EventTypeBadge>
+                      </div>
                     </Card.Header>
                     <Card.Body>
-                      <div className="event-date mb-2">
-                        <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
-                      </div>
-                      <div className="event-time mb-2">
-                        <strong>Time:</strong> {event.startTime} - {event.endTime}
-                      </div>
-                      <div className="event-location mb-2">
-                        <strong>Location:</strong> {event.location}
-                      </div>
-                      <div className="event-type mb-2">
-                        <strong>Type:</strong> {event.eventType}
-                      </div>
+                      <EventIcon>
+                        <FaCalendarAlt />
+                        <span>{new Date(event.date).toLocaleDateString()}</span>
+                      </EventIcon>
+                      <EventIcon>
+                        <FaClock />
+                        <span>{event.startTime} - {event.endTime}</span>
+                      </EventIcon>
+                      <EventIcon>
+                        <FaMapMarkerAlt />
+                        <span>{event.location}</span>
+                      </EventIcon>
                       {event.priest && (
-                        <div className="event-priest mb-2">
-                          <strong>Priest:</strong> {event.priest}
-                        </div>
+                        <EventIcon>
+                          <FaUserAlt />
+                          <span>{event.priest}</span>
+                        </EventIcon>
                       )}
                       <p className="mt-3">{event.description}</p>
                       
-                      {!isPast && isLoggedIn && (
-                        <Button variant="primary" size="sm" className="mt-2">
-                          Register for Event
-                        </Button>
-                      )}
-                      
-                      {isPast && (
-                        <div className="text-muted mt-2">
-                          <small>This event has already taken place</small>
+                      <CardFooter>
+                        <div className="d-flex justify-content-between align-items-center">
+                          {!isPast && isLoggedIn && (
+                            <Button 
+                              variant="primary" 
+                              size="sm"
+                              style={{ 
+                                backgroundColor: '#d35400', 
+                                borderColor: '#d35400',
+                                borderRadius: '8px',
+                                padding: '0.5rem 1rem'
+                              }}
+                            >
+                              {t('events.register')}
+                            </Button>
+                          )}
+                          
+                          {isPast && (
+                            <Badge bg="secondary" style={{ 
+                              backgroundColor: '#f5e6d3', 
+                              color: '#d35400',
+                              borderRadius: '8px',
+                              padding: '0.5rem 1rem',
+                              border: '1px solid #d35400'
+                            }}>
+                              {t('events.pastEvent')}
+                            </Badge>
+                          )}
                         </div>
-                      )}
+                      </CardFooter>
                     </Card.Body>
-                  </Card>
-                </Col>
-              );
-            })}
-          </Row>
-        )}
-      </Card.Body>
-    </Card>
+                  </StyledCard>
+                );
+              })}
+            </EventsGrid>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 
