@@ -1,33 +1,32 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import { t } from '../../utils/translationUtils';
 
 const AboutTemple = () => {
+  const { i18n } = useTranslation();
+
   return (
     <Container className="my-5">
-      <h1 className="section-heading mb-4">About Our Temple</h1>
+      <h1 className="section-heading mb-4">{t('about.aboutTemple')}</h1>
       
       {/* Introduction Section */}
       <Row className="mb-5">
         <Col lg={7}>
           <p className="lead">
-            Our temple serves as a spiritual center dedicated to preserving and promoting
-            Hindu traditions, culture, and values in our community.
+            {t('about.introduction')}
           </p>
           <p>
-            Founded in 2010, our temple has grown from a small prayer hall to a vibrant community center
-            that attracts devotees from across the region. The temple is built in traditional South Indian 
-            architectural style and houses several deities.
+            {t('about.history')}
           </p>
           <p>
-            Our mission is to provide a place for worship, spiritual growth, and community gathering.
-            We conduct regular pujas, celebrate all major Hindu festivals, and offer various religious
-            and cultural services to our devotees.
+            {t('about.mission')}
           </p>
         </Col>
         <Col lg={5}>
           <img 
             src="https://placehold.co/800x600/800020/FFFFFF?text=Temple+Building" 
-            alt="Temple Building" 
+            alt={t('about.templeBuilding')} 
             className="img-fluid rounded shadow-sm"
           />
         </Col>
@@ -35,7 +34,7 @@ const AboutTemple = () => {
 
       {/* Temple Values Section */}
       <div className="mb-5">
-        <h2 className="h3 mb-4">Our Core Values</h2>
+        <h2 className="h3 mb-4">{t('about.coreValues')}</h2>
         <Row>
           <Col md={4} className="mb-4">
             <Card className="h-100 border-0 shadow-sm">
@@ -43,10 +42,9 @@ const AboutTemple = () => {
                 <div className="text-temple mb-3">
                   <i className="fas fa-om fa-3x"></i>
                 </div>
-                <h3 className="h4">Spirituality</h3>
+                <h3 className="h4">{t('about.spirituality')}</h3>
                 <p>
-                  Promoting spiritual growth through traditional practices, meditation,
-                  and religious teachings for inner peace and well-being.
+                  {t('about.spiritualityDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -57,10 +55,9 @@ const AboutTemple = () => {
                 <div className="text-temple mb-3">
                   <i className="fas fa-hands-helping fa-3x"></i>
                 </div>
-                <h3 className="h4">Community Service</h3>
+                <h3 className="h4">{t('about.communityService')}</h3>
                 <p>
-                  Fostering a sense of community through service, support, and 
-                  outreach programs that benefit devotees and the wider society.
+                  {t('about.communityServiceDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -71,10 +68,9 @@ const AboutTemple = () => {
                 <div className="text-temple mb-3">
                   <i className="fas fa-book fa-3x"></i>
                 </div>
-                <h3 className="h4">Education</h3>
+                <h3 className="h4">{t('about.education')}</h3>
                 <p>
-                  Preserving and transmitting Hindu traditions, philosophy, and culture
-                  through classes, workshops, and educational programs.
+                  {t('about.educationDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -84,38 +80,33 @@ const AboutTemple = () => {
 
       {/* Temple Facilities Section */}
       <div className="mb-5">
-        <h2 className="h3 mb-4">Temple Facilities</h2>
+        <h2 className="h3 mb-4">{t('about.facilities')}</h2>
         <Row>
           <Col md={6}>
             <div className="mb-4">
-              <h3 className="h5 text-temple">Main Sanctum</h3>
+              <h3 className="h5 text-temple">{t('about.mainSanctum')}</h3>
               <p>
-                The main sanctum houses the primary deities and is built according to traditional
-                temple architecture with detailed carvings and decorations. Daily pujas and
-                special ceremonies are conducted here.
+                {t('about.mainSanctumDesc')}
               </p>
             </div>
             <div className="mb-4">
-              <h3 className="h5 text-temple">Multi-Purpose Hall</h3>
+              <h3 className="h5 text-temple">{t('about.multiPurposeHall')}</h3>
               <p>
-                A spacious hall for religious gatherings, cultural events, and community celebrations.
-                The hall can accommodate up to 300 people and is equipped with modern audio-visual systems.
+                {t('about.multiPurposeHallDesc')}
               </p>
             </div>
           </Col>
           <Col md={6}>
             <div className="mb-4">
-              <h3 className="h5 text-temple">Cultural Center</h3>
+              <h3 className="h5 text-temple">{t('about.culturalCenter')}</h3>
               <p>
-                Dedicated space for classes in music, dance, yoga, and language. Regular workshops
-                and cultural programs are conducted to promote traditional arts.
+                {t('about.culturalCenterDesc')}
               </p>
             </div>
             <div className="mb-4">
-              <h3 className="h5 text-temple">Dining Area</h3>
+              <h3 className="h5 text-temple">{t('about.diningArea')}</h3>
               <p>
-                Community dining hall where prasadam (blessed food) is served during special
-                occasions and festivals. The kitchen prepares traditional vegetarian food.
+                {t('about.diningAreaDesc')}
               </p>
             </div>
           </Col>
@@ -124,7 +115,7 @@ const AboutTemple = () => {
 
       {/* Temple History Timeline */}
       <div className="mb-5">
-        <h2 className="h3 mb-4">Temple History</h2>
+        <h2 className="h3 mb-4">{t('about.history')}</h2>
         <div className="position-relative">
           <div className="timeline-line"></div>
           <Row className="timeline-item mb-4">
@@ -134,10 +125,9 @@ const AboutTemple = () => {
             <Col md={10}>
               <Card className="border-0 shadow-sm">
                 <Card.Body>
-                  <h3 className="h5">Temple Foundation</h3>
+                  <h3 className="h5">{t('about.foundation')}</h3>
                   <p>
-                    The temple was established as a small prayer hall by a group
-                    of devoted community members seeking a place for worship.
+                    {t('about.foundationDesc')}
                   </p>
                 </Card.Body>
               </Card>
@@ -150,10 +140,9 @@ const AboutTemple = () => {
             <Col md={10}>
               <Card className="border-0 shadow-sm">
                 <Card.Body>
-                  <h3 className="h5">Main Temple Construction</h3>
+                  <h3 className="h5">{t('about.construction')}</h3>
                   <p>
-                    Construction of the main temple structure began with traditional
-                    groundbreaking ceremony and rituals.
+                    {t('about.constructionDesc')}
                   </p>
                 </Card.Body>
               </Card>
@@ -166,10 +155,9 @@ const AboutTemple = () => {
             <Col md={10}>
               <Card className="border-0 shadow-sm">
                 <Card.Body>
-                  <h3 className="h5">Temple Inauguration</h3>
+                  <h3 className="h5">{t('about.inauguration')}</h3>
                   <p>
-                    The temple was officially inaugurated with grand Kumbhabhishekam
-                    ceremony attended by priests from India and local dignitaries.
+                    {t('about.inaugurationDesc')}
                   </p>
                 </Card.Body>
               </Card>
@@ -182,10 +170,9 @@ const AboutTemple = () => {
             <Col md={10}>
               <Card className="border-0 shadow-sm">
                 <Card.Body>
-                  <h3 className="h5">Expansion & Growth</h3>
+                  <h3 className="h5">{t('about.expansion')}</h3>
                   <p>
-                    Expansion of temple facilities including cultural center,
-                    dining hall, and classroom spaces to serve growing community needs.
+                    {t('about.expansionDesc')}
                   </p>
                 </Card.Body>
               </Card>
@@ -196,19 +183,17 @@ const AboutTemple = () => {
 
       {/* Temple Administration */}
       <div className="mb-5">
-        <h2 className="h3 mb-4">Temple Administration</h2>
+        <h2 className="h3 mb-4">{t('about.administration')}</h2>
         <p>
-          The temple is managed by a dedicated board of trustees and volunteers
-          who oversee the daily operations, financial management, and long-term planning.
+          {t('about.administrationDesc')}
         </p>
         <Row>
           <Col md={4} className="mb-4">
             <Card className="h-100 border-0 shadow-sm">
               <Card.Body>
-                <h3 className="h5 text-temple">Board of Trustees</h3>
+                <h3 className="h5 text-temple">{t('about.boardOfTrustees')}</h3>
                 <p>
-                  Elected members who provide strategic direction and governance
-                  for the temple activities and development.
+                  {t('about.boardOfTrusteesDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -216,10 +201,9 @@ const AboutTemple = () => {
           <Col md={4} className="mb-4">
             <Card className="h-100 border-0 shadow-sm">
               <Card.Body>
-                <h3 className="h5 text-temple">Temple Management</h3>
+                <h3 className="h5 text-temple">{t('about.templeManagement')}</h3>
                 <p>
-                  Day-to-day operations team including temple manager, administrative
-                  staff, and maintenance personnel.
+                  {t('about.templeManagementDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -227,10 +211,9 @@ const AboutTemple = () => {
           <Col md={4} className="mb-4">
             <Card className="h-100 border-0 shadow-sm">
               <Card.Body>
-                <h3 className="h5 text-temple">Volunteer Groups</h3>
+                <h3 className="h5 text-temple">{t('about.volunteerGroups')}</h3>
                 <p>
-                  Dedicated volunteers who assist with festivals, events, classes,
-                  and various temple services.
+                  {t('about.volunteerGroupsDesc')}
                 </p>
               </Card.Body>
             </Card>
@@ -240,38 +223,21 @@ const AboutTemple = () => {
 
       {/* Visit Information */}
       <div className="p-4 bg-light rounded">
-        <h2 className="h3 mb-4">Visit the Temple</h2>
+        <h2 className="h3 mb-4">{t('about.visit')}</h2>
         <Row>
           <Col md={6}>
-            <h4>Temple Hours</h4>
+            <h4>{t('about.templeHours')}</h4>
             <ul className="list-unstyled">
-              <li><strong>Weekdays:</strong> 9:00 AM - 12:00 PM, 5:00 PM - 8:00 PM</li>
-              <li><strong>Weekends:</strong> 8:00 AM - 8:00 PM</li>
-              <li><strong>Festival Days:</strong> Special Hours (Check Calendar)</li>
+              <li><strong>{t('about.weekdays')}:</strong> {t('about.weekdayHours')}</li>
+              <li><strong>{t('about.weekends')}:</strong> {t('about.weekendHours')}</li>
+              <li><strong>{t('about.festivalDays')}:</strong> {t('about.festivalHours')}</li>
             </ul>
-            <h4>Dress Code</h4>
-            <p>
-              Modest attire is requested. Traditional clothing is encouraged but not required.
-            </p>
           </Col>
           <Col md={6}>
-            <h4>Contact Information</h4>
-            <p>
-              <i className="fas fa-map-marker-alt me-2"></i>
-              123 Temple Street, City, State 12345
-            </p>
-            <p>
-              <i className="fas fa-phone me-2"></i>
-              (123) 456-7890
-            </p>
-            <p>
-              <i className="fas fa-envelope me-2"></i>
-              info@temple.org
-            </p>
-            <p>
-              For general inquiries, facility rentals, or to schedule a guided tour,
-              please contact our temple office.
-            </p>
+            <h4>{t('about.location')}</h4>
+            <p>{t('temple.address')}</p>
+            <p>{t('temple.phone')}: (123) 456-7890</p>
+            <p>{t('temple.email')}: info@temple.org</p>
           </Col>
         </Row>
       </div>
