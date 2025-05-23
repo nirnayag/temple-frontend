@@ -1,116 +1,211 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Table, Form, Button, Accordion } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import {
+  Container,
+  Grid,
+  Typography,
+  Card,
+  CardContent,
+  CardHeader,
+  Button,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  MenuItem,
+  Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Alert
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import {
+  ExpandMore as ExpandMoreIcon,
+  Event as EventIcon,
+  LocationOn as LocationIcon,
+  AccessTime as TimeIcon
+} from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { t } from '../../utils/translationUtils';
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: '#E2DFD2',
+  borderRadius: '15px',
+  overflow: 'hidden',
+  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+  }
+}));
+
+const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
+  backgroundColor: '#d35400',
+  color: '#E2DFD2',
+  '& .MuiCardHeader-title': {
+    fontWeight: 'bold'
+  },
+  '& .MuiCardHeader-subheader': {
+    color: '#E2DFD2'
+  }
+}));
+
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
+  flexGrow: 1,
+  padding: '1.5rem',
+  '& .MuiTypography-root': {
+    color: '#4a4a4a'
+  }
+}));
+
+const StyledAccordion = styled(Accordion)(({ theme }) => ({
+  backgroundColor: '#E2DFD2',
+  '& .MuiAccordionSummary-root': {
+    backgroundColor: '#d35400',
+    color: '#E2DFD2',
+    '& .MuiAccordionSummary-content': {
+      color: '#E2DFD2',
+      fontWeight: 'bold'
+    }
+  },
+  '& .MuiAccordionDetails-root': {
+    padding: theme.spacing(2)
+  }
+}));
 
 const PujaServices = () => {
+  const { i18n } = useTranslation();
   const [selectedPuja, setSelectedPuja] = useState(null);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    date: '',
+    time: '',
+    location: '',
+    instructions: ''
+  });
 
   // Sample puja services based on temple offerings
   const pujaServices = [
     {
       id: 1,
-      category: "Regular Pujas",
+      category: t('puja.categories.regular'),
       pujas: [
         {
           id: 101,
-          name: "Archana",
-          description: "Simple offering of flowers with chanting of names",
-          duration: "15 minutes",
-          cost: "$21"
+          name: t('puja.regular.archana.name'),
+          description: t('puja.regular.archana.description'),
+          duration: t('puja.regular.archana.duration'),
+          cost: t('puja.regular.archana.cost')
         },
         {
           id: 102,
-          name: "Abhishekam",
-          description: "Sacred bathing ritual for deity with milk, honey, etc.",
-          duration: "45 minutes",
-          cost: "$51"
+          name: t('puja.regular.abhishekam.name'),
+          description: t('puja.regular.abhishekam.description'),
+          duration: t('puja.regular.abhishekam.duration'),
+          cost: t('puja.regular.abhishekam.cost')
         },
         {
           id: 103,
-          name: "Sahasranamam",
-          description: "Chanting of 1008 names of the deity",
-          duration: "60 minutes",
-          cost: "$31"
+          name: t('puja.regular.sahasranamam.name'),
+          description: t('puja.regular.sahasranamam.description'),
+          duration: t('puja.regular.sahasranamam.duration'),
+          cost: t('puja.regular.sahasranamam.cost')
         }
       ]
     },
     {
       id: 2,
-      category: "Special Pujas",
+      category: t('puja.categories.special'),
       pujas: [
         {
           id: 201,
-          name: "Ganapati Homam",
-          description: "Fire ritual for Lord Ganesha to remove obstacles",
-          duration: "90 minutes",
-          cost: "$101"
+          name: t('puja.special.ganapati.name'),
+          description: t('puja.special.ganapati.description'),
+          duration: t('puja.special.ganapati.duration'),
+          cost: t('puja.special.ganapati.cost')
         },
         {
           id: 202,
-          name: "Satyanarayana Puja",
-          description: "Special worship of Lord Vishnu as Satyanarayana",
-          duration: "2 hours",
-          cost: "$151"
+          name: t('puja.special.satyanarayana.name'),
+          description: t('puja.special.satyanarayana.description'),
+          duration: t('puja.special.satyanarayana.duration'),
+          cost: t('puja.special.satyanarayana.cost')
         },
         {
           id: 203,
-          name: "Rudra Homam",
-          description: "Fire ritual for Lord Shiva",
-          duration: "2 hours",
-          cost: "$151"
+          name: t('puja.special.rudra.name'),
+          description: t('puja.special.rudra.description'),
+          duration: t('puja.special.rudra.duration'),
+          cost: t('puja.special.rudra.cost')
         }
       ]
     },
     {
       id: 3,
-      category: "Life Events",
+      category: t('puja.categories.lifeEvents'),
       pujas: [
         {
           id: 301,
-          name: "Namakaranam (Naming Ceremony)",
-          description: "Traditional naming ceremony for newborn",
-          duration: "60 minutes",
-          cost: "$101"
+          name: t('puja.lifeEvents.namakaranam.name'),
+          description: t('puja.lifeEvents.namakaranam.description'),
+          duration: t('puja.lifeEvents.namakaranam.duration'),
+          cost: t('puja.lifeEvents.namakaranam.cost')
         },
         {
           id: 302,
-          name: "Grihapravesham (House Warming)",
-          description: "Ritual for new home blessing",
-          duration: "3 hours",
-          cost: "$301"
+          name: t('puja.lifeEvents.grihapravesham.name'),
+          description: t('puja.lifeEvents.grihapravesham.description'),
+          duration: t('puja.lifeEvents.grihapravesham.duration'),
+          cost: t('puja.lifeEvents.grihapravesham.cost')
         },
         {
           id: 303,
-          name: "Shashtiabdapoorthi (60th Birthday)",
-          description: "Special ritual for 60th birthday celebration",
-          duration: "3 hours",
-          cost: "$251"
+          name: t('puja.lifeEvents.shashtiabdapoorthi.name'),
+          description: t('puja.lifeEvents.shashtiabdapoorthi.description'),
+          duration: t('puja.lifeEvents.shashtiabdapoorthi.duration'),
+          cost: t('puja.lifeEvents.shashtiabdapoorthi.cost')
         }
       ]
     },
     {
       id: 4,
-      category: "Festival Pujas",
+      category: t('puja.categories.festival'),
       pujas: [
         {
           id: 401,
-          name: "Diwali Special Puja",
-          description: "Special worship for Diwali festival",
-          duration: "90 minutes",
-          cost: "$101"
+          name: t('puja.festival.diwali.name'),
+          description: t('puja.festival.diwali.description'),
+          duration: t('puja.festival.diwali.duration'),
+          cost: t('puja.festival.diwali.cost')
         },
         {
           id: 402,
-          name: "Navaratri Special Puja",
-          description: "Nine nights festival special worship",
-          duration: "90 minutes",
-          cost: "$101"
+          name: t('puja.festival.navaratri.name'),
+          description: t('puja.festival.navaratri.description'),
+          duration: t('puja.festival.navaratri.duration'),
+          cost: t('puja.festival.navaratri.cost')
         },
         {
           id: 403,
-          name: "Ganesh Chaturthi Puja",
-          description: "Special worship for Ganesh Chaturthi",
-          duration: "90 minutes",
-          cost: "$101"
+          name: t('puja.festival.ganeshChaturthi.name'),
+          description: t('puja.festival.ganeshChaturthi.description'),
+          duration: t('puja.festival.ganeshChaturthi.duration'),
+          cost: t('puja.festival.ganeshChaturthi.cost')
         }
       ]
     }
@@ -118,211 +213,334 @@ const PujaServices = () => {
 
   const handlePujaSelect = (puja) => {
     setSelectedPuja(puja);
-    window.scrollTo({
-      top: document.getElementById('booking-form').offsetTop,
-      behavior: 'smooth'
-    });
+    const bookingForm = document.getElementById('booking-form');
+    if (bookingForm) {
+      bookingForm.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission
+    console.log('Form submitted:', { selectedPuja, formData });
   };
 
   return (
-    <Container className="my-5">
-      <h1 className="section-heading mb-4">Puja Services</h1>
-      <p className="text-center mb-5">
-        Our temple offers a variety of traditional puja services performed by our experienced priests.
-        You can book these services for performance at the temple or at your residence.
-      </p>
+    <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
+      <Container>
+        <Typography variant="h3" component="h1" align="center" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
+          {t('puja.title')}
+        </Typography>
+        <Typography variant="h6" align="center" paragraph sx={{ color: '#4a4a4a', mb: 6 }}>
+          {t('puja.description')}
+        </Typography>
 
-      {/* Puja Categories */}
-      <Row className="mb-5">
-        {pujaServices.map(category => (
-          <Col md={6} lg={3} className="mb-4" key={category.id}>
-            <Card className="h-100 text-center">
-              <Card.Header className="bg-temple text-white">
-                <h3 className="h5 mb-0">{category.category}</h3>
-              </Card.Header>
-              <Card.Body className="d-flex flex-column">
-                <Card.Text>
-                  {category.pujas.length} different types of pujas
-                </Card.Text>
-                <div className="mt-auto">
-                  <Button 
-                    variant="outline-temple" 
-                    href={`#category-${category.id}`}
+        {/* Puja Categories */}
+        <Grid container spacing={4} sx={{ mb: 6 }}>
+          {pujaServices.map(category => (
+            <Grid item xs={12} sm={6} md={3} key={category.id}>
+              <StyledCard>
+                <StyledCardHeader
+                  title={category.category}
+                  subheader={`${category.pujas.length} ${t('puja.types')}`}
+                />
+                <StyledCardContent>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      bgcolor: '#d35400',
+                      '&:hover': {
+                        bgcolor: '#b34700'
+                      }
+                    }}
                     onClick={() => document.getElementById(`category-${category.id}`).scrollIntoView({ behavior: 'smooth' })}
                   >
-                    View Details
+                    {t('puja.viewDetails')}
                   </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
-      {/* Puja Listings by Category */}
-      <div className="mb-5">
-        <h2 className="h3 mb-4">Available Puja Services</h2>
-        <p className="mb-4">
-          Click on "Book Now" for any puja to fill out the booking form below. For special requests or questions,
-          please contact our temple office directly.
-        </p>
-
-        <Accordion defaultActiveKey="1">
-          {pujaServices.map(category => (
-            <Accordion.Item eventKey={category.id.toString()} key={category.id}>
-              <Accordion.Header id={`category-${category.id}`}>
-                {category.category}
-              </Accordion.Header>
-              <Accordion.Body>
-                <Table responsive bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Puja Name</th>
-                      <th>Description</th>
-                      <th>Duration</th>
-                      <th>Suggested Donation</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {category.pujas.map(puja => (
-                      <tr key={puja.id}>
-                        <td>{puja.name}</td>
-                        <td>{puja.description}</td>
-                        <td>{puja.duration}</td>
-                        <td>{puja.cost}</td>
-                        <td>
-                          <Button 
-                            variant="temple" 
-                            size="sm"
-                            onClick={() => handlePujaSelect(puja)}
-                          >
-                            Book Now
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Accordion.Body>
-            </Accordion.Item>
+                </StyledCardContent>
+              </StyledCard>
+            </Grid>
           ))}
-        </Accordion>
-      </div>
+        </Grid>
 
-      {/* Booking Form */}
-      <div className="p-4 bg-light rounded" id="booking-form">
-        <h2 className="h3 mb-4">Puja Booking Form</h2>
-        
-        {selectedPuja ? (
-          <p className="mb-4">
-            You are booking: <strong>{selectedPuja.name}</strong> - {selectedPuja.description}
-          </p>
-        ) : (
-          <p className="mb-4">
-            Please select a puja service from above to proceed with booking.
-          </p>
-        )}
+        {/* Puja Listings by Category */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
+            {t('puja.availableServices')}
+          </Typography>
+          <Typography paragraph sx={{ color: '#4a4a4a', mb: 4 }}>
+            {t('puja.bookingInstructions')}
+          </Typography>
 
-        <Form>
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Full Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter your full name" required />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control type="email" placeholder="Enter your email" required />
-              </Form.Group>
-            </Col>
-          </Row>
-          
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control type="tel" placeholder="Enter your phone number" required />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Preferred Date</Form.Label>
-                <Form.Control type="date" required />
-              </Form.Group>
-            </Col>
-          </Row>
-          
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Preferred Time</Form.Label>
-                <Form.Control type="time" required />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Location</Form.Label>
-                <Form.Select required>
-                  <option value="">Select location</option>
-                  <option value="temple">At Temple</option>
-                  <option value="residence">At My Residence</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-          
-          <Form.Group className="mb-3">
-            <Form.Label>Special Instructions (optional)</Form.Label>
-            <Form.Control as="textarea" rows={3} placeholder="Any additional information or requests" />
-          </Form.Group>
-          
-          <Button variant="temple" type="submit" size="lg" disabled={!selectedPuja}>
-            Submit Booking Request
-          </Button>
-        </Form>
-      </div>
+          {pujaServices.map(category => (
+            <StyledAccordion key={category.id} id={`category-${category.id}`}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#E2DFD2' }} />}>
+                <Typography>{category.category}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <TableContainer component={Paper} sx={{ bgcolor: '#E2DFD2' }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ color: '#4a4a4a', fontWeight: 'bold' }}>{t('puja.name')}</TableCell>
+                        <TableCell sx={{ color: '#4a4a4a', fontWeight: 'bold' }}>{t('puja.description')}</TableCell>
+                        <TableCell sx={{ color: '#4a4a4a', fontWeight: 'bold' }}>{t('puja.duration')}</TableCell>
+                        <TableCell sx={{ color: '#4a4a4a', fontWeight: 'bold' }}>{t('puja.cost')}</TableCell>
+                        <TableCell sx={{ color: '#4a4a4a', fontWeight: 'bold' }}>{t('puja.action')}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {category.pujas.map(puja => (
+                        <TableRow key={puja.id}>
+                          <TableCell sx={{ color: '#4a4a4a' }}>{puja.name}</TableCell>
+                          <TableCell sx={{ color: '#4a4a4a' }}>{puja.description}</TableCell>
+                          <TableCell sx={{ color: '#4a4a4a' }}>{puja.duration}</TableCell>
+                          <TableCell sx={{ color: '#4a4a4a' }}>{puja.cost}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{
+                                bgcolor: '#d35400',
+                                '&:hover': {
+                                  bgcolor: '#b34700'
+                                }
+                              }}
+                              onClick={() => handlePujaSelect(puja)}
+                            >
+                              {t('puja.bookNow')}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </AccordionDetails>
+            </StyledAccordion>
+          ))}
+        </Box>
 
-      {/* Additional Information */}
-      <div className="mt-5">
-        <h2 className="h3 mb-4">Additional Information</h2>
-        
-        <Row>
-          <Col md={6}>
-            <div className="mb-4">
-              <h4>Booking Guidelines</h4>
-              <ul>
-                <li>Please book at least 7 days in advance</li>
-                <li>Confirmation email will be sent within 24 hours</li>
-                <li>For urgent bookings, please call the temple office</li>
-                <li>Cancellations should be made at least 48 hours before</li>
-              </ul>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="mb-4">
-              <h4>What to Bring</h4>
-              <ul>
-                <li>Fruits and flowers for offering</li>
-                <li>Traditional clothing is recommended</li>
-                <li>For home pujas, please arrange a clean space</li>
-                <li>Additional items specific to puja will be communicated</li>
-              </ul>
-            </div>
-          </Col>
-        </Row>
-        
-        <div className="bg-temple-light p-3 rounded text-center">
-          <h4>Contact for Queries</h4>
-          <p className="mb-1">For any questions or special requests, please contact our temple office:</p>
-          <p className="mb-0">
-            <strong>Email:</strong> puja-services@temple.org | <strong>Phone:</strong> (123) 456-7890
-          </p>
-        </div>
-      </div>
-    </Container>
+        {/* Booking Form */}
+        <Box
+          id="booking-form"
+          component={Paper}
+          sx={{
+            p: 4,
+            bgcolor: '#E2DFD2',
+            borderRadius: '15px'
+          }}
+        >
+          <Typography variant="h4" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
+            {t('puja.bookingForm')}
+          </Typography>
+
+          {selectedPuja ? (
+            <Alert severity="info" sx={{ mb: 3, bgcolor: '#E2DFD2', color: '#4a4a4a' }}>
+              {t('puja.bookingFor')}: <strong>{selectedPuja.name}</strong> - {selectedPuja.description}
+            </Alert>
+          ) : (
+            <Alert severity="info" sx={{ mb: 3, bgcolor: '#E2DFD2', color: '#4a4a4a' }}>
+              {t('puja.selectPuja')}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label={t('puja.form.fullName')}
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label={t('puja.form.email')}
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label={t('puja.form.phone')}
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label={t('puja.form.date')}
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  required
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label={t('puja.form.time')}
+                  name="time"
+                  type="time"
+                  value={formData.time}
+                  onChange={handleInputChange}
+                  required
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  select
+                  label={t('puja.form.location')}
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  required
+                  sx={{ bgcolor: '#fff' }}
+                >
+                  <MenuItem value="temple">{t('puja.form.atTemple')}</MenuItem>
+                  <MenuItem value="residence">{t('puja.form.atResidence')}</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label={t('puja.form.instructions')}
+                  name="instructions"
+                  value={formData.instructions}
+                  onChange={handleInputChange}
+                  sx={{ bgcolor: '#fff' }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={!selectedPuja}
+                  sx={{
+                    bgcolor: '#d35400',
+                    '&:hover': {
+                      bgcolor: '#b34700'
+                    }
+                  }}
+                >
+                  {t('puja.form.submit')}
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Box>
+
+        {/* Additional Information */}
+        <Box sx={{ mt: 6 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
+            {t('puja.additionalInfo')}
+          </Typography>
+
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <StyledCard>
+                <StyledCardHeader title={t('puja.guidelines.title')} />
+                <StyledCardContent>
+                  <List>
+                    {[
+                      t('puja.guidelines.advance'),
+                      t('puja.guidelines.confirmation'),
+                      t('puja.guidelines.urgent'),
+                      t('puja.guidelines.cancellation')
+                    ].map((item, index) => (
+                      <React.Fragment key={index}>
+                        <ListItem>
+                          <ListItemText primary={item} />
+                        </ListItem>
+                        {index < 3 && <Divider />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                </StyledCardContent>
+              </StyledCard>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <StyledCard>
+                <StyledCardHeader title={t('puja.whatToBring.title')} />
+                <StyledCardContent>
+                  <List>
+                    {[
+                      t('puja.whatToBring.offering'),
+                      t('puja.whatToBring.clothing'),
+                      t('puja.whatToBring.space'),
+                      t('puja.whatToBring.additional')
+                    ].map((item, index) => (
+                      <React.Fragment key={index}>
+                        <ListItem>
+                          <ListItemText primary={item} />
+                        </ListItem>
+                        {index < 3 && <Divider />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                </StyledCardContent>
+              </StyledCard>
+            </Grid>
+          </Grid>
+
+          <Box
+            sx={{
+              mt: 4,
+              p: 3,
+              bgcolor: '#d35400',
+              color: '#E2DFD2',
+              borderRadius: '15px',
+              textAlign: 'center'
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              {t('puja.contact.title')}
+            </Typography>
+            <Typography paragraph sx={{ mb: 1 }}>
+              {t('puja.contact.description')}
+            </Typography>
+            <Typography>
+              <strong>{t('puja.contact.email')}:</strong> puja-services@temple.org |{' '}
+              <strong>{t('puja.contact.phone')}:</strong> (123) 456-7890
+            </Typography>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

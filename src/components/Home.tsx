@@ -16,7 +16,8 @@ import {
   Divider,
   CircularProgress,
   Alert,
-  Chip
+  Chip,
+  TypographyProps
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -25,6 +26,8 @@ import {
   LocalOffer as OfferIcon,
   Info as InfoIcon
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { t } from '../utils/translationUtils';
 
 // Import services
 import { eventService, announcementService, prasadamService, templeService } from '../services/api';
@@ -61,9 +64,42 @@ const HeroContent = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
 }));
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: '#E2DFD2',
+  borderRadius: '15px',
+  overflow: 'hidden',
+  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+  }
+}));
+
+const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
+  backgroundColor: '#d35400',
+  color: '#E2DFD2',
+  '& .MuiCardHeader-title': {
+    fontWeight: 'bold'
+  },
+  '& .MuiCardHeader-subheader': {
+    color: '#E2DFD2'
+  }
+}));
+
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
+  flexGrow: 1,
+  padding: '1.5rem',
+  '& .MuiTypography-root': {
+    color: '#4a4a4a'
+  }
+}));
+
 const FeatureIcon = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: '#fff',
+  backgroundColor: '#d35400',
+  color: '#E2DFD2',
   width: '80px',
   height: '80px',
   borderRadius: '50%',
@@ -71,14 +107,17 @@ const FeatureIcon = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   margin: '0 auto 1.5rem',
-  fontSize: '2rem',
+  fontSize: '2rem'
 }));
 
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  position: 'relative',
-  marginBottom: theme.spacing(6),
-  color: theme.palette.primary.main,
+const SectionTitle = styled((props: TypographyProps) => (
+  <Typography {...props} />
+))(({ theme }) => ({
+  color: '#d35400',
   textAlign: 'center',
+  marginBottom: '2rem',
+  fontWeight: 'bold',
+  position: 'relative',
   '&::after': {
     content: '""',
     position: 'absolute',
@@ -87,9 +126,9 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
     transform: 'translateX(-50%)',
     width: '80px',
     height: '3px',
-    backgroundColor: theme.palette.secondary.main,
-  },
-})) as typeof Typography;
+    backgroundColor: '#d35400'
+  }
+}));
 
 interface FeatureProps {
   _id: string;
@@ -173,6 +212,8 @@ const getIconComponent = (iconName: string) => {
 };
 
 const Home: React.FC = () => {
+  const { i18n } = useTranslation();
+  
   // State for data from backend
   const [announcements, setAnnouncements] = useState<AnnouncementProps[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<EventProps[]>([]);
@@ -196,7 +237,6 @@ const Home: React.FC = () => {
   const handleApiError = (error: any, setLoading: React.Dispatch<React.SetStateAction<boolean>>, errorMessage: string) => {
     console.error(`${errorMessage}:`, error);
     
-    // Log detailed error information for debugging
     if (error.response) {
       console.error('API Response Error:', error.response.data);
       console.error('Status:', error.response.status);
@@ -207,8 +247,7 @@ const Home: React.FC = () => {
       console.error('API Setup Error:', error.message);
     }
     
-    // Set appropriate error message
-    setError(errorMessage + (error.response ? ` (${error.response.status})` : ''));
+    setError(t(errorMessage) + (error.response ? ` (${error.response.status})` : ''));
     setLoading(false);
   };
 
@@ -221,7 +260,7 @@ const Home: React.FC = () => {
         setTempleInfo(response.data);
         setLoadingTempleInfo(false);
       } catch (err) {
-        handleApiError(err, setLoadingTempleInfo, 'Failed to load temple information');
+        handleApiError(err, setLoadingTempleInfo, 'home.errors.templeInfo');
       }
     };
 
@@ -237,7 +276,7 @@ const Home: React.FC = () => {
         setFeatures(response.data);
         setLoadingFeatures(false);
       } catch (err) {
-        handleApiError(err, setLoadingFeatures, 'Failed to load temple features');
+        handleApiError(err, setLoadingFeatures, 'home.errors.features');
       }
     };
 
@@ -253,14 +292,14 @@ const Home: React.FC = () => {
         setSections(response.data);
         setLoadingSections(false);
       } catch (err) {
-        handleApiError(err, setLoadingSections, 'Failed to load temple sections');
+        handleApiError(err, setLoadingSections, 'home.errors.sections');
       }
     };
 
     fetchSections();
   }, []);
 
-  // Fetch announcements from backend
+  // Fetch announcements
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
@@ -269,490 +308,316 @@ const Home: React.FC = () => {
         setAnnouncements(response.data);
         setLoadingAnnouncements(false);
       } catch (err) {
-        handleApiError(err, setLoadingAnnouncements, 'Failed to load announcements');
+        handleApiError(err, setLoadingAnnouncements, 'home.errors.announcements');
       }
     };
 
     fetchAnnouncements();
   }, []);
 
-  // Fetch events from backend with improved handling
+  // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        console.log('Fetching upcoming events...');
-        // Use process.env for Create React App or hardcode the URL
-        console.log('API URL: http://localhost:4000/api');
-        
-        // First try the /upcoming endpoint
-        try {
-          const response = await eventService.getUpcoming();
-          console.log('Upcoming events response:', response);
-          setUpcomingEvents(response.data.slice(0, 5)); // Show only 5 upcoming events
-        } catch (upcomingErr) {
-          console.error('Error with upcoming events endpoint, falling back to regular endpoint:', upcomingErr);
-          
-          // Fall back to the regular endpoint with client-side filtering
-          const allEventsResponse = await eventService.getAll();
-          console.log('All events response:', allEventsResponse);
-          
-          // Sort events by date (upcoming first)
-          const sortedEvents = [...allEventsResponse.data].sort((a, b) => {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          });
-          
-          // Take only upcoming events (today and future)
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const upcomingEvts = sortedEvents.filter(event => new Date(event.date) >= today);
-          
-          setUpcomingEvents(upcomingEvts.slice(0, 5)); // Show only 5 upcoming events
-        }
-        
+        console.log('Fetching events...');
+        const response = await eventService.getUpcoming();
+        setUpcomingEvents(response.data);
         setLoadingEvents(false);
       } catch (err) {
-        handleApiError(err, setLoadingEvents, 'Failed to load events');
+        handleApiError(err, setLoadingEvents, 'home.errors.events');
       }
     };
 
     fetchEvents();
   }, []);
 
-  // Fetch prasadam info from backend
+  // Fetch prasadam information
   useEffect(() => {
     const fetchPrasadam = async () => {
       try {
-        console.log('Fetching prasadam...');
+        console.log('Fetching prasadam info...');
         const response = await prasadamService.getAll();
         setPrasadamInfo(response.data);
         setLoadingPrasadam(false);
       } catch (err) {
-        handleApiError(err, setLoadingPrasadam, 'Failed to load prasadam information');
+        handleApiError(err, setLoadingPrasadam, 'home.errors.prasadam');
       }
     };
 
     fetchPrasadam();
   }, []);
 
-  // Fetch prasadam general info from backend
+  // Fetch prasadam general information
   useEffect(() => {
     const fetchPrasadamInfo = async () => {
       try {
-        console.log('Fetching prasadam info...');
+        console.log('Fetching prasadam general info...');
         const response = await prasadamService.getInfo();
-        console.log('Prasadam info response:', response);
-        
-        if (response && response.data) {
-          setPrasadamGeneralInfo(response.data);
-        } else {
-          console.error('No prasadam info data received');
-          setError('No prasadam information available');
-        }
+        setPrasadamGeneralInfo(response.data);
         setLoadingPrasadamInfo(false);
       } catch (err) {
-        handleApiError(err, setLoadingPrasadamInfo, 'Failed to load prasadam general information');
+        handleApiError(err, setLoadingPrasadamInfo, 'home.errors.prasadamInfo');
       }
     };
 
     fetchPrasadamInfo();
   }, []);
 
-  // Format date for display with better internationalization and formatting
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    
-    // Check if the date is valid
-    if (isNaN(date.getTime())) {
-      console.error('Invalid date:', dateString);
-      return 'Invalid date';
-    }
-    
-    try {
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return new Date(dateString).toDateString();
-    }
+    return date.toLocaleDateString(i18n.language === 'mr' ? 'mr-IN' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
-  // Format time with better handling
   const formatTime = (timeString: string) => {
-    // Handle different time formats
-    if (timeString.includes(':')) {
-      const [hours, minutes] = timeString.split(':');
-      const hour = parseInt(hours, 10);
-      
-      if (isNaN(hour)) return timeString;
-      
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-      
-      return `${formattedHour}:${minutes} ${period}`;
-    }
-    
-    return timeString;
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return date.toLocaleTimeString(i18n.language === 'mr' ? 'mr-IN' : 'en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
   };
+
+  if (error) {
+    return (
+      <Container>
+        <Alert severity="error" sx={{ mt: 4 }}>
+          {error}
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
-    <>
+    <Box sx={{ bgcolor: '#E2DFD2' }}>
       {/* Hero Banner */}
       <HeroBanner>
         <HeroContent>
-          <Typography variant="h2" component="h1" gutterBottom>
-            {loadingTempleInfo ? 'Welcome to Temple' : templeInfo?.name || 'Sri Siva Vishnu Temple'}
-          </Typography>
-          <Typography variant="h5" paragraph>
-            {loadingTempleInfo ? 'Loading...' : templeInfo?.tagline || 'Experience peace, spirituality and cultural richness'}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 4 }}>
-            <Button variant="contained" color="secondary" component={Link} to="/donations">
-              Recurring Donations
+          <Container>
+            <Typography variant="h2" component="h1" gutterBottom>
+              {templeInfo?.name || t('home.hero.title')}
+            </Typography>
+            <Typography variant="h5" gutterBottom>
+              {templeInfo?.tagline || t('home.hero.subtitle')}
+            </Typography>
+            <Button
+              component={Link}
+              to="/about"
+              variant="contained"
+              sx={{ 
+                mt: 2,
+                bgcolor: '#d35400',
+                '&:hover': {
+                  bgcolor: '#b34700'
+                }
+              }}
+            >
+              {t('home.hero.learnMore')}
             </Button>
-            <Button variant="outlined" color="inherit" component={Link} to="/services/puja">
-              Puja Sponsorships
-            </Button>
-          </Box>
+          </Container>
         </HeroContent>
       </HeroBanner>
 
-      {/* Feature Icons Section */}
-      <Box sx={{ py: 5 }}>
-        <Container>
-          {loadingFeatures ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : features.length === 0 ? (
-            <Alert severity="info" sx={{ mb: 3 }}>No features available at this time.</Alert>
-          ) : (
-          <Grid container spacing={4}>
-              {features.map(feature => (
-                <Grid item xs={12} sm={6} md={3} key={feature._id}>
-                <Box 
-                  component={Link} 
-                  to={feature.link} 
-                  sx={{ 
-                    textDecoration: 'none', 
-                    color: 'inherit',
-                    display: 'block',
-                    '&:hover': {
-                      '& .MuiCard-root': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: 4
-                      }
-                    }
-                  }}
-                >
-                  <Box sx={{ textAlign: 'center', mb: 2 }}>
-                    <FeatureIcon>
-                        {getIconComponent(feature.icon)}
-                    </FeatureIcon>
-                    <Typography variant="h5" gutterBottom>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {feature.description}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-          )}
-        </Container>
-      </Box>
+      {/* Features Section */}
+      <Container sx={{ py: 8 }}>
+        <SectionTitle variant="h3">
+          {t('home.features.title')}
+        </SectionTitle>
+        <Grid container spacing={4}>
+          {features.map((feature) => (
+            <Grid item xs={12} sm={6} md={4} key={feature._id}>
+              <StyledCard>
+                <StyledCardContent sx={{ textAlign: 'center' }}>
+                  <FeatureIcon>
+                    {getIconComponent(feature.icon)}
+                  </FeatureIcon>
+                  <Typography variant="h5" component="h3" gutterBottom>
+                    {feature.title}
+                  </Typography>
+                  <Typography>
+                    {feature.description}
+                  </Typography>
+                </StyledCardContent>
+              </StyledCard>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
 
       {/* Announcements Section */}
-      <Box sx={{ py: 5, bgcolor: '#f8f9fa' }}>
+      <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
         <Container>
-          <SectionTitle variant="h3" component="h2">
-            Announcements
+          <SectionTitle variant="h3">
+            {t('home.announcements.title')}
           </SectionTitle>
-          
-          {loadingAnnouncements ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
-          ) : announcements.length === 0 ? (
-            <Alert severity="info" sx={{ mb: 3 }}>No announcements available at this time.</Alert>
-          ) : (
-          <Grid container spacing={3}>
-            {announcements.map(announcement => (
-                <Grid item xs={12} md={6} key={announcement._id}>
-                <Card elevation={2} sx={{ 
-                  height: '100%',
-                  transition: 'all 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: 4
-                  }
-                }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box sx={{ 
-                        bgcolor: 'primary.main', 
-                        color: 'white', 
-                        px: 2, 
-                        py: 1, 
-                        borderRadius: 4, 
-                        mr: 2 
-                      }}>
-                          {new Date(announcement.dateRange.split(' - ')[0]).getDate()}
-                          {new Date(announcement.dateRange.split(' - ')[0]).toLocaleString('default', { month: 'short' })}
-                      </Box>
-                      <Typography variant="h5" component="h3">
-                        {announcement.title}
-                      </Typography>
-                    </Box>
-                    <Typography color="text.secondary" variant="body2" gutterBottom>
-                      {announcement.dateRange}
-                    </Typography>
-                    <Typography paragraph>
-                      {announcement.description}
-                    </Typography>
-                    <Button size="small" variant="outlined">Info</Button>
-                  </CardContent>
-                </Card>
+          <Grid container spacing={4}>
+            {announcements.length === 0 ? (
+              <Grid item xs={12}>
+                <Alert severity="info">{t('home.announcements.noAnnouncements')}</Alert>
               </Grid>
-            ))}
+            ) : (
+              announcements.map((announcement) => (
+                <Grid item xs={12} md={6} key={announcement._id}>
+                  <StyledCard>
+                    <StyledCardHeader
+                      title={announcement.title}
+                      subheader={announcement.dateRange}
+                    />
+                    <StyledCardContent>
+                      <Typography>
+                        {announcement.description}
+                      </Typography>
+                      <Button
+                        variant="text"
+                        sx={{ 
+                          mt: 2,
+                          color: '#d35400',
+                          '&:hover': {
+                            color: '#b34700'
+                          }
+                        }}
+                      >
+                        {t('home.announcements.readMore')}
+                      </Button>
+                    </StyledCardContent>
+                  </StyledCard>
+                </Grid>
+              ))
+            )}
           </Grid>
-          )}
         </Container>
       </Box>
 
-      {/* Upcoming Events */}
-      <Box sx={{ py: 5 }}>
-        <Container>
-          <SectionTitle variant="h3" component="h2">
-            Upcoming Events
-          </SectionTitle>
-          
-          {loadingEvents ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
-          ) : upcomingEvents.length === 0 ? (
-            <Alert severity="info" sx={{ mb: 3 }}>No upcoming events available at this time.</Alert>
+      {/* Upcoming Events Section */}
+      <Container sx={{ py: 8 }}>
+        <SectionTitle variant="h3">
+          {t('home.events.title')}
+        </SectionTitle>
+        <Grid container spacing={4}>
+          {upcomingEvents.length === 0 ? (
+            <Grid item xs={12}>
+              <Alert severity="info">{t('home.events.noEvents')}</Alert>
+            </Grid>
           ) : (
-          <Grid container spacing={3}>
-            {upcomingEvents.map(event => (
-              <Grid item xs={12} sm={6} md={4} key={event._id}>
-                <Card elevation={2} sx={{ 
-                  height: '100%',
-                  transition: 'all 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: 4
-                  }
-                }}>
-                  <CardHeader
-                    sx={{ bgcolor: 'primary.main', color: 'white', py: 2 }}
-                    title={
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ 
-                          bgcolor: 'secondary.main', 
-                          color: 'white', 
-                          px: 1.5, 
-                          py: 0.5, 
-                          borderRadius: 4, 
-                          mr: 2, 
-                          fontSize: '0.9rem', 
-                          fontWeight: 'bold',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          minWidth: '2.5rem'
-                        }}>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                            {new Date(event.date).getDate()}
-                          </Typography>
-                          <Typography variant="caption">
-                            {new Date(event.date).toLocaleString('default', { month: 'short' })}
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6">{event.title}</Typography>
-                      </Box>
+            upcomingEvents.map((event) => (
+              <Grid item xs={12} md={6} key={event._id}>
+                <StyledCard>
+                  <StyledCardHeader
+                    title={event.title}
+                    subheader={`${formatDate(event.date)} - ${formatTime(event.startTime)}`}
+                    action={
+                      event.registrationRequired && (
+                        <Chip
+                          label={t('home.events.registrationRequired')}
+                          sx={{ 
+                            bgcolor: '#E2DFD2',
+                            color: '#d35400',
+                            fontWeight: 'bold'
+                          }}
+                          size="small"
+                        />
+                      )
                     }
                   />
-                  <CardContent>
+                  <StyledCardContent>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
-                      <strong>When:</strong> {formatDate(event.date)}, {formatTime(event.startTime)} - {formatTime(event.endTime)}
+                      {t('home.events.location')}: {event.location}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      <strong>Where:</strong> {event.location}
-                    </Typography>
-                    {event.eventType && (
-                      <Chip 
-                        label={event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)} 
-                        size="small" 
-                        color={
-                          event.eventType === 'puja' ? 'primary' :
-                          event.eventType === 'festival' ? 'secondary' :
-                          event.eventType === 'discourse' ? 'info' :
-                          event.eventType === 'community' ? 'success' :
-                          event.eventType === 'class' ? 'warning' : 'default'
-                        }
-                        sx={{ mb: 2 }}
-                      />
-                    )}
-                    <Typography variant="body2" paragraph>
+                    <Typography>
                       {event.description}
                     </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Button size="small" variant="contained" component={Link} to={`/events/${event._id}`}>
-                        Details
-                      </Button>
-                      {event.registrationRequired && (
-                        <Chip 
-                          label="Registration Required" 
-                      size="small" 
-                          color="warning" 
-                      variant="outlined" 
-                        />
-                      )}
-                    </Box>
-                  </CardContent>
-                </Card>
+                    <Button
+                      variant="text"
+                      component={Link}
+                      to="/events"
+                      sx={{ 
+                        mt: 2,
+                        color: '#d35400',
+                        '&:hover': {
+                          color: '#b34700'
+                        }
+                      }}
+                    >
+                      {t('home.events.viewAll')}
+                    </Button>
+                  </StyledCardContent>
+                </StyledCard>
               </Grid>
-            ))}
-          </Grid>
+            ))
           )}
-          
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              component={Link} 
-              to="/events"
-            >
-              More Events
-            </Button>
-          </Box>
-        </Container>
-      </Box>
+        </Grid>
+      </Container>
 
-      {/* Temple Information */}
-      <Box sx={{ py: 5, bgcolor: '#f8f9fa' }}>
+      {/* Prasadam Section */}
+      <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
         <Container>
-          <SectionTitle variant="h3" component="h2">
-            {loadingTempleInfo ? 'Temple Information' : templeInfo?.name || 'Sri Siva Vishnu Temple'}
+          <SectionTitle variant="h3">
+            {t('home.prasadam.title')}
           </SectionTitle>
-          
-          {loadingSections ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : sections.length === 0 ? (
-            <Alert severity="info" sx={{ mb: 3 }}>No temple information available at this time.</Alert>
-          ) : (
-          <Grid container spacing={4} sx={{ mb: 5 }}>
-              {sections.map(section => (
-                <Grid item xs={12} md={6} key={section._id}>
-              <Typography variant="h6" gutterBottom>
-                    {section.title}
-              </Typography>
-              <Typography paragraph>
-                    {section.description}
-              </Typography>
-            </Grid>
-              ))}
-            </Grid>
+          {prasadamGeneralInfo && (
+            <Typography paragraph sx={{ color: '#4a4a4a', textAlign: 'center', mb: 4 }}>
+              {prasadamGeneralInfo.description}
+            </Typography>
           )}
-          
-          <Box sx={{ textAlign: 'center' }}>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              component={Link} 
-              to="/about"
-            >
-              View All
-            </Button>
-          </Box>
-        </Container>
-      </Box>
-
-      {/* Prasadam Info */}
-      <Box sx={{ py: 5 }}>
-        <Container>
-          <SectionTitle variant="h3" component="h2">
-            Prasadam
-          </SectionTitle>
-          
-          {loadingPrasadam || loadingPrasadamInfo ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
-          ) : (
-            <>
-          <Typography align="center" paragraph sx={{ mb: 4 }}>
-                {prasadamGeneralInfo?.description || 'Prasadam information is not available at this time.'}
-          </Typography>
-              
-          <Grid container spacing={3}>
-                {prasadamInfo.length === 0 ? (
-                  <Grid item xs={12}>
-                    <Alert severity="info">No prasadam information available at this time.</Alert>
-                  </Grid>
-                ) : (
-                  // Filter only Saturday and Sunday prasadam for the homepage
-                  prasadamInfo
-                    .filter(prasadam => ['Saturday', 'Sunday'].includes(prasadam.dayOfWeek))
-                    .map(prasadam => (
-                      <Grid item xs={12} md={6} key={prasadam._id}>
-              <Card elevation={2} sx={{ height: '100%' }}>
-                <CardHeader
-                  sx={{ bgcolor: 'primary.main', color: 'white' }}
-                            title={prasadam.dayOfWeek}
-                />
-                <CardContent>
-                            <Typography paragraph>Special prasadam offerings on {prasadam.dayOfWeek}:</Typography>
-                            {prasadam.isAvailable ? (
-                  <List>
-                                {prasadam.items.map((item, index) => (
-                                  <React.Fragment key={index}>
-                    <ListItem>
-                                      <ListItemText 
-                                        primary={item.name} 
-                                        secondary={item.description}
-                                        primaryTypographyProps={{
-                                          fontWeight: item.specialItem ? 'bold' : 'regular'
-                                        }}
-                                      />
-                    </ListItem>
-                                    {index < prasadam.items.length - 1 && <Divider component="li" />}
-                                  </React.Fragment>
-                                ))}
-                  </List>
-                            ) : (
-                              <Alert severity="info">Prasadam not available on this day.</Alert>
-                            )}
-                            {prasadam.notes && (
-                              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                                Note: {prasadam.notes}
-                              </Typography>
-                            )}
-                </CardContent>
-              </Card>
-            </Grid>
-                    ))
-                )}
+          <Grid container spacing={4}>
+            {prasadamInfo.length === 0 ? (
+              <Grid item xs={12}>
+                <Alert severity="info">{t('home.prasadam.noPrasadam')}</Alert>
+              </Grid>
+            ) : (
+              prasadamInfo.map((day) => (
+                <Grid item xs={12} md={6} key={day._id}>
+                  <StyledCard>
+                    <StyledCardHeader
+                      title={t(`common.days.${day.dayOfWeek.toLowerCase()}`)}
+                      subheader={day.isAvailable ? t('home.prasadam.available') : t('home.prasadam.unavailable')}
+                    />
+                    <StyledCardContent>
+                      <List>
+                        {day.items.map((item, index) => (
+                          <React.Fragment key={index}>
+                            <ListItem>
+                              <ListItemText
+                                primary={item.name}
+                                secondary={item.description}
+                                primaryTypographyProps={{ color: '#4a4a4a' }}
+                                secondaryTypographyProps={{ color: '#666666' }}
+                              />
+                              {item.specialItem && (
+                                <Chip
+                                  label={t('home.prasadam.special')}
+                                  sx={{ 
+                                    bgcolor: '#E2DFD2',
+                                    color: '#d35400',
+                                    fontWeight: 'bold'
+                                  }}
+                                  size="small"
+                                />
+                              )}
+                            </ListItem>
+                            {index < day.items.length - 1 && <Divider />}
+                          </React.Fragment>
+                        ))}
+                      </List>
+                      {day.notes && (
+                        <Typography variant="body2" sx={{ mt: 2, color: '#666666' }}>
+                          {t('home.prasadam.notes')}: {day.notes}
+                        </Typography>
+                      )}
+                    </StyledCardContent>
+                  </StyledCard>
+                </Grid>
+              ))
+            )}
           </Grid>
-            </>
-          )}
         </Container>
       </Box>
-    </>
+    </Box>
   );
 };
 

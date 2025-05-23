@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import authService from '../../services/auth';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [credentials, setCredentials] = useState({
     username: '',
     password: ''
@@ -24,7 +26,7 @@ const Login = () => {
   
   const validateForm = () => {
     if (!credentials.username || !credentials.password) {
-      setError('Please enter both username and password');
+      setError(t('auth.requiredFields'));
       return false;
     }
     return true;
@@ -44,7 +46,7 @@ const Login = () => {
     try {
       const response = await authService.login(credentials);
       
-      setSuccess('Login successful! Redirecting...');
+      setSuccess(t('auth.loginSuccessful'));
       
       // Redirect based on user role after a short delay
       setTimeout(() => {
@@ -56,7 +58,7 @@ const Login = () => {
       }, 1000);
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || err.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || err.message || t('auth.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,7 @@ const Login = () => {
         <Col md={6} lg={5}>
           <Card className="mt-5 mb-4 shadow-sm">
             <Card.Header className="bg-temple text-white">
-              <h3 className="mb-0">Login to Your Account</h3>
+              <h3 className="mb-0">{t('auth.login')}</h3>
             </Card.Header>
             <Card.Body>
               {error && <Alert variant="danger">{error}</Alert>}
@@ -76,25 +78,25 @@ const Login = () => {
               
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4" controlId="username">
-                  <Form.Label>Username</Form.Label>
+                  <Form.Label>{t('auth.username')}</Form.Label>
                   <Form.Control
                     type="text"
                     name="username"
                     value={credentials.username}
                     onChange={handleChange}
-                    placeholder="Enter your username"
+                    placeholder={t('auth.enterUsername')}
                     required
                   />
                 </Form.Group>
                 
                 <Form.Group className="mb-4" controlId="password">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label>{t('auth.password')}</Form.Label>
                   <Form.Control
                     type="password"
                     name="password"
                     value={credentials.password}
                     onChange={handleChange}
-                    placeholder="Enter your password"
+                    placeholder={t('auth.enterPassword')}
                     required
                   />
                 </Form.Group>
@@ -103,10 +105,10 @@ const Login = () => {
                   <Form.Check
                     type="checkbox"
                     id="rememberMe"
-                    label="Remember me"
+                    label={t('auth.rememberMe')}
                   />
                   <Link to="/forgot-password" className="text-primary text-decoration-none">
-                    Forgot Password?
+                    {t('auth.forgotPassword')}
                   </Link>
                 </div>
                 
@@ -116,18 +118,18 @@ const Login = () => {
                   disabled={loading} 
                   className="w-100 py-2"
                 >
-                  {loading ? 'Logging in...' : 'Login'}
+                  {loading ? t('auth.loggingIn') : t('auth.login')}
                 </Button>
               </Form>
             </Card.Body>
             <Card.Footer className="text-center">
               <p className="mb-0">
-                Don't have an account? <Link to="/register">Register</Link>
+                {t('auth.dontHaveAccount')} <Link to="/register">{t('auth.register')}</Link>
               </p>
               <p className="small text-muted mt-2">
-                Demo credentials: <br/>
-                Admin: username="admin", password="admin123" <br/>
-                User: username="user", password="user123"
+                {t('auth.demoCredentials')} <br/>
+                {t('auth.adminCredentials')} <br/>
+                {t('auth.userCredentials')}
               </p>
             </Card.Footer>
           </Card>
