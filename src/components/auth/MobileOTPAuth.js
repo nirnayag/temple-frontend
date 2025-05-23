@@ -1,29 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Button, Card, Alert, Container, Row, Col, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Alert,
+  Grid,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
+  Divider
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import {
+  Phone as PhoneIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+  ArrowBack as ArrowBackIcon
+} from '@mui/icons-material';
 import authService from '../../services/auth';
 
-// Custom CSS for OTP input
-const customStyles = `
-  /* Hide number input arrows */
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  backgroundColor: '#E2DFD2',
+  borderRadius: '15px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: '#fff',
+    '& fieldset': {
+      borderColor: '#d35400',
+    },
+    '&:hover fieldset': {
+      borderColor: '#b34700',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#d35400',
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: '#4a4a4a',
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: '#d35400',
   }
-  
-  /* For Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: '#d35400',
+  color: '#E2DFD2',
+  padding: theme.spacing(1.5),
+  '&:hover': {
+    backgroundColor: '#b34700',
+  },
+  '&.Mui-disabled': {
+    backgroundColor: '#e0c9a6',
+    color: '#4a4a4a',
   }
-  
-  /* Focus styles */
-  #otp-input:focus {
-    background-color: #f8f9fa;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}));
+
+const OTPInput = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: '#fff',
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    width: '40px',
+    '& fieldset': {
+      borderColor: '#d35400',
+    },
+    '&:hover fieldset': {
+      borderColor: '#b34700',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#d35400',
+    },
   }
-`;
+}));
 
 // Enum for authentication steps
 const AuthStep = {
@@ -33,9 +92,10 @@ const AuthStep = {
 };
 
 const MobileOTPAuth = () => {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(AuthStep.ENTER_MOBILE);
   const [mobileNumber, setMobileNumber] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -52,37 +112,69 @@ const MobileOTPAuth = () => {
   const [timer, setTimer] = useState(0);
   
   const navigate = useNavigate();
-  const otpInputRef = useRef(null);
+  const otpInputRefs = [
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null)
+  ];
   
   // Focus OTP input when verification step is active
   useEffect(() => {
-    if (currentStep === AuthStep.VERIFY_OTP && otpInputRef.current) {
+    if (currentStep === AuthStep.VERIFY_OTP && otpInputRefs[0].current) {
       setTimeout(() => {
-        otpInputRef.current.focus();
+        otpInputRefs[0].current.focus();
       }, 300);
     }
   }, [currentStep]);
   
   // Handle mobile number change
   const handleMobileChange = (e) => {
-    const value = e.target.value.replace(/[^0-9+]/g, ''); // Only allow numbers and + sign
+    const value = e.target.value.replace(/[^0-9+]/g, '');
     setMobileNumber(value);
   };
   
   // Handle OTP input change
-  const handleOtpChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // Only allow numbers
-    if (value.length <= 6) { // Only allow 6 digits max
-      setOtp(value);
+  const handleOtpChange = (index, value) => {
+    if (value.length <= 1 && /^[0-9]*$/.test(value)) {
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+
+      // Auto-focus next input if current input is filled
+      if (value && index < 5) {
+        otpInputRefs[index + 1].current.focus();
+      }
     }
   };
   
-  // Handle paste event for OTP
+  // Handle OTP keydown
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      // Focus previous input on backspace if current input is empty
+      otpInputRefs[index - 1].current.focus();
+    }
+  };
+  
+  // Handle OTP paste
   const handleOtpPaste = (e) => {
     e.preventDefault();
     const pasteData = e.clipboardData.getData('text');
     const numericData = pasteData.replace(/[^0-9]/g, '').substring(0, 6);
-    setOtp(numericData);
+    
+    if (numericData.length > 0) {
+      const newOtp = [...otp];
+      for (let i = 0; i < numericData.length; i++) {
+        newOtp[i] = numericData[i];
+      }
+      setOtp(newOtp);
+      
+      // Focus the next empty input or the last input
+      const nextEmptyIndex = numericData.length < 6 ? numericData.length : 5;
+      otpInputRefs[nextEmptyIndex].current.focus();
+    }
   };
   
   // Handle user data change for registration
@@ -96,9 +188,8 @@ const MobileOTPAuth = () => {
   
   // Validate mobile number
   const validateMobileNumber = () => {
-    // Basic validation to ensure mobile number is not empty and has at least 10 digits
     if (!mobileNumber || mobileNumber.replace(/[^0-9]/g, '').length < 10) {
-      setError('Please enter a valid mobile number');
+      setError(t('auth.invalidMobile'));
       return false;
     }
     return true;
@@ -106,8 +197,9 @@ const MobileOTPAuth = () => {
   
   // Validate OTP
   const validateOtp = () => {
-    if (!otp || otp.length !== 6) {
-      setError('Please enter a valid 6-digit OTP');
+    const otpString = otp.join('');
+    if (otpString.length !== 6) {
+      setError(t('auth.invalidOtp'));
       return false;
     }
     return true;
@@ -116,15 +208,14 @@ const MobileOTPAuth = () => {
   // Validate registration data
   const validateRegistrationData = () => {
     if (!userData.name) {
-      setError('Name is required');
+      setError(t('auth.requiredFields'));
       return false;
     }
     
-    // Email validation is optional but if provided, should be valid
     if (userData.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(userData.email)) {
-        setError('Please enter a valid email address');
+        setError(t('auth.invalidEmail'));
         return false;
       }
     }
@@ -134,7 +225,7 @@ const MobileOTPAuth = () => {
   
   // Start OTP timer
   const startOtpTimer = () => {
-    setTimer(60); // 60 seconds countdown
+    setTimer(60);
     const interval = setInterval(() => {
       setTimer(prevTime => {
         if (prevTime <= 1) {
@@ -161,12 +252,12 @@ const MobileOTPAuth = () => {
     try {
       const response = await authService.requestOTP(mobileNumber);
       setOtpSent(true);
-      setSuccess(`OTP sent to ${mobileNumber}`);
+      setSuccess(t('auth.otpSent', { mobile: mobileNumber }));
       setCurrentStep(AuthStep.VERIFY_OTP);
       startOtpTimer();
     } catch (err) {
       console.error('Error requesting OTP:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to send OTP. Please try again.');
+      setError(err.response?.data?.message || err.message || t('auth.error'));
     } finally {
       setLoading(false);
     }
@@ -185,15 +276,14 @@ const MobileOTPAuth = () => {
     setLoading(true);
     
     try {
-      const response = await authService.verifyOTP(mobileNumber, otp);
+      const response = await authService.verifyOTP(mobileNumber, otp.join(''));
       
       if (response.isNewUser) {
         setCurrentStep(AuthStep.REGISTRATION);
-        setSuccess('OTP verified. Please complete your registration.');
+        setSuccess(t('auth.otpVerified'));
       } else {
-        setSuccess('Login successful! Redirecting...');
+        setSuccess(t('auth.loginSuccessful'));
         
-        // Redirect based on user role after a short delay
         setTimeout(() => {
           if (response.user.role === 'admin') {
             navigate('/admin/dashboard');
@@ -205,11 +295,10 @@ const MobileOTPAuth = () => {
     } catch (err) {
       console.error('Error verifying OTP:', err);
       
-      // Check if more registration data is required
       if (err.response?.data?.requiresRegistration) {
         setCurrentStep(AuthStep.REGISTRATION);
       } else {
-        setError(err.response?.data?.message || err.message || 'Invalid OTP. Please try again.');
+        setError(err.response?.data?.message || err.message || t('auth.invalidOtp'));
       }
     } finally {
       setLoading(false);
@@ -229,11 +318,10 @@ const MobileOTPAuth = () => {
     setLoading(true);
     
     try {
-      const response = await authService.verifyOTPAndRegister(mobileNumber, otp, userData);
+      const response = await authService.verifyOTPAndRegister(mobileNumber, otp.join(''), userData);
       
-      setSuccess('Registration successful! Redirecting...');
+      setSuccess(t('auth.registrationSuccessful'));
       
-      // Redirect based on user role after a short delay
       setTimeout(() => {
         if (response.user.role === 'admin') {
           navigate('/admin/dashboard');
@@ -243,7 +331,7 @@ const MobileOTPAuth = () => {
       }, 1000);
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.message || err.message || 'Registration failed. Please try again.');
+      setError(err.response?.data?.message || err.message || t('auth.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -251,218 +339,207 @@ const MobileOTPAuth = () => {
   
   // Render mobile number form
   const renderMobileForm = () => (
-    <Form onSubmit={handleRequestOtp}>
-      <Form.Group className="mb-4" controlId="mobileNumber">
-        <Form.Label>Mobile Number</Form.Label>
-        <InputGroup>
-          <Form.Control
-            type="text"
-            value={mobileNumber}
-            onChange={handleMobileChange}
-            placeholder="Enter your mobile number"
-            required
-          />
-        </InputGroup>
-        <Form.Text className="text-muted">
-          We'll send a one-time password to this number
-        </Form.Text>
-      </Form.Group>
+    <form onSubmit={handleRequestOtp}>
+      <StyledTextField
+        fullWidth
+        label={t('auth.mobileNumber')}
+        value={mobileNumber}
+        onChange={handleMobileChange}
+        placeholder={t('auth.enterMobileNumber')}
+        required
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <PhoneIcon sx={{ color: '#d35400' }} />
+            </InputAdornment>
+          ),
+        }}
+        sx={{ mb: 3 }}
+      />
       
-      <Button 
-        variant="primary" 
-        type="submit" 
-        disabled={loading} 
-        className="w-100 py-2"
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        {t('auth.otpMessage')}
+      </Typography>
+      
+      <StyledButton
+        fullWidth
+        type="submit"
+        disabled={loading}
+        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
       >
-        {loading ? 'Sending OTP...' : 'Send OTP'}
-      </Button>
-    </Form>
+        {loading ? t('auth.sendingOtp') : t('auth.sendOtp')}
+      </StyledButton>
+    </form>
   );
   
   // Render OTP verification form
-  const renderOtpForm = () => {
-    return (
-      <Form onSubmit={handleVerifyOtp}>
-        <Form.Group className="mb-4" controlId="otp">
-          <Form.Label>One-Time Password (OTP)</Form.Label>
-          
-          {/* Single input field for all devices */}
-          <Form.Control
-            id="otp-input"
-            ref={otpInputRef}
-            type="text"
-            inputMode="numeric"
-            value={otp}
-            onChange={handleOtpChange}
+  const renderOtpForm = () => (
+    <form onSubmit={handleVerifyOtp}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2 }}>
+        {otp.map((digit, index) => (
+          <OTPInput
+            key={index}
+            inputRef={otpInputRefs[index]}
+            value={digit}
+            onChange={(e) => handleOtpChange(index, e.target.value)}
+            onKeyDown={(e) => handleOtpKeyDown(index, e)}
             onPaste={handleOtpPaste}
-            placeholder="Enter 6-digit OTP"
-            maxLength={6}
-            className="text-center"
-            style={{ 
-              fontSize: '1.5rem',
-              letterSpacing: '0.5rem',
-              fontWeight: 'bold'
+            inputProps={{
+              maxLength: 1,
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              autoComplete: 'one-time-code'
             }}
-            autoComplete="one-time-code"
           />
-          
-          <Form.Text className="text-center d-block mb-2">
-            Enter the 6-digit code sent to your mobile
-          </Form.Text>
-          
-          <Form.Text className="d-flex justify-content-between mt-2">
-            <span>OTP sent to {mobileNumber}</span>
-            {timer > 0 ? (
-              <span>Resend in {timer}s</span>
-            ) : (
-              <Button 
-                variant="link" 
-                size="sm" 
-                className="p-0" 
-                onClick={handleRequestOtp} 
-                disabled={loading}
-              >
-                Resend OTP
-              </Button>
-            )}
-          </Form.Text>
-        </Form.Group>
-        
-        <Button 
-          variant="primary" 
-          type="submit" 
-          disabled={loading || otp.length !== 6} 
-          className="w-100 py-2"
-        >
-          {loading ? 'Verifying...' : 'Verify OTP'}
-        </Button>
-        
-        <div className="text-center mt-3">
-          <Button 
-            variant="link" 
-            onClick={() => setCurrentStep(AuthStep.ENTER_MOBILE)}
+        ))}
+      </Box>
+      
+      <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 2 }}>
+        {timer > 0 
+          ? t('auth.otpTimer', { seconds: timer })
+          : t('auth.otpExpired')}
+      </Typography>
+      
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+        <Typography variant="body2" color="text.secondary">
+          {t('auth.otpSent', { mobile: mobileNumber })}
+        </Typography>
+        {timer > 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            {t('auth.resendOtp')} ({timer}s)
+          </Typography>
+        ) : (
+          <Button
+            color="primary"
+            onClick={handleRequestOtp}
             disabled={loading}
+            sx={{ color: '#d35400' }}
           >
-            Change Mobile Number
+            {t('auth.resendOtp')}
           </Button>
-        </div>
-      </Form>
-    );
-  };
+        )}
+      </Box>
+      
+      <StyledButton
+        fullWidth
+        type="submit"
+        disabled={loading || otp.join('').length !== 6}
+        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+      >
+        {loading ? t('auth.verifyingOtp') : t('auth.verifyOtp')}
+      </StyledButton>
+      
+      <Button
+        fullWidth
+        onClick={() => setCurrentStep(AuthStep.ENTER_MOBILE)}
+        disabled={loading}
+        startIcon={<ArrowBackIcon />}
+        sx={{ mt: 2, color: '#d35400' }}
+      >
+        {t('auth.changeMobileNumber')}
+      </Button>
+    </form>
+  );
   
   // Render registration form
   const renderRegistrationForm = () => (
-    <Form onSubmit={handleCompleteRegistration}>
-      <Row>
-        <Col md={12}>
-          <h5 className="mb-3">Personal Information</h5>
-        </Col>
-        
-        <Col md={12}>
-          <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Full Name <span className="text-danger">*</span></Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={userData.name}
-              onChange={handleUserDataChange}
-              placeholder="Enter your full name"
-              required
-            />
-          </Form.Group>
-        </Col>
-        
-        <Col md={6}>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={userData.email}
-              onChange={handleUserDataChange}
-              placeholder="Enter your email (optional)"
-            />
-          </Form.Group>
-        </Col>
-        
-        <Col md={6}>
-          <Form.Group className="mb-3" controlId="username">
-            <Form.Label>Preferred Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              value={userData.username}
-              onChange={handleUserDataChange}
-              placeholder="Choose a username (optional)"
-            />
-            <Form.Text className="text-muted">
-              If left blank, a username will be auto-generated
-            </Form.Text>
-          </Form.Group>
-        </Col>
-        
-        <Col md={12}>
-          <Form.Group className="mb-3" controlId="address">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              type="text"
-              name="address"
-              value={userData.address}
-              onChange={handleUserDataChange}
-              placeholder="Enter your address"
-            />
-          </Form.Group>
-        </Col>
-        
-        <Col md={4}>
-          <Form.Group className="mb-3" controlId="city">
-            <Form.Label>City</Form.Label>
-            <Form.Control
-              type="text"
-              name="city"
-              value={userData.city}
-              onChange={handleUserDataChange}
-              placeholder="Enter your city"
-            />
-          </Form.Group>
-        </Col>
-        
-        <Col md={4}>
-          <Form.Group className="mb-3" controlId="state">
-            <Form.Label>State</Form.Label>
-            <Form.Control
-              type="text"
-              name="state"
-              value={userData.state}
-              onChange={handleUserDataChange}
-              placeholder="Enter your state"
-            />
-          </Form.Group>
-        </Col>
-        
-        <Col md={4}>
-          <Form.Group className="mb-3" controlId="country">
-            <Form.Label>Country</Form.Label>
-            <Form.Control
-              type="text"
-              name="country"
-              value={userData.country}
-              onChange={handleUserDataChange}
-              placeholder="Enter your country"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
+    <form onSubmit={handleCompleteRegistration}>
+      <Typography variant="h6" sx={{ color: '#d35400', mb: 3 }}>
+        {t('auth.personalInformation')}
+      </Typography>
       
-      <Button 
-        variant="primary" 
-        type="submit" 
-        disabled={loading} 
-        className="w-100 py-2 mt-3"
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.fullName')}
+            name="name"
+            value={userData.name}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterFullName')}
+            required
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={6}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.email')}
+            name="email"
+            type="email"
+            value={userData.email}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterEmailOptional')}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={6}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.preferredUsername')}
+            name="username"
+            value={userData.username}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterUsernameOptional')}
+            helperText={t('auth.usernameAutoGenerated')}
+          />
+        </Grid>
+        
+        <Grid item xs={12}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.address')}
+            name="address"
+            value={userData.address}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterAddress')}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={4}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.city')}
+            name="city"
+            value={userData.city}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterCity')}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={4}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.state')}
+            name="state"
+            value={userData.state}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterState')}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={4}>
+          <StyledTextField
+            fullWidth
+            label={t('auth.country')}
+            name="country"
+            value={userData.country}
+            onChange={handleUserDataChange}
+            placeholder={t('auth.enterCountry')}
+          />
+        </Grid>
+      </Grid>
+      
+      <StyledButton
+        fullWidth
+        type="submit"
+        disabled={loading}
+        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+        sx={{ mt: 3 }}
       >
-        {loading ? 'Completing Registration...' : 'Complete Registration'}
-      </Button>
-    </Form>
+        {loading ? t('auth.completingRegistration') : t('auth.completeRegistration')}
+      </StyledButton>
+    </form>
   );
   
   // Render appropriate form based on current step
@@ -480,28 +557,37 @@ const MobileOTPAuth = () => {
   };
   
   return (
-    <Container>
-      <style>{customStyles}</style>
-      <Row className="justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="mt-5 mb-4 shadow-sm">
-            <Card.Header className="bg-temple text-white">
-              <h3 className="mb-0">
-                {currentStep === AuthStep.REGISTRATION
-                  ? 'Complete Your Registration'
-                  : 'Login with Mobile OTP'}
-              </h3>
-            </Card.Header>
-            <Card.Body>
-              {error && <Alert variant="danger">{error}</Alert>}
-              {success && <Alert variant="success">{success}</Alert>}
-              
-              {renderCurrentStep()}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+    <Box sx={{ bgcolor: '#E2DFD2', minHeight: '100vh', py: 8 }}>
+      <Container maxWidth="sm">
+        <StyledPaper>
+          <Typography
+            variant="h4"
+            component="h1"
+            align="center"
+            gutterBottom
+            sx={{ color: '#d35400', fontWeight: 'bold' }}
+          >
+            {currentStep === AuthStep.REGISTRATION
+              ? t('auth.completeRegistration')
+              : t('auth.loginWithMobileOtp')}
+          </Typography>
+          
+          {error && (
+            <Alert severity="error" sx={{ mb: 3, bgcolor: '#E2DFD2' }}>
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert severity="success" sx={{ mb: 3, bgcolor: '#E2DFD2' }}>
+              {success}
+            </Alert>
+          )}
+          
+          {renderCurrentStep()}
+        </StyledPaper>
+      </Container>
+    </Box>
   );
 };
 
