@@ -334,7 +334,8 @@ const AdminDashboard = () => {
                     <thead>
                       <tr>
                         <th>Title</th>
-                        <th>Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Time</th>
                         <th>Location</th>
                         <th>Type</th>
@@ -346,7 +347,13 @@ const AdminDashboard = () => {
                       {eventData.slice(0, 5).map((event) => (
                         <tr key={event._id}>
                           <td>{event.title}</td>
-                          <td>{new Date(event.date).toLocaleDateString()}</td>
+                          <td>
+                            {new Date(event.startDate).toLocaleDateString()}
+                          </td>
+                          <td>
+                            {new Date(event.endDate).toLocaleDateString()}
+                          </td>
+
                           <td>
                             {event.startTime} - {event.endTime}
                           </td>
