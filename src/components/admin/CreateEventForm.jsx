@@ -34,13 +34,16 @@ function CreateEventForm() {
   // If eventDataforEdit is provided, populate the form with its data because we are using the same for both create and edit operations.
   // This is done using the useLocation hook to get the state passed from the previous component.
   useEffect(() => {
-    console.log("Event Data for Edit:", eventDataforEdit);
+    // If eventDataforEdit is available, set the formData state with its values
     if (eventDataforEdit) {
       setFormData({
         title: eventDataforEdit.title || "",
         description: eventDataforEdit.description || "",
-        startDate: eventDataforEdit.startDate || "",
-        endDate: eventDataforEdit.endDate || "",
+        startDate:
+          new Date(eventDataforEdit.startDate).toISOString().split("T")[0] ||
+          "",
+        endDate:
+          new Date(eventDataforEdit.endDate).toISOString().split("T")[0] || "",
         startTime: eventDataforEdit.startTime || "",
         endTime: eventDataforEdit.endTime || "",
         location: eventDataforEdit.location || "",
@@ -65,8 +68,6 @@ function CreateEventForm() {
           },
         }
       );
-      console.log("Editing Event with ID:", eventDataforEdit._id);
-      console.log("eventDataforEdit for Edit:", formData);
     }
   };
 
