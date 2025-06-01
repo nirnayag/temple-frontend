@@ -72,6 +72,10 @@ const App: React.FC = () => {
                 path="/admin/events/create"
                 element={<CreateEventForm />}
               />
+              <Route
+                path="/admin/events/edit/:id"
+                element={<CreateEventForm />}
+              />
 
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
