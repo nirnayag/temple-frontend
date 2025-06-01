@@ -44,12 +44,30 @@ export const useDeleteEvent = () => {
     onSuccess: () => {
       toast.success("Event deleted successfully!");
       queryClient.invalidateQueries([EventTanstackKeys.get_All_Events_key]); // Invalidate the events query to refetch data
-      // Optionally, you can invalidate queries to refetch data
-      // queryClient.invalidateQueries(["getAllEvents"]);
     },
     onError: (error) => {
       toast.error("Failed to delete event");
       console.warn("Error deleting event:", error);
+    },
+  });
+};
+
+export const useEditEvent = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }) => {
+      // Ensure data is in the correct format for the API
+      const response = await eventService.update(id, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Event updated successfully!");
+      // Optionally, you can invalidate queries to refetch data
+      queryClient.invalidateQueries([EventTanstackKeys.get_All_Events_key]);
+    },
+    onError: (error) => {
+      toast.error("Failed to update event");
+      console.warn("Error updating event:", error);
     },
   });
 };

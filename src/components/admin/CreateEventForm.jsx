@@ -1,10 +1,12 @@
 import { Grid, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { eventService } from "services/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useCreateEvent } from "tanstack/Queries/events_tanstack";
+import { useCreateEvent, useEditEvent } from "tanstack/Queries/events_tanstack";
+import { useLocation, useParams } from "react-router-dom";
+
 function CreateEventForm() {
   const [formData, setFormData] = useState({
     title: "",
@@ -15,9 +17,12 @@ function CreateEventForm() {
     endTime: "",
     location: "",
   });
-  const { mutate, isPending } = useCreateEvent(); // use This hook to handle event creation
+  const { mutate: createEvent, isPending: createEventIsPending } =
+    useCreateEvent();
+  const { mutate: EditEvent, isPending: EditEventIsPending } = useEditEvent(); // use This hook to handle event creation
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const eventDataforEdit = location.state?.event;
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -26,13 +31,43 @@ function CreateEventForm() {
     }));
   };
 
+  // If eventDataforEdit is provided, populate the form with its data because we are using the same for both create and edit operations.
+  // This is done using the useLocation hook to get the state passed from the previous component.
+  useEffect(() => {
+    console.log("Event Data for Edit:", eventDataforEdit);
+    if (eventDataforEdit) {
+      setFormData({
+        title: eventDataforEdit.title || "",
+        description: eventDataforEdit.description || "",
+        startDate: eventDataforEdit.startDate || "",
+        endDate: eventDataforEdit.endDate || "",
+        startTime: eventDataforEdit.startTime || "",
+        endTime: eventDataforEdit.endTime || "",
+        location: eventDataforEdit.location || "",
+      });
+    }
+  }, [eventDataforEdit]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    mutate(formData, {
-      onSuccess: () => {
-        navigate("/admin/dashboard");
-      },
-    });
+    if (!eventDataforEdit) {
+      createEvent(formData, {
+        onSuccess: () => {
+          navigate("/admin/dashboard");
+        },
+      });
+    } else {
+      EditEvent(
+        { id: eventDataforEdit._id, data: formData },
+        {
+          onSuccess: () => {
+            navigate("/admin/dashboard");
+          },
+        }
+      );
+      console.log("Editing Event with ID:", eventDataforEdit._id);
+      console.log("eventDataforEdit for Edit:", formData);
+    }
   };
 
   return (
@@ -141,7 +176,7 @@ function CreateEventForm() {
               },
             }}
           >
-            Submit
+            {eventDataforEdit ? " Update" : " Create"}
           </Button>
         </Grid>
       </Grid>

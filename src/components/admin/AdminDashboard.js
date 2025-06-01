@@ -10,7 +10,7 @@ import {
   Tab,
   Badge,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { devoteeService, eventService } from "../../services/api";
 import authService from "../../services/auth";
 import { useGetAllEvents } from "tanstack/Queries/events_tanstack";
@@ -37,6 +37,7 @@ const AdminDashboard = () => {
   const { mutate: deleteEvent } = useDeleteEvent();
   const isLoading = isAdminLoading || isEventsLoading || isDevoteesLoading;
   const error = adminError || eventsError || devoteesError;
+  const navigate = useNavigate();
   // const [adminProfile, setAdminProfile] = useState(null);
   // const [devotees, setDevotees] = useState([]);
   const [donations, setDonations] = useState([]);
@@ -146,6 +147,15 @@ const AdminDashboard = () => {
         },
       });
     }
+  }
+
+  function hanleEventEdit(eventId, yourEventData) {
+    navigate(`/admin/events/edit/${eventId}`, {
+      state: { event: yourEventData },
+    });
+
+    console.log("Editing event with ID:", eventId);
+    console.log("yourEventData:", yourEventData);
   }
 
   if (isLoading) {
@@ -361,11 +371,12 @@ const AdminDashboard = () => {
                           <td>{event.registeredDevotees?.length || 0}</td>
                           <td>
                             <Button
-                              as={Link}
+                              as={false}
                               to={`/admin/events/${event._id}`}
                               variant="primary"
                               size="sm"
                               className="me-1"
+                              onClick={() => hanleEventEdit(event._id, event)}
                             >
                               Edit
                             </Button>
