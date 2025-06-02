@@ -14,10 +14,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { devoteeService, eventService } from "../../services/api";
 import authService from "../../services/auth";
 import { useGetAllEvents } from "tanstack/Queries/events_tanstack";
-import { useGetAllDevotees } from "tanstack/Queries/devotees_tanstack";
+import {
+  useDeleteDevotee,
+  useGetAllDevotees,
+} from "tanstack/Queries/devotees_tanstack";
 import { useGetProfile } from "tanstack/Queries/profile_tanstacks";
 import { useDeleteEvent } from "tanstack/Queries/events_tanstack";
-
+import { toast } from "react-toastify";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -34,7 +37,10 @@ const AdminDashboard = () => {
     isLoading: isDevoteesLoading,
     error: devoteesError,
   } = useGetAllDevotees();
-  const { mutate: deleteEvent } = useDeleteEvent();
+  const { mutate: deleteEvent, isPending: deleteEventPending } =
+    useDeleteEvent();
+  const { mutate: deleteDevotee, isPending: deleteDevoteePending } =
+    useDeleteDevotee();
   const isLoading = isAdminLoading || isEventsLoading || isDevoteesLoading;
   const error = adminError || eventsError || devoteesError;
   const navigate = useNavigate();
@@ -149,15 +155,30 @@ const AdminDashboard = () => {
     }
   }
 
-  function hanleEventEdit(eventId, yourEventData) {
+  function handleEventEdit(eventId, yourEventData) {
     navigate(`/admin/events/edit/${eventId}`, {
       state: { event: yourEventData },
     });
-
-    console.log("Editing event with ID:", eventId);
-    console.log("yourEventData:", yourEventData);
   }
 
+  function handleDevoteeEdit(devoteeId, selectedDevoteeData) {
+    navigate(`/admin/devotees/${devoteeId}`, {
+      state: { DevoteeData: selectedDevoteeData },
+    });
+  }
+
+  function handleDevoteeDelete(id) {
+    if (window.confirm("Are you sure you want to delete this devotee?")) {
+      deleteDevotee(
+        { id },
+        {
+          onSuccess: () => {
+            toast.success("Devotee has been deleted");
+          },
+        }
+      );
+    }
+  }
   if (isLoading) {
     return <div className="text-center py-5">Loading admin dashboard...</div>;
   }
@@ -294,15 +315,22 @@ const AdminDashboard = () => {
                           </td>
                           <td>
                             <Button
-                              as={Link}
+                              as={false}
                               to={`/admin/devotees/${devotee._id}`}
                               variant="primary"
                               size="sm"
                               className="me-1"
+                              onClick={() =>
+                                handleDevoteeEdit(devotee._id, devotee)
+                              }
                             >
                               Edit
                             </Button>
-                            <Button variant="danger" size="sm">
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={(e) => handleDevoteeDelete(devotee._id)}
+                            >
                               Delete
                             </Button>
                           </td>
@@ -383,7 +411,7 @@ const AdminDashboard = () => {
                               variant="primary"
                               size="sm"
                               className="me-1"
-                              onClick={() => hanleEventEdit(event._id, event)}
+                              onClick={() => handleEventEdit(event._id, event)}
                             >
                               Edit
                             </Button>
