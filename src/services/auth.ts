@@ -172,6 +172,7 @@ const authService = {
           Authorization: `Bearer ${token}`,
         },
       });
+
       return response.data;
     } catch (error) {
       console.error("Error fetching profile:", error);

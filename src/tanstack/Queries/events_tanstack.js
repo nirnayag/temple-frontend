@@ -11,7 +11,10 @@ export const useGetAllEvents = () => {
       const res = await eventService.getAll();
       return res.data;
     },
-    refetchOnWindowFocus: false, // Optional: prevents refetching on window focus
+    staleTime: 5 * 60 * 1000, // 5 minutes: how long data is fresh
+    cacheTime: 30 * 60 * 1000,
+    // refetchOnWindowFocus: false, // prevent auto refetch when tab gets focus
+    // refetchOnMount: false, // prevent refetch on remount if data is fresh
   });
 };
 
@@ -23,9 +26,8 @@ export const useCreateEvent = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Event created successfully!");
+      toast.success("Event has been created");
       queryClient.invalidateQueries([EventTanstackKeys.get_All_Events_key]); // Invalidate the events query to refetch data
-      // navigate("/admin/dashboard");
     },
     onError: (error) => {
       toast.error("Failed to create event");
