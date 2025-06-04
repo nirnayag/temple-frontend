@@ -14,7 +14,9 @@ import {
   Chip,
   Divider,
   Paper,
-  Stack
+  Stack,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -24,10 +26,13 @@ import {
   AdminPanelSettings as AdminIcon,
   CalendarMonth as CalendarIcon,
   LocationOn as LocationIcon,
-  AccessTime as TimeIcon
+  AccessTime as TimeIcon,
+  Delete as DeleteIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
-import { eventService, devoteeService } from '../../services/api';
+import { eventService, devoteeService, pujaService } from '../../services/api';
 import authService from '../../services/auth';
+import PujaBookings from './PujaBookings';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: '#E2DFD2',
@@ -79,10 +84,23 @@ const EventCard = styled(Paper)(({ theme }) => ({
   }
 }));
 
+const PujaBookingCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: '#f5e6d3',
+  marginBottom: theme.spacing(2),
+  borderRadius: '10px',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+  }
+}));
+
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
   const [devotee, setDevotee] = useState(null);
   const [events, setEvents] = useState([]);
+  const [pujaBookings, setPujaBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -94,8 +112,13 @@ const UserDashboard = () => {
         setUser(profileData.user);
         setDevotee(profileData.devotee);
         
-        const eventsResponse = await eventService.getUpcoming();
+        const [eventsResponse, bookingsResponse] = await Promise.all([
+          eventService.getUpcoming(),
+          pujaService.getBookings()
+        ]);
+        
         setEvents(eventsResponse.data);
+        setPujaBookings(bookingsResponse.data);
         
         setError(null);
       } catch (err) {
@@ -108,6 +131,16 @@ const UserDashboard = () => {
 
     fetchUserData();
   }, []);
+
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      await pujaService.cancelBooking(bookingId);
+      setPujaBookings(prev => prev.filter(booking => booking._id !== bookingId));
+    } catch (err) {
+      console.error('Error canceling booking:', err);
+      // You might want to show an error message to the user here
+    }
+  };
 
   if (loading) {
     return (
@@ -176,48 +209,48 @@ const UserDashboard = () => {
 
         {/* Main Content */}
         <Grid container spacing={3}>
-          {/* Events Section */}
+          {/* Puja Bookings Section */}
           <Grid item xs={12} md={8}>
             <StyledCard>
               <StyledCardHeader
-                title="Upcoming Events"
+                title="Your Puja Bookings"
                 action={
                   <StyledOutlineButton
                     component={Link}
-                    to="/events"
+                    to="/puja-services"
                     size="small"
                     startIcon={<EventIcon />}
                   >
-                    View All
+                    Book New Puja
                   </StyledOutlineButton>
                 }
               />
               <CardContent>
-                {events.length === 0 ? (
-                  <Alert severity="info">No upcoming events found.</Alert>
+                {pujaBookings.length === 0 ? (
+                  <Alert severity="info">No puja bookings found.</Alert>
                 ) : (
                   <Stack spacing={2}>
-                    {events.slice(0, 5).map(event => (
-                      <EventCard key={event._id}>
+                    {pujaBookings.map(booking => (
+                      <PujaBookingCard key={booking._id}>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={8}>
                             <Typography variant="h6" sx={{ color: '#4a4a4a', mb: 1 }}>
-                              {event.title}
+                              {booking.pujaName}
                             </Typography>
                             <Typography variant="body2" sx={{ color: '#666666', mb: 1 }}>
-                              {event.description}
+                              {booking.description}
                             </Typography>
                             <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
                               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <TimeIcon sx={{ color: '#d35400', mr: 0.5, fontSize: '1rem' }} />
                                 <Typography variant="caption" sx={{ color: '#666666' }}>
-                                  {event.startTime} - {event.endTime}
+                                  {booking.time}
                                 </Typography>
                               </Box>
                               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <LocationIcon sx={{ color: '#d35400', mr: 0.5, fontSize: '1rem' }} />
                                 <Typography variant="caption" sx={{ color: '#666666' }}>
-                                  {event.location}
+                                  {booking.location}
                                 </Typography>
                               </Box>
                             </Stack>
@@ -225,26 +258,39 @@ const UserDashboard = () => {
                           <Grid item xs={12} sm={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'flex-start', sm: 'flex-end' } }}>
                             <Chip
                               icon={<CalendarIcon />}
-                              label={formatDate(event.date)}
+                              label={formatDate(booking.date)}
                               sx={{
-                                bgcolor: new Date(event.date) < new Date(new Date().setDate(new Date().getDate() + 3))
+                                bgcolor: new Date(booking.date) < new Date(new Date().setDate(new Date().getDate() + 3))
                                   ? '#dc3545'
                                   : '#d35400',
                                 color: '#E2DFD2',
                                 mb: 1
                               }}
                             />
-                            <StyledOutlineButton
-                              component={Link}
-                              to={`/events/${event._id}`}
-                              size="small"
-                              sx={{ mt: 'auto' }}
-                            >
-                              Details
-                            </StyledOutlineButton>
+                            <Stack direction="row" spacing={1}>
+                              <Tooltip title="View Details">
+                                <IconButton
+                                  component={Link}
+                                  to={`/puja-services/${booking.pujaId}`}
+                                  size="small"
+                                  sx={{ color: '#d35400' }}
+                                >
+                                  <InfoIcon />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Cancel Booking">
+                                <IconButton
+                                  onClick={() => handleCancelBooking(booking._id)}
+                                  size="small"
+                                  sx={{ color: '#dc3545' }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </Stack>
                           </Grid>
                         </Grid>
-                      </EventCard>
+                      </PujaBookingCard>
                     ))}
                   </Stack>
                 )}
@@ -376,6 +422,11 @@ const UserDashboard = () => {
                 </Stack>
               </CardContent>
             </StyledCard>
+          </Grid>
+
+          {/* Puja Bookings Component */}
+          <Grid item xs={12}>
+            <PujaBookings />
           </Grid>
         </Grid>
       </Container>

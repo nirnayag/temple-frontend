@@ -9,6 +9,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true // Enable sending cookies
 });
 
 // Add a response interceptor
@@ -78,6 +79,19 @@ export const templeService = {
   getFeatures: () => api.get('/temple/features'),
   getSections: () => api.get('/temple/sections'),
   update: (data: any) => api.post('/temple/info', data)
+};
+
+// Puja services
+export const pujaService = {
+  getAll: () => api.get('/pujas'),
+  getUpcoming: () => api.get('/pujas/upcoming'),
+  getById: (id: string) => api.get(`/pujas/${id}`),
+  create: (data: any) => api.post('/pujas', data),
+  update: (id: string, data: any) => api.patch(`/pujas/${id}`, data),
+  delete: (id: string) => api.delete(`/pujas/${id}`),
+  book: (data: any) => api.post('/pujas/book', data),
+  getBookings: () => api.get('/pujas/bookings'),
+  cancelBooking: (id: string) => api.delete(`/pujas/bookings/${id}`)
 };
 
 export default api; 
