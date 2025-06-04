@@ -298,5 +298,148 @@
       "discourse": "Discourse",
       "community": "Community Event"
     }
+  },
+  "puja": {
+    "title": "Puja Services",
+    "description": "Book various pujas and religious ceremonies",
+    "categories": {
+      "regular": "Regular Pujas",
+      "special": "Special Pujas",
+      "lifeEvents": "Life Events",
+      "festival": "Festival Pujas"
+    },
+    "regular": {
+      "archana": {
+        "name": "Archana",
+        "description": "Simple offering of flowers and prayers",
+        "duration": "30 minutes",
+        "cost": "$51"
+      },
+      "abhishekam": {
+        "name": "Abhishekam",
+        "description": "Sacred bath ceremony for deities",
+        "duration": "1 hour",
+        "cost": "$101"
+      },
+      "sahasranamam": {
+        "name": "Sahasranamam",
+        "description": "Recitation of 1000 names",
+        "duration": "1.5 hours",
+        "cost": "$151"
+      }
+    },
+    "special": {
+      "ganapati": {
+        "name": "Ganapati Puja",
+        "description": "Special puja for Lord Ganesha",
+        "duration": "2 hours",
+        "cost": "$201"
+      },
+      "satyanarayana": {
+        "name": "Satyanarayana Puja",
+        "description": "Special puja for Lord Vishnu",
+        "duration": "2.5 hours",
+        "cost": "$251"
+      },
+      "rudra": {
+        "name": "Rudra Abhishekam",
+        "description": "Special puja for Lord Shiva",
+        "duration": "3 hours",
+        "cost": "$301"
+      }
+    },
+    "lifeEvents": {
+      "namakaranam": {
+        "name": "Namakaranam",
+        "description": "Baby naming ceremony",
+        "duration": "1.5 hours",
+        "cost": "$201"
+      },
+      "grihapravesham": {
+        "name": "Grihapravesham",
+        "description": "House warming ceremony",
+        "duration": "2 hours",
+        "cost": "$251"
+      },
+      "shashtiabdapoorthi": {
+        "name": "Shashtiabdapoorthi",
+        "description": "60th birthday celebration",
+        "duration": "2.5 hours",
+        "cost": "$301"
+      }
+    },
+    "festival": {
+      "diwali": {
+        "name": "Diwali Puja",
+        "description": "Special puja for Diwali festival",
+        "duration": "2 hours",
+        "cost": "$201"
+      },
+      "navaratri": {
+        "name": "Navaratri Puja",
+        "description": "Special puja for Navaratri festival",
+        "duration": "2.5 hours",
+        "cost": "$251"
+      },
+      "ganeshChaturthi": {
+        "name": "Ganesh Chaturthi Puja",
+        "description": "Special puja for Ganesh Chaturthi",
+        "duration": "2 hours",
+        "cost": "$201"
+      }
+    },
+    "types": "types",
+    "viewDetails": "View Details",
+    "availableServices": "Available Services",
+    "bookingInstructions": "Select a puja service and fill out the booking form below",
+    "name": "Name",
+    "description": "Description",
+    "duration": "Duration",
+    "cost": "Cost",
+    "action": "Action",
+    "bookNow": "Book Now",
+    "bookingForm": "Booking Form",
+    "bookingFor": "Booking for",
+    "selectPuja": "Please select a puja service",
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "date": "Date",
+      "time": "Time",
+      "location": "Location",
+      "instructions": "Special Instructions",
+      "atTemple": "At Temple",
+      "atResidence": "At Residence",
+      "submit": "Submit Booking"
+    },
+    "additionalInfo": "Additional Information",
+    "guidelines": {
+      "title": "Booking Guidelines",
+      "advance": "Book at least 3 days in advance",
+      "confirmation": "Confirmation will be sent via email",
+      "urgent": "For urgent bookings, please call",
+      "cancellation": "Cancellation policy applies"
+    },
+    "whatToBring": {
+      "title": "What to Bring",
+      "offering": "Required offerings will be provided",
+      "clothing": "Traditional attire recommended",
+      "space": "Space for puja setup",
+      "additional": "Additional items as specified"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "description": "For any questions or special requests",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "myBookings": "My Puja Bookings",
+    "status": "Status",
+    "paymentStatus": "Payment Status",
+    "cancelBooking": "Cancel Booking",
+    "noBookings": "You haven't booked any pujas yet.",
+    "bookingCancelled": "Booking cancelled successfully",
+    "errorCancelling": "Error cancelling booking"
   }
 } 

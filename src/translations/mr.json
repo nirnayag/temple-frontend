@@ -277,5 +277,141 @@
       "discourse": "प्रवचन",
       "community": "समुदाय कार्यक्रम"
     }
+  },
+  "puja": {
+    "title": "पूजा सेवा",
+    "description": "विविध पूजा आणि धार्मिक समारंभ बुक करा",
+    "categories": {
+      "regular": "नियमित पूजा",
+      "special": "विशेष पूजा",
+      "lifeEvents": "जीवन कार्यक्रम",
+      "festival": "सण पूजा"
+    },
+    "regular": {
+      "archana": {
+        "name": "अर्चना",
+        "description": "फुले आणि प्रार्थना सादर करणे",
+        "duration": "३० मिनिटे",
+        "cost": "₹५१"
+      },
+      "abhishekam": {
+        "name": "अभिषेक",
+        "description": "देवतांसाठी पवित्र स्नान समारंभ",
+        "duration": "१ तास",
+        "cost": "₹१०१"
+      },
+      "sahasranamam": {
+        "name": "सहस्रनाम",
+        "description": "१००० नावांचे पठण",
+        "duration": "१.५ तास",
+        "cost": "₹१५१"
+      }
+    },
+    "special": {
+      "ganapati": {
+        "name": "गणपती पूजा",
+        "description": "श्री गणेशासाठी विशेष पूजा",
+        "duration": "२ तास",
+        "cost": "₹२०१"
+      },
+      "satyanarayana": {
+        "name": "सत्यनारायण पूजा",
+        "description": "श्री विष्णूसाठी विशेष पूजा",
+        "duration": "२.५ तास",
+        "cost": "₹२५१"
+      },
+      "rudra": {
+        "name": "रुद्राभिषेक",
+        "description": "श्री शिवासाठी विशेष पूजा",
+        "duration": "३ तास",
+        "cost": "₹३०१"
+      }
+    },
+    "lifeEvents": {
+      "namakaranam": {
+        "name": "नामकरण",
+        "description": "बाळाचे नामकरण समारंभ",
+        "duration": "१.५ तास",
+        "cost": "₹२०१"
+      },
+      "grihapravesham": {
+        "name": "गृहप्रवेश",
+        "description": "नवीन घराचा समारंभ",
+        "duration": "२ तास",
+        "cost": "₹२५१"
+      },
+      "shashtiabdapoorthi": {
+        "name": "षष्ट्यब्दपूर्ती",
+        "description": "६० व्या वाढदिवसाचा समारंभ",
+        "duration": "२.५ तास",
+        "cost": "₹३०१"
+      }
+    },
+    "festival": {
+      "diwali": {
+        "name": "दिवाळी पूजा",
+        "description": "दिवाळी सणासाठी विशेष पूजा",
+        "duration": "२ तास",
+        "cost": "₹२०१"
+      },
+      "navaratri": {
+        "name": "नवरात्री पूजा",
+        "description": "नवरात्री सणासाठी विशेष पूजा",
+        "duration": "२.५ तास",
+        "cost": "₹२५१"
+      },
+      "ganeshChaturthi": {
+        "name": "गणेश चतुर्थी पूजा",
+        "description": "गणेश चतुर्थीसाठी विशेष पूजा",
+        "duration": "२ तास",
+        "cost": "₹२०१"
+      }
+    },
+    "types": "प्रकार",
+    "viewDetails": "तपशील पहा",
+    "availableServices": "उपलब्ध सेवा",
+    "bookingInstructions": "पूजा सेवा निवडा आणि खालील बुकिंग फॉर्म भरा",
+    "name": "नाव",
+    "description": "वर्णन",
+    "duration": "कालावधी",
+    "cost": "किंमत",
+    "action": "कृती",
+    "bookNow": "आता बुक करा",
+    "bookingForm": "बुकिंग फॉर्म",
+    "bookingFor": "बुकिंग साठी",
+    "selectPuja": "कृपया पूजा सेवा निवडा",
+    "form": {
+      "fullName": "पूर्ण नाव",
+      "email": "ईमेल",
+      "phone": "फोन नंबर",
+      "date": "तारीख",
+      "time": "वेळ",
+      "location": "स्थान",
+      "instructions": "विशेष सूचना",
+      "atTemple": "मंदिरात",
+      "atResidence": "घरी",
+      "submit": "बुकिंग सबमिट करा"
+    },
+    "additionalInfo": "अतिरिक्त माहिती",
+    "guidelines": {
+      "title": "बुकिंग मार्गदर्शक तत्त्वे",
+      "advance": "किमान ३ दिवस आधी बुक करा",
+      "confirmation": "पुष्टीकरण ईमेलद्वारे पाठवले जाईल",
+      "urgent": "तातडीच्या बुकिंगसाठी कृपया फोन करा",
+      "cancellation": "रद्द करण्याची पॉलिसी लागू होते"
+    },
+    "whatToBring": {
+      "title": "काय आणावे",
+      "offering": "आवश्यक सामग्री पुरवली जाईल",
+      "clothing": "पारंपारिक पोशाख शिफारस केला जातो",
+      "space": "पूजा सेटअपसाठी जागा",
+      "additional": "निर्दिष्ट केलेली अतिरिक्त वस्तू"
+    },
+    "contact": {
+      "title": "संपर्क माहिती",
+      "description": "कोणतेही प्रश्न किंवा विशेष विनंतीसाठी",
+      "email": "ईमेल",
+      "phone": "फोन"
+    }
   }
 } 

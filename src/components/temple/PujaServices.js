@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Container,
   Grid,
@@ -26,7 +26,8 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -37,6 +38,8 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { t } from '../../utils/translationUtils';
+import { pujaService } from '../../services/api';
+import authService from '../../services/auth';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -87,8 +90,12 @@ const StyledAccordion = styled(Accordion)(({ theme }) => ({
 }));
 
 const PujaServices = () => {
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
   const [selectedPuja, setSelectedPuja] = useState(null);
+  const [userBookings, setUserBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -98,6 +105,33 @@ const PujaServices = () => {
     location: '',
     instructions: ''
   });
+
+  useEffect(() => {
+    // Check if user is logged in
+    if (!authService.isLoggedIn()) {
+      navigate('/login', { state: { from: '/puja-services' } });
+      return;
+    }
+    fetchUserBookings();
+  }, [navigate]);
+
+  const fetchUserBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await pujaService.getBookings();
+      if (response.data && Array.isArray(response.data)) {
+        setUserBookings(response.data);
+      } else {
+        console.error('Invalid response format:', response);
+        setUserBookings([]);
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      setUserBookings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Sample puja services based on temple offerings
   const pujaServices = [
@@ -227,15 +261,160 @@ const PujaServices = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', { selectedPuja, formData });
+    setError(null);
+    
+    // Check if user is logged in
+    if (!authService.isLoggedIn()) {
+      navigate('/login', { state: { from: '/puja-services' } });
+      return;
+    }
+    
+    // Validate form data
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.date || !formData.time || !formData.location) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      // Create the booking
+      const bookingData = {
+        pujaId: selectedPuja.id,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        date: formData.date,
+        time: formData.time,
+        location: formData.location,
+        instructions: formData.instructions,
+        status: 'pending',
+        paymentStatus: 'pending'
+      };
+
+      const response = await pujaService.book(bookingData);
+      
+      if (response.data) {
+        // Add the new booking to the user's bookings list
+        setUserBookings(prevBookings => [response.data, ...prevBookings]);
+        
+        // Show success message
+        alert('Puja booking submitted successfully!');
+        
+        // Reset form after successful submission
+        setFormData({
+          fullName: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          location: '',
+          instructions: ''
+        });
+        setSelectedPuja(null);
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      setError(error.response?.data?.message || 'Failed to create booking. Please try again.');
+    }
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      await pujaService.cancelBooking(bookingId);
+      alert(t('puja.bookingCancelled'));
+      fetchUserBookings(); // Refresh the bookings list
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert(t('puja.errorCancelling'));
+    }
   };
 
   return (
     <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
       <Container>
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+        
+        {/* User's Bookings Section */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
+            {t('puja.myBookings')}
+          </Typography>
+          
+          {loading ? (
+            <Box display="flex" justifyContent="center" p={3}>
+              <CircularProgress />
+            </Box>
+          ) : userBookings.length > 0 ? (
+            <Grid container spacing={3}>
+              {userBookings.map((booking) => (
+                <Grid item xs={12} md={6} key={booking._id}>
+                  <StyledCard>
+                    <StyledCardHeader
+                      title={booking.pujaId.name}
+                      subheader={`${t('puja.status')}: ${booking.status}`}
+                    />
+                    <StyledCardContent>
+                      <List>
+                        <ListItem>
+                          <ListItemText
+                            primary={t('puja.date')}
+                            secondary={new Date(booking.date).toLocaleDateString()}
+                          />
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                          <ListItemText
+                            primary={t('puja.time')}
+                            secondary={booking.time}
+                          />
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                          <ListItemText
+                            primary={t('puja.location')}
+                            secondary={booking.location === 'temple' ? t('puja.form.atTemple') : t('puja.form.atResidence')}
+                          />
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                          <ListItemText
+                            primary={t('puja.paymentStatus')}
+                            secondary={booking.paymentStatus}
+                          />
+                        </ListItem>
+                        {booking.status === 'pending' && (
+                          <ListItem>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              fullWidth
+                              onClick={() => handleCancelBooking(booking._id)}
+                            >
+                              {t('puja.cancelBooking')}
+                            </Button>
+                          </ListItem>
+                        )}
+                      </List>
+                    </StyledCardContent>
+                  </StyledCard>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Alert severity="info" sx={{ mb: 3 }}>
+              {t('puja.noBookings')}
+            </Alert>
+          )}
+        </Box>
+
+        {/* Existing Puja Services Section */}
         <Typography variant="h3" component="h1" align="center" gutterBottom sx={{ color: '#d35400', fontWeight: 'bold' }}>
           {t('puja.title')}
         </Typography>
@@ -350,7 +529,7 @@ const PujaServices = () => {
             </Alert>
           ) : (
             <Alert severity="info" sx={{ mb: 3, bgcolor: '#E2DFD2', color: '#4a4a4a' }}>
-              {t('puja.selectPuja')}
+              {t('puja.form.instructions')}
             </Alert>
           )}
 
@@ -449,7 +628,6 @@ const PujaServices = () => {
                   type="submit"
                   variant="contained"
                   size="large"
-                  disabled={!selectedPuja}
                   sx={{
                     bgcolor: '#d35400',
                     '&:hover': {
