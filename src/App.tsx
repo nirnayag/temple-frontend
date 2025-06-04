@@ -36,8 +36,6 @@ import {
   PublicRoute,
 } from "./components/auth/ProtectedRoute";
 import ProfileEdit from "./components/profile/ProfileEdit";
-import CreateEventForm from "components/admin/CreateEventForm";
-import AddDevoteeForm from "components/devotees/AddDevoteeForm";
 
 const App: React.FC = () => {
   return (
@@ -85,23 +83,6 @@ const App: React.FC = () => {
                 {/* <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
                 {/* THis below routes will be moved in Admin routes after development */}
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route
-                  path="/admin/events/create"
-                  element={<CreateEventForm />}
-                />
-                <Route
-                  path="/admin/events/edit/:id"
-                  element={<CreateEventForm />}
-                />
-                <Route
-                  path="/admin/devotees/:id"
-                  element={<AddDevoteeForm />}
-                />
-                {/* Thsese are devotee routes which has to be moved to admin route */}
-                <Route
-                  path="/admin/devotees/create"
-                  element={<AddDevoteeForm />}
-                />
               </Route>
 
               {/* Redirect unknown routes to home */}
