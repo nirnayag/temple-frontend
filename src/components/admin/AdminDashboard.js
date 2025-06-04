@@ -21,6 +21,8 @@ import {
 import { useGetProfile } from "tanstack/Queries/profile_tanstacks";
 import { useDeleteEvent } from "tanstack/Queries/events_tanstack";
 import { toast } from "react-toastify";
+import EventDialogForm from "./EventDialogForm";
+import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -46,7 +48,11 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   // const [adminProfile, setAdminProfile] = useState(null);
   // const [devotees, setDevotees] = useState([]);
+  const [openEventFormDialog, setEventFormOpenDialog] = useState(false);
+  const [openAddDevoteeForm, setOpenAddDevoteeForm] = useState(false);
   const [donations, setDonations] = useState([]);
+  const [eventDataforEdit, setEventDataforEdit] = useState(null);
+  const [devoteeDataforEdit, setDevoteeDataforEdit] = useState(null);
   const [stats, setStats] = useState({
     devotees: 0,
     events: 0,
@@ -155,16 +161,14 @@ const AdminDashboard = () => {
     }
   }
 
-  function handleEventEdit(eventId, yourEventData) {
-    navigate(`/admin/events/edit/${eventId}`, {
-      state: { event: yourEventData },
-    });
+  function handleEventEdit(yourEventData) {
+    setEventDataforEdit(yourEventData);
+    setEventFormOpenDialog(true);
   }
 
-  function handleDevoteeEdit(devoteeId, selectedDevoteeData) {
-    navigate(`/admin/devotees/${devoteeId}`, {
-      state: { DevoteeData: selectedDevoteeData },
-    });
+  function handleDevoteeEdit(selectedDevoteeData) {
+    setOpenAddDevoteeForm(true);
+    setDevoteeDataforEdit(selectedDevoteeData);
   }
 
   function handleDevoteeDelete(id) {
@@ -179,6 +183,11 @@ const AdminDashboard = () => {
       );
     }
   }
+
+  function handleCreate() {
+    console.log("event create clicked");
+  }
+
   if (isLoading) {
     return <div className="text-center py-5">Loading admin dashboard...</div>;
   }
@@ -208,14 +217,18 @@ const AdminDashboard = () => {
         </Col>
         <Col xs="auto">
           <Button
-            as={Link}
-            to="/admin/events/create"
+            as={false}
             variant="success"
             className="me-2"
+            onClick={() => setEventFormOpenDialog(true)}
           >
             Create Event
           </Button>
-          <Button as={Link} to="/admin/devotees/create" variant="primary">
+          <Button
+            as={false}
+            variant="primary"
+            onClick={() => setOpenAddDevoteeForm(true)}
+          >
             Add Devotee
           </Button>
         </Col>
@@ -316,13 +329,10 @@ const AdminDashboard = () => {
                           <td>
                             <Button
                               as={false}
-                              to={`/admin/devotees/${devotee._id}`}
                               variant="primary"
                               size="sm"
                               className="me-1"
-                              onClick={() =>
-                                handleDevoteeEdit(devotee._id, devotee)
-                              }
+                              onClick={() => handleDevoteeEdit(devotee)}
                             >
                               Edit
                             </Button>
@@ -407,11 +417,10 @@ const AdminDashboard = () => {
                           <td>
                             <Button
                               as={false}
-                              to={`/admin/events/${event._id}`}
                               variant="primary"
                               size="sm"
                               className="me-1"
-                              onClick={() => handleEventEdit(event._id, event)}
+                              onClick={() => handleEventEdit(event)}
                             >
                               Edit
                             </Button>
@@ -486,6 +495,19 @@ const AdminDashboard = () => {
           </Tabs>
         </Card.Body>
       </Card>
+      <EventDialogForm
+        open={openEventFormDialog}
+        onClose={() => setEventFormOpenDialog(false)}
+        eventDataforEdit={eventDataforEdit}
+      />
+      <DevoteeDialogForm
+        open={openAddDevoteeForm}
+        onClose={() => {
+          setOpenAddDevoteeForm(false);
+          setEventDataforEdit(null);
+        }}
+        devoteeDataforEdit={devoteeDataforEdit}
+      />
     </Container>
   );
 };
