@@ -81,4 +81,11 @@ export const templeService = {
   update: (data: any) => api.post("/temple/info", data),
 };
 
+export const paymentService = {
+  getAll: () => api.get("/payments/all"),
+  getById: (id: string) => api.get(`/payments/${id}`),
+  create: (data: any) => api.post("/payments", data),
+  delete: (id: string) => api.delete(`/payments/${id}`),
+};
+
 export default api;

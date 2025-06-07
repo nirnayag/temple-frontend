@@ -1,20 +1,25 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { translateApiResponse as translateResponse, formatApiError, formatApiSuccess, translateApiData } from './translationUtils';
+import axios, { AxiosError, AxiosResponse } from "axios";
+import {
+  translateApiResponse as translateResponse,
+  formatApiError,
+  formatApiSuccess,
+  translateApiData,
+} from "./translationUtils";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = "https://c697-103-180-220-88.ngrok-free.app/api";
 
 // Create axios instance with default config
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,8 +38,8 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -42,7 +47,7 @@ api.interceptors.response.use(
 
 // Generic API request function with translation
 export const apiRequest = async <T>(
-  method: 'get' | 'post' | 'put' | 'delete',
+  method: "get" | "post" | "put" | "delete",
   url: string,
   data?: any
 ): Promise<T> => {
@@ -78,4 +83,4 @@ export default {
   handleApiError,
   handleApiSuccess,
   translateApiResponse,
-}; 
+};
