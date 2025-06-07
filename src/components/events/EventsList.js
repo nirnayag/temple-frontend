@@ -1,10 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Alert, Form, Row, Col, Badge, Container } from 'react-bootstrap';
-import { eventService } from '../../services/api';
-import authService from '../../services/auth';
-import { useTranslation } from 'react-i18next';
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaUserAlt, FaFilter } from 'react-icons/fa';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Button,
+  Alert,
+  Form,
+  Row,
+  Col,
+  Badge,
+  Container,
+} from "react-bootstrap";
+import { eventService } from "../../services/api";
+import authService from "../../services/auth";
+import { useTranslation } from "react-i18next";
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaMapMarkerAlt,
+  FaUserAlt,
+  FaFilter,
+} from "react-icons/fa";
+import styled from "styled-components";
 
 // Styled components for enhanced UI
 const StyledCard = styled(Card)`
@@ -13,14 +28,14 @@ const StyledCard = styled(Card)`
   border: none;
   background-color: #f5e6d3;
   color: #4a4a4a;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
   border-radius: 15px;
   overflow: hidden;
-  
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 
   .card-header {
@@ -46,7 +61,7 @@ const EventIcon = styled.div`
   align-items: center;
   margin-bottom: 0.75rem;
   color: #5d4037;
-  
+
   svg {
     margin-right: 0.75rem;
     color: #d35400;
@@ -58,7 +73,7 @@ const FilterContainer = styled.div`
   padding: 1.5rem;
   border-radius: 15px;
   margin-bottom: 2.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #4a4a4a;
   border: 1px solid #e0c9a6;
 
@@ -73,7 +88,7 @@ const FilterContainer = styled.div`
     border: 1px solid #e0c9a6;
     border-radius: 8px;
     padding: 0.5rem;
-    
+
     &:focus {
       background-color: #f5e6d3;
       color: #4a4a4a;
@@ -103,15 +118,15 @@ const EventsGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   margin-bottom: 2rem;
-  
+
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   @media (max-width: 992px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
   }
@@ -128,7 +143,7 @@ const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
   const isLoggedIn = authService.isLoggedIn();
   const isAdmin = authService.isAdmin();
 
@@ -143,8 +158,8 @@ const EventsList = () => {
       setEvents(response.data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching events:', err);
-      setError(t('events.errors.loadFailed'));
+      console.error("Error fetching events:", err);
+      setError(t("events.errors.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -155,31 +170,31 @@ const EventsList = () => {
   };
 
   const getFilteredEvents = () => {
-    if (filter === 'all') return events;
-    
+    if (filter === "all") return events;
+
     const now = new Date();
-    
-    if (filter === 'upcoming') {
-      return events.filter(event => new Date(event.date) >= now);
-    } else if (filter === 'past') {
-      return events.filter(event => new Date(event.date) < now);
+
+    if (filter === "upcoming") {
+      return events.filter((event) => new Date(event.date) >= now);
+    } else if (filter === "past") {
+      return events.filter((event) => new Date(event.date) < now);
     }
-    
-    return events.filter(event => event.eventType === filter);
+
+    return events.filter((event) => event.eventType === filter);
   };
 
   const getEventTypeColor = (type) => {
     switch (type) {
-      case 'puja':
-        return 'primary';
-      case 'festival':
-        return 'success';
-      case 'discourse':
-        return 'info';
-      case 'community':
-        return 'warning';
+      case "puja":
+        return "primary";
+      case "festival":
+        return "success";
+      case "discourse":
+        return "info";
+      case "community":
+        return "warning";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
@@ -192,7 +207,7 @@ const EventsList = () => {
     return (
       <Container className="text-center py-5">
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">{t('common.loading')}</span>
+          <span className="visually-hidden">{t("common.loading")}</span>
         </div>
       </Container>
     );
@@ -200,78 +215,90 @@ const EventsList = () => {
 
   return (
     <Container fluid className="px-4">
-      <Card className="border-0 shadow-sm mb-5" style={{ backgroundColor: '#f5e6d3', borderRadius: '15px' }}>
-        <Card.Header className="bg-temple text-white" style={{ backgroundColor: '#d35400', borderRadius: '15px 15px 0 0' }}>
-          <div className="d-flex justify-content-between align-items-center">
-            <h3 className="mb-0">{t('events.title')}</h3>
-            {isLoggedIn && isAdmin && (
-              <Button 
-                variant="light" 
-                size="sm" 
-                style={{ 
-                  backgroundColor: '#f5e6d3', 
-                  color: '#d35400',
-                  borderRadius: '8px',
-                  padding: '0.5rem 1rem'
-                }}
-              >
-                {t('events.addNew')}
-              </Button>
-            )}
+      <Card
+        className="border-0 shadow-sm mb-5"
+        style={{ backgroundColor: "#f5e6d3", borderRadius: "15px" }}
+      >
+        <Card.Header
+          className="bg-temple text-white"
+          style={{ backgroundColor: "#d35400", borderRadius: "15px 15px 0 0" }}
+        >
+          <div
+            className="d-flex justify-content-between align-items-center"
+            style={{ backgroundColor: "red" }}
+          >
+            <h3 className="mb-0">{t("events.title")}</h3>
           </div>
         </Card.Header>
-        <Card.Body style={{ backgroundColor: '#f5e6d3', color: '#4a4a4a', padding: '2rem' }}>
+        <Card.Body
+          style={{
+            backgroundColor: "#f5e6d3",
+            color: "#4a4a4a",
+            padding: "2rem",
+          }}
+        >
           {error && (
             <Alert variant="danger">
               {error}
-              <Button 
-                variant="outline-danger" 
-                size="sm" 
+              <Button
+                variant="outline-danger"
+                size="sm"
                 className="ms-3"
                 onClick={fetchEvents}
               >
-                {t('common.tryAgain')}
+                {t("common.tryAgain")}
               </Button>
             </Alert>
           )}
-          
+
           <FilterContainer>
             <div className="d-flex align-items-center mb-3">
               <FaFilter className="me-2" />
-              <h5 className="mb-0">{t('events.filter')}</h5>
+              <h5 className="mb-0">{t("events.filter")}</h5>
             </div>
-            <Form.Select 
-              value={filter} 
+            <Form.Select
+              value={filter}
               onChange={handleFilterChange}
               className="shadow-sm"
             >
-              <option value="all">{t('events.filters.all')}</option>
-              <option value="upcoming">{t('events.filters.upcoming')}</option>
-              <option value="past">{t('events.filters.past')}</option>
-              <option value="puja">{t('events.filters.puja')}</option>
-              <option value="festival">{t('events.filters.festival')}</option>
-              <option value="discourse">{t('events.filters.discourse')}</option>
-              <option value="community">{t('events.filters.community')}</option>
+              <option value="all">{t("events.filters.all")}</option>
+              <option value="upcoming">{t("events.filters.upcoming")}</option>
+              <option value="past">{t("events.filters.past")}</option>
+              <option value="puja">{t("events.filters.puja")}</option>
+              <option value="festival">{t("events.filters.festival")}</option>
+              <option value="discourse">{t("events.filters.discourse")}</option>
+              <option value="community">{t("events.filters.community")}</option>
             </Form.Select>
           </FilterContainer>
-          
+
           {sortedEvents.length === 0 ? (
-            <Alert variant="info" style={{ 
-              backgroundColor: '#f5e6d3', 
-              color: '#4a4a4a', 
-              borderColor: '#d35400',
-              borderRadius: '10px'
-            }}>
-              {t('events.noEvents')}
+            <Alert
+              variant="info"
+              style={{
+                backgroundColor: "#f5e6d3",
+                color: "#4a4a4a",
+                borderColor: "#d35400",
+                borderRadius: "10px",
+              }}
+            >
+              {t("events.noEvents")}
             </Alert>
           ) : (
             <EventsGrid>
-              {sortedEvents.map(event => {
+              {sortedEvents.map((event) => {
                 const isPast = new Date(event.date) < new Date();
-                
+
                 return (
-                  <StyledCard key={event._id} className={isPast ? 'bg-light' : ''}>
-                    <Card.Header className={isPast ? 'bg-secondary' : 'bg-primary'} style={{ backgroundColor: isPast ? '#e0c9a6' : '#d35400' }}>
+                  <StyledCard
+                    key={event._id}
+                    className={isPast ? "bg-light" : ""}
+                  >
+                    <Card.Header
+                      className={isPast ? "bg-secondary" : "bg-primary"}
+                      style={{
+                        backgroundColor: isPast ? "#e0c9a6" : "#d35400",
+                      }}
+                    >
                       <div className="d-flex justify-content-between align-items-start">
                         <h5 className="mb-0">{event.title}</h5>
                         <EventTypeBadge bg={getEventTypeColor(event.eventType)}>
@@ -286,7 +313,9 @@ const EventsList = () => {
                       </EventIcon>
                       <EventIcon>
                         <FaClock />
-                        <span>{event.startTime} - {event.endTime}</span>
+                        <span>
+                          {event.startTime} - {event.endTime}
+                        </span>
                       </EventIcon>
                       <EventIcon>
                         <FaMapMarkerAlt />
@@ -299,33 +328,36 @@ const EventsList = () => {
                         </EventIcon>
                       )}
                       <p className="mt-3">{event.description}</p>
-                      
+
                       <CardFooter>
                         <div className="d-flex justify-content-between align-items-center">
                           {!isPast && isLoggedIn && (
-                            <Button 
-                              variant="primary" 
+                            <Button
+                              variant="primary"
                               size="sm"
-                              style={{ 
-                                backgroundColor: '#d35400', 
-                                borderColor: '#d35400',
-                                borderRadius: '8px',
-                                padding: '0.5rem 1rem'
+                              style={{
+                                backgroundColor: "#d35400",
+                                borderColor: "#d35400",
+                                borderRadius: "8px",
+                                padding: "0.5rem 1rem",
                               }}
                             >
-                              {t('events.register')}
+                              {t("events.register")}
                             </Button>
                           )}
-                          
+
                           {isPast && (
-                            <Badge bg="secondary" style={{ 
-                              backgroundColor: '#f5e6d3', 
-                              color: '#d35400',
-                              borderRadius: '8px',
-                              padding: '0.5rem 1rem',
-                              border: '1px solid #d35400'
-                            }}>
-                              {t('events.pastEvent')}
+                            <Badge
+                              bg="secondary"
+                              style={{
+                                backgroundColor: "#f5e6d3",
+                                color: "#d35400",
+                                borderRadius: "8px",
+                                padding: "0.5rem 1rem",
+                                border: "1px solid #d35400",
+                              }}
+                            >
+                              {t("events.pastEvent")}
                             </Badge>
                           )}
                         </div>
@@ -342,4 +374,4 @@ const EventsList = () => {
   );
 };
 
-export default EventsList; 
+export default EventsList;

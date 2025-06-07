@@ -23,6 +23,7 @@ import { useDeleteEvent } from "tanstack/Queries/events_tanstack";
 import { toast } from "react-toastify";
 import EventDialogForm from "./EventDialogForm";
 import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
+import PaymentDialogForm from "./PaymentDialogForm";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -50,6 +51,8 @@ const AdminDashboard = () => {
   // const [devotees, setDevotees] = useState([]);
   const [openEventFormDialog, setEventFormOpenDialog] = useState(false);
   const [openAddDevoteeForm, setOpenAddDevoteeForm] = useState(false);
+  const [openAddPaymentDetailsForm, setAddPaymentDetailsForm] = useState(false);
+
   const [donations, setDonations] = useState([]);
   const [eventDataforEdit, setEventDataforEdit] = useState(null);
   const [devoteeDataforEdit, setDevoteeDataforEdit] = useState(null);
@@ -216,6 +219,14 @@ const AdminDashboard = () => {
           </p>
         </Col>
         <Col xs="auto">
+          <Button
+            as={false}
+            variant="primary"
+            className="me-2"
+            onClick={() => setAddPaymentDetailsForm(true)}
+          >
+            Add Donation
+          </Button>
           <Button
             as={false}
             variant="success"
@@ -507,6 +518,13 @@ const AdminDashboard = () => {
           setEventDataforEdit(null);
         }}
         devoteeDataforEdit={devoteeDataforEdit}
+      />
+      <PaymentDialogForm
+        open={openAddPaymentDetailsForm}
+        onClose={() => {
+          setAddPaymentDetailsForm(false);
+          setEventDataforEdit(null);
+        }}
       />
     </Container>
   );
