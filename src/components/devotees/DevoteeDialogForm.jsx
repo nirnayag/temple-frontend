@@ -17,11 +17,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useAddDevotee,
-  useEditDevotee,
-} from "tanstack/Queries/devotees_tanstack";
+import { useAddDevotee, useEditDevotee } from "tanstack/Queries/devotees_tanstack";
 import { toast } from "react-toastify";
 
 export default function DevoteeDialogForm({
@@ -30,51 +26,86 @@ export default function DevoteeDialogForm({
   onSubmit,
   devoteeDataforEdit,
 }) {
-  const { mutate: addDevotee, isPending: addDevoteeIsPending } =
-    useAddDevotee();
-  const { mutate: editDevotee, isPending: editDevoteeIsPending } =
-    useEditDevotee();
+  const { mutate: addDevotee } = useAddDevotee();
+  const { mutate: editDevotee } = useEditDevotee();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobileNumber: "",
   });
 
+  const [errors, setErrors] = useState({
+    mobileNumber: "",
+    email: "",
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (name === "mobileNumber") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10); // allow only digits, max 10
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+
+      if (numericValue.length !== 10) {
+        setErrors((prev) => ({
+          ...prev,
+          mobileNumber: "Mobile number must be exactly 10 digits",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, mobileNumber: "" }));
+      }
+    } else if (name === "email") {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "Please enter a valid email address",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleAddDevoteeForm = async (e) => {
     e.preventDefault();
+
+    if (
+      formData.mobileNumber.length !== 10 ||
+      errors.mobileNumber ||
+      errors.email
+    ) {
+      toast.error("Please correct the errors in the form.");
+      return;
+    }
+
+    const finalPayload = { data: formData };
+
     if (!devoteeDataforEdit) {
-      addDevotee(
-        { data: formData },
-        {
-          onSuccess: () => {
-            onClose();
-          },
-        }
-      );
+      addDevotee(finalPayload, {
+        onSuccess: () => {
+          onClose();
+        },
+      });
     } else {
       editDevotee(
         { id: devoteeDataforEdit._id, data: formData },
         {
           onSuccess: () => {
-            toast.success("Event has been edited");
+            toast.success("Devotee details updated successfully.");
             onClose();
           },
         }
       );
     }
   };
-  // If eventDataforEdit is provided, populate the form with its data because we are using the same for both create and edit operations.
-  // This is done using the useLocation hook to get the state passed from the previous component.
+
   useEffect(() => {
-    // If eventDataforEdit is available, set the formData state with its values
     if (devoteeDataforEdit) {
       setFormData({
         name: devoteeDataforEdit.name || "",
@@ -98,7 +129,6 @@ export default function DevoteeDialogForm({
         },
       }}
     >
-      {/* Dialog Header */}
       <Box
         sx={{
           background: "linear-gradient(to right, #e67e22, #d35400)",
@@ -152,6 +182,7 @@ export default function DevoteeDialogForm({
                 }}
               />
             </Grid>
+
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -161,6 +192,8 @@ export default function DevoteeDialogForm({
                 value={formData.email}
                 onChange={handleInputChange}
                 required
+                error={!!errors.email}
+                helperText={errors.email}
                 sx={{ bgcolor: "#fff" }}
                 InputLabelProps={{ sx: { fontWeight: "bold" } }}
                 InputProps={{
@@ -172,15 +205,19 @@ export default function DevoteeDialogForm({
                 }}
               />
             </Grid>
+
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Phone"
                 name="mobileNumber"
-                type="number"
+                type="text"
                 value={formData.mobileNumber}
                 onChange={handleInputChange}
                 required
+                error={!!errors.mobileNumber}
+                helperText={errors.mobileNumber}
+                inputProps={{ maxLength: 10 }}
                 sx={{ bgcolor: "#fff" }}
                 InputLabelProps={{ sx: { fontWeight: "bold" } }}
                 InputProps={{
@@ -195,7 +232,6 @@ export default function DevoteeDialogForm({
           </Grid>
         </DialogContent>
 
-        {/* Submit Button */}
         <DialogActions sx={{ px: { xs: 2, sm: 4 }, pb: 3 }}>
           <Button
             type="submit"
