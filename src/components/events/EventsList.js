@@ -185,7 +185,7 @@ const EventsList = () => {
 
   const getEventTypeColor = (type) => {
     switch (type) {
-      case "puja":
+      case "amavsya":
         return "primary";
       case "festival":
         return "success";
@@ -264,7 +264,7 @@ const EventsList = () => {
               <option value="all">{t("events.filters.all")}</option>
               <option value="upcoming">{t("events.filters.upcoming")}</option>
               <option value="past">{t("events.filters.past")}</option>
-              <option value="puja">{t("events.filters.puja")}</option>
+              <option value="amavsya">{t("events.filters.amavsya")}</option>
               <option value="festival">{t("events.filters.festival")}</option>
               <option value="discourse">{t("events.filters.discourse")}</option>
               <option value="community">{t("events.filters.community")}</option>

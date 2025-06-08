@@ -222,11 +222,10 @@ const Home: React.FC = () => {
   // State for data from backend
   const [announcements, setAnnouncements] = useState<AnnouncementProps[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<EventProps[]>([]);
-  const [prasadamInfo, setPrasadamInfo] = useState<PrasadamProps[]>([]);
-  const [prasadamGeneralInfo, setPrasadamGeneralInfo] =
-    useState<PrasadamInfoProps | null>(null);
-  const [features, setFeatures] = useState<FeatureProps[]>([]);
-  const [sections, setSections] = useState<SectionProps[]>([]);
+  // const [prasadamInfo, setPrasadamInfo] = useState<PrasadamProps[]>([]);
+  // const [prasadamGeneralInfo, setPrasadamGeneralInfo] = useState<PrasadamInfoProps | null>(null);
+  // const [features, setFeatures] = useState<FeatureProps[]>([]);
+  // const [sections, setSections] = useState<SectionProps[]>([]);
   const [templeInfo, setTempleInfo] = useState<TempleProps | null>(null);
 
   // Loading and error states
@@ -281,36 +280,36 @@ const Home: React.FC = () => {
   }, []);
 
   // Fetch features
-  useEffect(() => {
-    const fetchFeatures = async () => {
-      try {
-        console.log("Fetching features...");
-        const response = await templeService.getFeatures();
-        setFeatures(response.data);
-        setLoadingFeatures(false);
-      } catch (err) {
-        handleApiError(err, setLoadingFeatures, "home.errors.features");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFeatures = async () => {
+  //     try {
+  //       console.log('Fetching features...');
+  //       const response = await templeService.getFeatures();
+  //       setFeatures(response.data);
+  //       setLoadingFeatures(false);
+  //     } catch (err) {
+  //       handleApiError(err, setLoadingFeatures, 'home.errors.features');
+  //     }
+  //   };
 
-    fetchFeatures();
-  }, []);
+  //   fetchFeatures();
+  // }, []);
 
   // Fetch sections
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        console.log("Fetching sections...");
-        const response = await templeService.getSections();
-        setSections(response.data);
-        setLoadingSections(false);
-      } catch (err) {
-        handleApiError(err, setLoadingSections, "home.errors.sections");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSections = async () => {
+  //     try {
+  //       console.log('Fetching sections...');
+  //       const response = await templeService.getSections();
+  //       setSections(response.data);
+  //       setLoadingSections(false);
+  //     } catch (err) {
+  //       handleApiError(err, setLoadingSections, 'home.errors.sections');
+  //     }
+  //   };
 
-    fetchSections();
-  }, []);
+  //   fetchSections();
+  // }, []);
 
   // Fetch announcements
   useEffect(() => {
@@ -349,36 +348,36 @@ const Home: React.FC = () => {
   }, []);
 
   // Fetch prasadam information
-  useEffect(() => {
-    const fetchPrasadam = async () => {
-      try {
-        console.log("Fetching prasadam info...");
-        const response = await prasadamService.getAll();
-        setPrasadamInfo(response.data);
-        setLoadingPrasadam(false);
-      } catch (err) {
-        handleApiError(err, setLoadingPrasadam, "home.errors.prasadam");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchPrasadam = async () => {
+  //     try {
+  //       console.log('Fetching prasadam info...');
+  //       const response = await prasadamService.getAll();
+  //       setPrasadamInfo(response.data);
+  //       setLoadingPrasadam(false);
+  //     } catch (err) {
+  //       handleApiError(err, setLoadingPrasadam, 'home.errors.prasadam');
+  //     }
+  //   };
 
-    fetchPrasadam();
-  }, []);
+  //   fetchPrasadam();
+  // }, []);
 
   // Fetch prasadam general information
-  useEffect(() => {
-    const fetchPrasadamInfo = async () => {
-      try {
-        console.log("Fetching prasadam general info...");
-        const response = await prasadamService.getInfo();
-        setPrasadamGeneralInfo(response.data);
-        setLoadingPrasadamInfo(false);
-      } catch (err) {
-        handleApiError(err, setLoadingPrasadamInfo, "home.errors.prasadamInfo");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchPrasadamInfo = async () => {
+  //     try {
+  //       console.log('Fetching prasadam general info...');
+  //       const response = await prasadamService.getInfo();
+  //       setPrasadamGeneralInfo(response.data);
+  //       setLoadingPrasadamInfo(false);
+  //     } catch (err) {
+  //       handleApiError(err, setLoadingPrasadamInfo, 'home.errors.prasadamInfo');
+  //     }
+  //   };
 
-    fetchPrasadamInfo();
-  }, []);
+  //   fetchPrasadamInfo();
+  // }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -569,6 +568,71 @@ const Home: React.FC = () => {
           )} */}
         </Grid>
       </Container>
+
+      {/* Prasadam Section */}
+      {/* <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
+        <Container>
+          <SectionTitle variant="h3">
+            {t('home.prasadam.title')}
+          </SectionTitle>
+          {prasadamGeneralInfo && (
+            <Typography paragraph sx={{ color: '#4a4a4a', textAlign: 'center', mb: 4 }}>
+              {prasadamGeneralInfo.description}
+            </Typography>
+          )}
+          <Grid container spacing={4}>
+            {prasadamInfo.length === 0 ? (
+              <Grid item xs={12}>
+                <Alert severity="info">{t('home.prasadam.noPrasadam')}</Alert>
+              </Grid>
+            ) : (
+              prasadamInfo.map((day) => (
+                <Grid item xs={12} md={6} key={day._id}>
+                  <StyledCard>
+                    <StyledCardHeader
+                      title={t(`common.days.${day.dayOfWeek.toLowerCase()}`)}
+                      subheader={day.isAvailable ? t('home.prasadam.available') : t('home.prasadam.unavailable')}
+                    />
+                    <StyledCardContent>
+                      <List>
+                        {day.items.map((item, index) => (
+                          <React.Fragment key={index}>
+                            <ListItem>
+                              <ListItemText
+                                primary={item.name}
+                                secondary={item.description}
+                                primaryTypographyProps={{ color: '#4a4a4a' }}
+                                secondaryTypographyProps={{ color: '#666666' }}
+                              />
+                              {item.specialItem && (
+                                <Chip
+                                  label={t('home.prasadam.special')}
+                                  sx={{ 
+                                    bgcolor: '#E2DFD2',
+                                    color: '#d35400',
+                                    fontWeight: 'bold'
+                                  }}
+                                  size="small"
+                                />
+                              )}
+                            </ListItem>
+                            {index < day.items.length - 1 && <Divider />}
+                          </React.Fragment>
+                        ))}
+                      </List>
+                      {day.notes && (
+                        <Typography variant="body2" sx={{ mt: 2, color: '#666666' }}>
+                          {t('home.prasadam.notes')}: {day.notes}
+                        </Typography>
+                      )}
+                    </StyledCardContent>
+                  </StyledCard>
+                </Grid>
+              ))
+            )}
+          </Grid>
+        </Container>
+      </Box> */}
     </Box>
   );
 };
