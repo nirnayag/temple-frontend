@@ -207,7 +207,7 @@ const AdminDashboard = () => {
 
   return (
     <Container fluid className="my-4">
-      <Row className="mb-4">
+      {/* <Row className="mb-4">
         <Col>
           <h2>Admin Dashboard</h2>
           <p className="text-muted">
@@ -232,9 +232,58 @@ const AdminDashboard = () => {
             Add Devotee
           </Button>
         </Col>
-      </Row>
+      </Row> */}
 
-      <Row className="mb-4">
+      <Row className="mb-4 align-items-center">
+  <Col>
+    <h2
+      style={{
+        color: "#d35400",
+        fontFamily: "Georgia, 'Times New Roman', serif",
+        fontWeight: 700,
+        fontSize: "2.2rem",
+        marginBottom: "0.3rem",
+      }}
+    >
+      Admin Dashboard
+    </h2>
+    <p
+      style={{
+        color: "#a84300",
+        fontFamily: "'Merriweather', serif",
+        fontSize: "1.1rem",
+        marginBottom: 0,
+      }}
+    >
+      Welcome,{" "}
+      <strong>
+        {adminProfile?.devotee?.name || adminProfile?.user?.username}
+      </strong>
+    </p>
+  </Col>
+
+  <Col xs="auto">
+    <Button
+      variant="success"
+      className="me-2"
+      onClick={() => setEventFormOpenDialog(true)}
+      style={{ fontWeight: "bold", borderRadius: "8px" }}
+    >
+      Create Event
+    </Button>
+    <Button
+      variant="primary"
+      onClick={() => setOpenAddDevoteeForm(true)}
+      style={{ fontWeight: "bold", borderRadius: "8px" }}
+    >
+      Add Devotee
+    </Button>
+  </Col>
+</Row>
+
+
+
+      {/* <Row className="mb-4">
         <Col md={4}>
           <Card className="stats-card bg-primary text-white mb-4">
             <Card.Body>
@@ -283,8 +332,85 @@ const AdminDashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
+<Row className="mb-4">
+  {/* Total Devotees */}
+  <Col md={4}>
+    <Card
+      className="stats-card text-white mb-4"
+      style={{
+        background: "linear-gradient(to right, #f39c12, #e67e22)",
+        borderRadius: "16px",
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+      }}
+    >
+      <Card.Body>
+        <Card.Title className="fw-semibold">Total Devotees</Card.Title>
+        <h1 className="display-6 fw-bold">{stats.devotees}</h1>
+        <Button
+        
+          to="/admin/devotees"
+          variant="outline-light"
+          size="sm"
+        >
+          View All Devotees
+        </Button>
+      </Card.Body>
+    </Card>
+  </Col>
 
+  {/* Total Events */}
+  <Col md={4}>
+    <Card
+      className="stats-card text-white mb-4"
+      style={{
+        background: "linear-gradient(to right, #f39c12, #e67e22)",
+        borderRadius: "16px",
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+      }}
+    >
+      <Card.Body>
+        <Card.Title className="fw-semibold">Total Events</Card.Title>
+        <h1 className="display-6 fw-bold">{stats.events}</h1>
+        <Button
+          as={Link}
+          to="/admin/events"
+          variant="outline-light"
+          size="sm"
+        >
+          View All Events
+        </Button>
+      </Card.Body>
+    </Card>
+  </Col>
+
+  {/* Upcoming Events */}
+  <Col md={4}>
+    <Card
+      className="stats-card text-white mb-4"
+      style={{
+        background: "linear-gradient(to right, #f39c12, #e67e22)",
+        borderRadius: "16px",
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+      }}
+    >
+      <Card.Body>
+        <Card.Title className="fw-semibold">Upcoming Events</Card.Title>
+        <h1 className="display-6 fw-bold">{stats.upcomingEvents}</h1>
+        <Button
+          as={Link}
+          to="/admin/events"
+          variant="outline-light"
+          size="sm"
+        >
+          View All Events
+        </Button>
+      </Card.Body>
+    </Card>
+  </Col>
+</Row>
+
+        
       <Card>
         <Card.Body>
           <Tabs defaultActiveKey="devotees" className="mb-3">
