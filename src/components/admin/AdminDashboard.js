@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import EventDialogForm from "./EventDialogForm";
 import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
 import PaymentDialogForm from "./PaymentDialogForm";
+import DevoteeViewDialog from "components/CustomPagination/DevoteeViewDialog";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -52,6 +53,7 @@ const AdminDashboard = () => {
   const [openEventFormDialog, setEventFormOpenDialog] = useState(false);
   const [openAddDevoteeForm, setOpenAddDevoteeForm] = useState(false);
   const [openAddPaymentDetailsForm, setAddPaymentDetailsForm] = useState(false);
+  const [openViewAllDevotee, setOpenViewAllDevotee] = useState(false);
 
   const [donations, setDonations] = useState([]);
   const [eventDataforEdit, setEventDataforEdit] = useState(null);
@@ -252,10 +254,9 @@ const AdminDashboard = () => {
               <Card.Title>Total Devotees</Card.Title>
               <h1>{stats.devotees}</h1>
               <Button
-                as={Link}
-                to="/admin/devotees"
                 variant="outline-light"
                 size="sm"
+                onClick={() => setOpenViewAllDevotee(true)}
               >
                 View All Devotees
               </Button>
@@ -364,9 +365,10 @@ const AdminDashboard = () => {
               {devoteeData.length > 5 && (
                 <div className="text-center mt-3">
                   <Button
-                    as={Link}
+                    as={false}
                     to="/admin/devotees"
                     variant="outline-primary"
+                    onClick={() => setOpenViewAllDevotee(true)}
                   >
                     View All Devotees
                   </Button>
@@ -524,6 +526,12 @@ const AdminDashboard = () => {
         onClose={() => {
           setAddPaymentDetailsForm(false);
           setEventDataforEdit(null);
+        }}
+      />
+      <DevoteeViewDialog
+        open={openViewAllDevotee}
+        onClose={() => {
+          setOpenViewAllDevotee(false);
         }}
       />
     </Container>
