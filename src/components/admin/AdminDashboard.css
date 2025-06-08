@@ -31,6 +31,9 @@
   --temple-subtle: #6c757d; /* Subtle text color */
 }
 
+
+
+
 body {
   background-color: var(--temple-background);
 }
