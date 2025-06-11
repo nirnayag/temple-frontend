@@ -470,7 +470,7 @@ const Home: React.FC = () => {
             {t("home.announcements.title")}
           </SectionTitle>
           <Grid container spacing={4}>
-            {/* {announcements.length === 0 ? (
+            {announcements.length === 0 ? (
               <Grid item xs={12}>
                 <Alert severity="info">
                   {t("home.announcements.noAnnouncements")}
@@ -502,7 +502,7 @@ const Home: React.FC = () => {
                   </StyledCard>
                 </Grid>
               ))
-            )} */}
+            )}
           </Grid>
         </Container>
       </Box>
@@ -511,7 +511,7 @@ const Home: React.FC = () => {
       <Container sx={{ py: 8 }}>
         <SectionTitle variant="h3">{t("home.events.title")}</SectionTitle>
         <Grid container spacing={4}>
-          {/* {upcomingEvents.length === 0 ? (
+          {upcomingEvents.length === 0 ? (
             <Grid item xs={12}>
               <Alert severity="info">{t("home.events.noEvents")}</Alert>
             </Grid>
@@ -565,7 +565,7 @@ const Home: React.FC = () => {
                 </StyledCard>
               </Grid>
             ))
-          )} */}
+          )}
         </Grid>
       </Container>
 
