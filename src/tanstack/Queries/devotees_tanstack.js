@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { devoteeService } from "services/api";
 import { DevoteeTanstackKeys } from "tanstack/Keys/DevoteeTanstackKeys";
 import { toast } from "react-toastify";
+
 export const useGetAllDevotees = () => {
   return useQuery({
     queryKey: [DevoteeTanstackKeys.get_All_Devotees_key],
@@ -15,6 +16,20 @@ export const useGetAllDevotees = () => {
     // refetchOnWindowFocus: false, // prevent auto refetch when tab gets focus
     // refetchOnMount: false, // prevent refetch on remount if data is fresh
     // refetchOnReconnect: false, // prevent refetch on network reconnect
+  });
+};
+
+export const usePaginatedDevotees = ({ page = 1, limit = 10 }) => {
+  return useQuery({
+    queryKey: [DevoteeTanstackKeys.get_All_Devotees_key, page, limit],
+    queryFn: async () => {
+      const res = await devoteeService.getPaginatedData({ page, limit });
+      return res.data; // Assumes response includes { data, totalPages, currentPage, etc. }
+    },
+    keepPreviousData: true, // keeps old data while fetching new page
+    // staleTime: 5 * 60 * 1000,
+    // cacheTime: 30 * 60 * 1000,
+    // refetchOnWindowFocus: false,
   });
 };
 

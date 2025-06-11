@@ -35,6 +35,7 @@ api.interceptors.response.use(
 // Devotee services
 export const devoteeService = {
   getAll: () => api.get("/devotees"),
+  getPaginatedData: () => api.get("/devotees/paginate"),
   getById: (id: string) => api.get(`/devotees/${id}`),
   create: (data: any) => api.post("/devotees", data),
   update: (id: string, data: any) => api.patch(`/devotees/${id}`, data),
