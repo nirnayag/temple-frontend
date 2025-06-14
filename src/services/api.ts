@@ -2,6 +2,8 @@ import axios from "axios";
 
 // API base path for all endpoints
 const API_URL = "http://localhost:4000/api";
+//  "http://localhost:4000/api";
+// "http://temple-backed-production.up.railway.app/api";
 
 // Create an axios instance with base URL
 const api = axios.create({
@@ -35,7 +37,8 @@ api.interceptors.response.use(
 // Devotee services
 export const devoteeService = {
   getAll: () => api.get("/devotees"),
-  getPaginatedData: () => api.get("/devotees/paginate"),
+  getPaginatedData: (page: number, limit: number) =>
+    api.get(`/devotees/paginate?page=${page}&limit=${limit}`),
   getById: (id: string) => api.get(`/devotees/${id}`),
   create: (data: any) => api.post("/devotees", data),
   update: (id: string, data: any) => api.patch(`/devotees/${id}`, data),
