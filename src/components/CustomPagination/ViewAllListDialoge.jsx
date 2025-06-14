@@ -26,46 +26,55 @@ import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useMemo, useState } from "react";
-
-// Dummy data for illustration
-const generateDummyData = () =>
-  Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    name: `Devotee ${i + 1}`,
-    email: `devotee${i + 1}@example.com`,
-  }));
+import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
+import { useDeleteDevotee } from "tanstack/Queries/devotees_tanstack";
+import { toast } from "react-toastify";
 
 export default function ViewAllListDialoge({
   open,
   onClose,
-  getData,
-  EditData,
-  deleteData,
+  usePaginatedHook,
+  dataKey,
+  handleEditData,
+  handleDelete,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageData, setPagesData] = useState([]);
-  const itemsPerPage = 10;
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(2);
+  const [openDevoteeForm, setOpenDevoteeForm] = useState(false);
+  const [editDevoteeFormData, setEditDevoteeFormData] = useState([]);
+  const [openeditEventForm, setOpenEditEventForm] = useState(false);
+
+  const { data, isLoading, isError } = usePaginatedHook({
+    page: currentPage,
+    limit: itemsPerPage,
+    enabled: open,
+  });
+  function handleDevoteeDelete(id) {
+    if (window.confirm("Are you sure you want to delete this devotee?")) {
+      handleDelete(
+        { id },
+        {
+          onSuccess: () => {
+            toast.success("Devotee has been deleted");
+          },
+        }
+      );
+    }
+  }
 
   useEffect(() => {
-    setPagesData(generateDummyData()); // Replace this with your API call
-  }, []);
-
-  const filteredData = useMemo(() => {
-    return pageData.filter((devotee) =>
-      devotee.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, pageData]);
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredData.slice(start, start + itemsPerPage);
-  }, [filteredData, currentPage]);
+    setPagesData(data?.devotees);
+    setTotalPages(data?.totalPages);
+  }, [data]);
 
   function handleEdit() {}
 
-  function handleDelete() {}
+  if (isError) {
+    return <p>Error in paginated component</p>;
+  }
 
   return (
     <Dialog
@@ -139,32 +148,40 @@ export default function ViewAllListDialoge({
           <Table sx={{ minWidth: 650, backgroundColor: "#fff" }}>
             <TableHead>
               <TableRow>
+                {data?.devotees?.length >= 1 &&
+                  Object.keys(data?.devotees[0])?.map((key, index) => {
+                    let allowedHeadings = [
+                      "email",
+                      "name",
+                      "mobileNumber",
+                      "_id",
+                      "membershipType",
+                      "memberSince",
+                    ];
+
+                    if (allowedHeadings.includes(key)) {
+                      return (
+                        <TableCell>
+                          <strong>{key}</strong>
+                        </TableCell>
+                      );
+                    }
+                  })}
                 <TableCell>
-                  <strong>Name</strong>
+                  <strong>Edit</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Email</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Phone</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Membership</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Member Since</strong>
-                </TableCell>
-                <TableCell align="center">
-                  <strong>Actions</strong>
+                  <strong>Delete</strong>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.map((devotee) => (
-                <TableRow key={devotee.id}>
+              {data?.devotees.map((devotee) => (
+                <TableRow key={devotee._id}>
+                  <TableCell>{devotee._id}</TableCell>
                   <TableCell>{devotee.name}</TableCell>
                   <TableCell>{devotee.email}</TableCell>
-                  <TableCell>{devotee.phone || "N/A"}</TableCell>
+                  <TableCell>{devotee.mobileNumber || "N/A"}</TableCell>
                   <TableCell>
                     <Typography
                       sx={{
@@ -177,27 +194,42 @@ export default function ViewAllListDialoge({
                         fontSize: "0.75rem",
                       }}
                     >
-                      {devotee.membership || "regular"}
+                      {devotee.membershipType || "regular"}
                     </Typography>
                   </TableCell>
                   <TableCell>{devotee.memberSince || "N/A"}</TableCell>
                   <TableCell align="center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEdit(devotee)}
-                    >
-                      <EditIcon />
+                    <IconButton color="primary">
+                      <EditIcon
+                        onClick={() => {
+                          setOpenDevoteeForm(true);
+                          setEditDevoteeFormData(devotee);
+                        }}
+                      />
                     </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(devotee.id)}
-                    >
-                      <DeleteIcon />
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton color="error">
+                      <DeleteIcon
+                        onClick={() => {
+                          handleDevoteeDelete(devotee._id);
+                        }}
+                      />
                     </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
-              {paginatedData.length === 0 && (
+              {data?.devotees.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    <Typography color="text.secondary">
+                      No pageData found.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {data?.devotees.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     <Typography color="text.secondary">
@@ -242,6 +274,13 @@ export default function ViewAllListDialoge({
           Close
         </Button>
       </DialogActions>
+      <DevoteeDialogForm
+        open={openDevoteeForm}
+        onClose={() => {
+          setOpenDevoteeForm(false);
+        }}
+        devoteeDataforEdit={editDevoteeFormData}
+      />
     </Dialog>
   );
 }
