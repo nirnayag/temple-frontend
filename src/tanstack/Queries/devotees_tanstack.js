@@ -19,14 +19,19 @@ export const useGetAllDevotees = () => {
   });
 };
 
-export const usePaginatedDevotees = ({ page = 1, limit = 10 }) => {
+export const usePaginatedDevotees = ({
+  page = 1,
+  limit = 10,
+  enabled = false,
+}) => {
   return useQuery({
     queryKey: [DevoteeTanstackKeys.get_All_Devotees_key, page, limit],
     queryFn: async () => {
-      const res = await devoteeService.getPaginatedData({ page, limit });
+      const res = await devoteeService.getPaginatedData(page, limit);
       return res.data; // Assumes response includes { data, totalPages, currentPage, etc. }
     },
     keepPreviousData: true, // keeps old data while fetching new page
+    enabled,
     // staleTime: 5 * 60 * 1000,
     // cacheTime: 30 * 60 * 1000,
     // refetchOnWindowFocus: false,

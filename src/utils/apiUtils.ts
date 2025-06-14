@@ -6,7 +6,7 @@ import {
   translateApiData,
 } from "./translationUtils";
 
-const API_BASE_URL = "https://c697-103-180-220-88.ngrok-free.app/api";
+const API_BASE_URL = "temple-backed-production.up.railway.app";
 
 // Create axios instance with default config
 const api = axios.create({

@@ -25,7 +25,10 @@ import EventDialogForm from "./EventDialogForm";
 import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
 import PaymentDialogForm from "./PaymentDialogForm";
 import ViewAllListDialoge from "components/CustomPagination/ViewAllListDialoge";
-
+import {
+  usePaginatedDevotees,
+  useEditDevotee,
+} from "tanstack/Queries/devotees_tanstack";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -46,6 +49,7 @@ const AdminDashboard = () => {
     useDeleteEvent();
   const { mutate: deleteDevotee, isPending: deleteDevoteePending } =
     useDeleteDevotee();
+
   const isLoading = isAdminLoading || isEventsLoading || isDevoteesLoading;
   const error = adminError || eventsError || devoteesError;
   const navigate = useNavigate();
@@ -55,7 +59,7 @@ const AdminDashboard = () => {
   const [openAddDevoteeForm, setOpenAddDevoteeForm] = useState(false);
   const [openAddPaymentDetailsForm, setAddPaymentDetailsForm] = useState(false);
   const [openViewAllDevotee, setOpenViewAllDevotee] = useState(false);
-
+  const { mutate: editDevotee } = useEditDevotee();
   const [donations, setDonations] = useState([]);
   const [eventDataforEdit, setEventDataforEdit] = useState(null);
   const [devoteeDataforEdit, setDevoteeDataforEdit] = useState(null);
@@ -636,7 +640,7 @@ const AdminDashboard = () => {
         open={openAddDevoteeForm}
         onClose={() => {
           setOpenAddDevoteeForm(false);
-          setEventDataforEdit(null);
+          // setEventDataforEdit(null);
         }}
         devoteeDataforEdit={devoteeDataforEdit}
       />
@@ -644,7 +648,7 @@ const AdminDashboard = () => {
         open={openAddPaymentDetailsForm}
         onClose={() => {
           setAddPaymentDetailsForm(false);
-          setEventDataforEdit(null);
+          // setEventDataforEdit(null);
         }}
       />
       <ViewAllListDialoge
@@ -652,8 +656,10 @@ const AdminDashboard = () => {
         onClose={() => {
           setOpenViewAllDevotee(false);
         }}
-        getData={devoteeData}
-        pageNo={1}
+        usePaginatedHook={usePaginatedDevotees}
+        dataKey={"devotees"}
+        handleEditData={editDevotee}
+        handleDelete={deleteDevotee}
       />
     </Container>
   );
