@@ -444,7 +444,7 @@ const AdminDashboard = () => {
                         <tr key={devotee._id}>
                           <td>{devotee.name}</td>
                           <td>{devotee.email}</td>
-                          <td>{devotee.phone || "N/A"}</td>
+                          <td>{devotee.mobileNumber || "N/A"}</td>
                           <td>
                             <Badge
                               bg={
