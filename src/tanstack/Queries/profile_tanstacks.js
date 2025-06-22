@@ -8,9 +8,9 @@ export const useGetProfile = () => {
       const res = await authService.getProfile();
       return res.data;
     },
-    // staleTime: 5 * 60 * 1000, // 5 minutes: how long data is fresh
-    // cacheTime: 30 * 60 * 1000, // 30 minutes: unused data stays cached
-    // refetchOnWindowFocus: false, // prevent auto refetch when tab gets focus
+    staleTime: 5 * 60 * 1000, // 5 minutes: how long data is fresh
+    cacheTime: 30 * 60 * 1000, // 30 minutes: unused data stays cached
+    refetchOnWindowFocus: false, // prevent auto refetch when tab gets focus
     // refetchOnMount: false, // prevent refetch on remount if data is fresh
     // refetchOnReconnect: false, // prevent refetch on network reconnect
   });

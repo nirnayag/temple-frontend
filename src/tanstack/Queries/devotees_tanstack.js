@@ -32,9 +32,9 @@ export const usePaginatedDevotees = ({
     },
     keepPreviousData: true, // keeps old data while fetching new page
     enabled,
-    // staleTime: 5 * 60 * 1000,
-    // cacheTime: 30 * 60 * 1000,
-    // refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -69,7 +69,6 @@ export const useDeleteDevotee = () => {
     },
   });
 };
-
 export const useEditDevotee = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -79,6 +78,18 @@ export const useEditDevotee = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries([DevoteeTanstackKeys.get_All_Devotees_key]); // Invalidate the events query to refetch data
+    },
+    onError: (error) => {
+      toast.error("Error while adding a devotee", error);
+    },
+  });
+};
+export const useSearchDevotee = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ phone, name }) => {
+      const res = await devoteeService.search(phone, name);
+      return res.data;
     },
     onError: (error) => {
       toast.error("Error while adding a devotee", error);
