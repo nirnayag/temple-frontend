@@ -25,11 +25,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
 import { useDeleteDevotee } from "tanstack/Queries/devotees_tanstack";
 import { toast } from "react-toastify";
-
+import { useSearchDevotee } from "tanstack/Queries/devotees_tanstack";
+import { devoteeService } from "services/api";
 export default function ViewAllListDialoge({
   open,
   onClose,
@@ -46,12 +47,17 @@ export default function ViewAllListDialoge({
   const [openDevoteeForm, setOpenDevoteeForm] = useState(false);
   const [editDevoteeFormData, setEditDevoteeFormData] = useState([]);
   const [openeditEventForm, setOpenEditEventForm] = useState(false);
-
+  const timerRef = useRef(null);
   const { data, isLoading, isError } = usePaginatedHook({
     page: currentPage,
     limit: itemsPerPage,
     enabled: open,
   });
+  const {
+    mutate: searchDevotee,
+    isLoading: isDovoteeLoading,
+    isError: isDevoteeError,
+  } = useSearchDevotee();
   function handleDevoteeDelete(id) {
     if (window.confirm("Are you sure you want to delete this devotee?")) {
       handleDelete(
@@ -70,7 +76,31 @@ export default function ViewAllListDialoge({
     setTotalPages(data?.totalPages);
   }, [data]);
 
-  function handleEdit() {}
+  useMemo(() => {
+    if (searchQuery === "") {
+      return;
+    }
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      handleSearchText(searchQuery);
+    }, 1500);
+  }, [searchQuery]);
+
+  async function handleSearchText() {
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) return; // Optional: early return for empty input
+    const isPhoneSearch = /^\d+$/.test(trimmedQuery); // Only digits
+    try {
+      const res = isPhoneSearch
+        ? searchDevotee({ phone: Number(trimmedQuery) })
+        : searchDevotee({ name: trimmedQuery });
+      console.log("Search result:", res);
+    } catch (e) {
+      console.error("Error while getting search data:", e);
+    }
+  }
 
   if (isError) {
     return <p>Error in paginated component</p>;

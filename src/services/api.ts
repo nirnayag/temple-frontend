@@ -43,6 +43,8 @@ export const devoteeService = {
   create: (data: any) => api.post("/devotees", data),
   update: (id: string, data: any) => api.patch(`/devotees/${id}`, data),
   delete: (id: string) => api.delete(`/devotees/${id}`),
+  search: (phone: number, name: string) =>
+    api.get(`/devotees/search/?name=${name}&mobileNumber=${phone}`),
   addDonation: (id: string, data: any) =>
     api.post(`/devotees/${id}/donations`, data),
 };

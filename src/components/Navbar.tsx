@@ -1,24 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  AppBar, 
-  Box, 
-  Toolbar, 
-  Typography, 
-  Button, 
-  Container, 
-  Grid, 
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Grid,
   Menu,
   MenuItem,
-  IconButton
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import TranslateIcon from '@mui/icons-material/Translate';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './LanguageSwitcher';
-import authService from '../services/auth';
-import { t } from '../utils/translationUtils';
+  IconButton,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import TranslateIcon from "@mui/icons-material/Translate";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
+import authService from "../services/auth";
+import { t } from "../utils/translationUtils";
 
 interface DropdownMenu {
   id: string;
@@ -32,12 +32,25 @@ interface DropdownMenu {
 
 const Navbar: React.FC = () => {
   const { i18n } = useTranslation();
-  const [isAuthenticated, setIsAuthenticated] = React.useState(authService.isLoggedIn());
+  const [isAuthenticated, setIsAuthenticated] = React.useState(
+    authService.isLoggedIn()
+  );
+
+  console.log("isAuthenticated", isAuthenticated);
+
   const [isAdminUser, setIsAdminUser] = React.useState(authService.isAdmin());
-  const [currentUser, setCurrentUser] = React.useState(authService.getCurrentUser());
-  const [anchorEl, setAnchorEl] = React.useState<{ [key: string]: HTMLElement | null }>({});
+  const [currentUser, setCurrentUser] = React.useState(
+    authService.getCurrentUser()
+  );
+  console.log("isAdminUser", isAdminUser);
+  console.log("currentUser", currentUser);
+
+  const [anchorEl, setAnchorEl] = React.useState<{
+    [key: string]: HTMLElement | null;
+  }>({});
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
-  const [languageMenuAnchor, setLanguageMenuAnchor] = React.useState<null | HTMLElement>(null);
+  const [languageMenuAnchor, setLanguageMenuAnchor] =
+    React.useState<null | HTMLElement>(null);
 
   React.useEffect(() => {
     const updateAuthState = () => {
@@ -47,21 +60,25 @@ const Navbar: React.FC = () => {
     };
 
     updateAuthState();
-    window.addEventListener('auth_state_change', updateAuthState);
-    return () => window.removeEventListener('auth_state_change', updateAuthState);
+    window.addEventListener("auth_state_change", updateAuthState);
+    return () =>
+      window.removeEventListener("auth_state_change", updateAuthState);
   }, []);
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, menuId: string) => {
+  const handleOpenMenu = (
+    event: React.MouseEvent<HTMLElement>,
+    menuId: string
+  ) => {
     setAnchorEl({
       ...anchorEl,
-      [menuId]: event.currentTarget
+      [menuId]: event.currentTarget,
     });
   };
 
   const handleCloseMenu = (menuId: string) => {
     setAnchorEl({
       ...anchorEl,
-      [menuId]: null
+      [menuId]: null,
     });
   };
 
@@ -84,46 +101,64 @@ const Navbar: React.FC = () => {
 
   const dropdownMenus: DropdownMenu[] = [
     {
-      id: 'religious',
-      title: t('temple.religious'),
+      id: "religious",
+      title: t("temple.religious"),
       items: [
-        { label: t('temple.pujaServices'), path: '/services/puja' },
-        { label: t('temple.priests'), path: '/priests' }
-      ]
+        { label: t("temple.pujaServices"), path: "/services/puja" },
+        { label: t("temple.priests"), path: "/priests" },
+      ],
     },
     {
-      id: 'calendar',
-      title: t('temple.calendar'),
-      items: [
-        { label: t('temple.currentEvents'), path: '/events' }
-      ]
+      id: "calendar",
+      title: t("temple.calendar"),
+      items: [{ label: t("temple.currentEvents"), path: "/events" }],
     },
     {
-      id: 'about',
-      title: t('common.about'),
-      items: [
-        { label: t('common.about'), path: '/about' }
-      ]
-    }
+      id: "about",
+      title: t("common.about"),
+      items: [{ label: t("common.about"), path: "/about" }],
+    },
   ];
 
   return (
     <>
       {/* Top Contact Bar */}
-      <Box sx={{ bgcolor: '#d35400', color: '#f5e6d3', py: 1 }}>
+      <Box sx={{ bgcolor: "#d35400", color: "#f5e6d3", py: 1 }}>
         <Container>
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={12} md={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' }, mb: { xs: 1, md: 0 } }}>
-              <Box sx={{ mr: 3, display: 'flex', alignItems: 'center' }}>
-                <Box component="span" sx={{ mr: 1 }}>&#9742;</Box>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: { xs: "center", md: "flex-start" },
+                mb: { xs: 1, md: 0 },
+              }}
+            >
+              <Box sx={{ mr: 3, display: "flex", alignItems: "center" }}>
+                <Box component="span" sx={{ mr: 1 }}>
+                  &#9742;
+                </Box>
                 (123) 456-7890
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box component="span" sx={{ mr: 1 }}>&#9993;</Box>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box component="span" sx={{ mr: 1 }}>
+                  &#9993;
+                </Box>
                 info@temple.org
               </Box>
             </Grid>
-            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", md: "flex-end" },
+              }}
+            >
               <LanguageSwitcher />
             </Grid>
           </Grid>
@@ -131,7 +166,11 @@ const Navbar: React.FC = () => {
       </Box>
 
       {/* Main Navigation */}
-      <AppBar position="sticky" sx={{ bgcolor: '#f5e6d3', color: '#4a4a4a' }} elevation={1}>
+      <AppBar
+        position="sticky"
+        sx={{ bgcolor: "#f5e6d3", color: "#4a4a4a" }}
+        elevation={1}
+      >
         <Container>
           <Toolbar disableGutters>
             <Typography
@@ -140,29 +179,29 @@ const Navbar: React.FC = () => {
               to="/"
               sx={{
                 flexGrow: 1,
-                textDecoration: 'none',
-                color: '#d35400',
-                display: 'flex',
-                alignItems: 'center',
-                fontWeight: 'bold'
+                textDecoration: "none",
+                color: "#d35400",
+                display: "flex",
+                alignItems: "center",
+                fontWeight: "bold",
               }}
             >
-              {t('temple.name')}
+              {t("temple.name")}
             </Typography>
 
             {/* Desktop Navigation */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
               {dropdownMenus.map((menu) => (
                 <Box key={menu.id}>
                   <Button
                     endIcon={<KeyboardArrowDownIcon />}
                     onClick={(e) => handleOpenMenu(e, menu.id)}
-                    sx={{ 
-                      color: '#4a4a4a',
-                      '&:hover': {
-                        color: '#d35400',
-                        bgcolor: 'transparent'
-                      }
+                    sx={{
+                      color: "#4a4a4a",
+                      "&:hover": {
+                        color: "#d35400",
+                        bgcolor: "transparent",
+                      },
                     }}
                   >
                     {menu.title}
@@ -173,14 +212,14 @@ const Navbar: React.FC = () => {
                     onClose={() => handleCloseMenu(menu.id)}
                     PaperProps={{
                       sx: {
-                        bgcolor: '#f5e6d3',
-                        '& .MuiMenuItem-root': {
-                          color: '#4a4a4a',
-                          '&:hover': {
-                            bgcolor: '#e0c9a6'
-                          }
-                        }
-                      }
+                        bgcolor: "#f5e6d3",
+                        "& .MuiMenuItem-root": {
+                          color: "#4a4a4a",
+                          "&:hover": {
+                            bgcolor: "#e0c9a6",
+                          },
+                        },
+                      },
                     }}
                   >
                     {menu.items.map((item) => (
@@ -204,15 +243,15 @@ const Navbar: React.FC = () => {
               <Button
                 startIcon={<TranslateIcon />}
                 onClick={handleLanguageMenuOpen}
-                sx={{ 
-                  color: '#4a4a4a',
-                  '&:hover': {
-                    color: '#d35400',
-                    bgcolor: 'transparent'
-                  }
+                sx={{
+                  color: "#4a4a4a",
+                  "&:hover": {
+                    color: "#d35400",
+                    bgcolor: "transparent",
+                  },
                 }}
               >
-                {i18n.language === 'mr' ? 'मराठी' : 'English'}
+                {i18n.language === "mr" ? "मराठी" : "English"}
               </Button>
               <Menu
                 anchorEl={languageMenuAnchor}
@@ -220,60 +259,62 @@ const Navbar: React.FC = () => {
                 onClose={handleLanguageMenuClose}
                 PaperProps={{
                   sx: {
-                    bgcolor: '#f5e6d3',
-                    '& .MuiMenuItem-root': {
-                      color: '#4a4a4a',
-                      '&:hover': {
-                        bgcolor: '#e0c9a6'
-                      }
-                    }
-                  }
+                    bgcolor: "#f5e6d3",
+                    "& .MuiMenuItem-root": {
+                      color: "#4a4a4a",
+                      "&:hover": {
+                        bgcolor: "#e0c9a6",
+                      },
+                    },
+                  },
                 }}
               >
-                <MenuItem onClick={() => changeLanguage('en')}>English</MenuItem>
-                <MenuItem onClick={() => changeLanguage('mr')}>मराठी</MenuItem>
+                <MenuItem onClick={() => changeLanguage("en")}>
+                  English
+                </MenuItem>
+                <MenuItem onClick={() => changeLanguage("mr")}>मराठी</MenuItem>
               </Menu>
 
               {isAuthenticated ? (
                 <Button
                   endIcon={<KeyboardArrowDownIcon />}
-                  onClick={(e) => handleOpenMenu(e, 'account')}
-                  sx={{ 
-                    color: '#4a4a4a',
-                    '&:hover': {
-                      color: '#d35400',
-                      bgcolor: 'transparent'
-                    }
+                  onClick={(e) => handleOpenMenu(e, "account")}
+                  sx={{
+                    color: "#4a4a4a",
+                    "&:hover": {
+                      color: "#d35400",
+                      bgcolor: "transparent",
+                    },
                   }}
                 >
-                  {currentUser?.username || t('common.login')}
+                  {currentUser?.username || t("common.login")}
                 </Button>
               ) : (
                 <Button
                   component={Link}
                   to="/login"
-                  sx={{ 
-                    color: '#4a4a4a',
-                    '&:hover': {
-                      color: '#d35400',
-                      bgcolor: 'transparent'
-                    }
+                  sx={{
+                    color: "#4a4a4a",
+                    "&:hover": {
+                      color: "#d35400",
+                      bgcolor: "transparent",
+                    },
                   }}
                 >
-                  {t('common.login')}
+                  {t("common.login")}
                 </Button>
               )}
             </Box>
 
             {/* Mobile Navigation */}
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
                 edge="end"
                 color="inherit"
                 aria-label="menu"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                sx={{ color: '#4a4a4a' }}
+                sx={{ color: "#4a4a4a" }}
               >
                 <MenuIcon />
               </IconButton>
@@ -285,4 +326,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
