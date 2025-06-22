@@ -277,7 +277,7 @@ const MobileOTPAuth = () => {
 
     try {
       const response = await authService.verifyOTP(mobileNumber, otp.join(""));
-
+      console.log("response", response);
       if (response.isNewUser) {
         setCurrentStep(AuthStep.REGISTRATION);
         setSuccess(t("auth.otpVerified"));
