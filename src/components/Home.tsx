@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Container,
   Grid,
@@ -37,6 +37,9 @@ import {
   prasadamService,
   templeService,
 } from "../services/api";
+import EventNoteIcon from "@mui/icons-material/EventNote";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import Link from "@mui/material/Link";
 
 // Styled components for custom elements
 const HeroBanner = styled(Box)(({ theme }) => ({
@@ -233,8 +236,6 @@ const Home: React.FC = () => {
   const [loadingAnnouncements, setLoadingAnnouncements] =
     useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [loadingPrasadam, setLoadingPrasadam] = useState<boolean>(true);
-  const [loadingPrasadamInfo, setLoadingPrasadamInfo] = useState<boolean>(true);
   const [loadingFeatures, setLoadingFeatures] = useState<boolean>(true);
   const [loadingSections, setLoadingSections] = useState<boolean>(true);
   const [loadingTempleInfo, setLoadingTempleInfo] = useState<boolean>(true);
@@ -279,22 +280,6 @@ const Home: React.FC = () => {
 
     fetchTempleInfo();
   }, []);
-
-  // Fetch features
-  // useEffect(() => {
-  //   const fetchFeatures = async () => {
-  //     try {
-  //       console.log('Fetching features...');
-  //       const response = await templeService.getFeatures();
-  //       setFeatures(response.data);
-  //       setLoadingFeatures(false);
-  //     } catch (err) {
-  //       handleApiError(err, setLoadingFeatures, 'home.errors.features');
-  //     }
-  //   };
-
-  //   fetchFeatures();
-  // }, []);
 
   // Fetch sections
   // useEffect(() => {
@@ -348,38 +333,6 @@ const Home: React.FC = () => {
     fetchEvents();
   }, []);
 
-  // Fetch prasadam information
-  // useEffect(() => {
-  //   const fetchPrasadam = async () => {
-  //     try {
-  //       console.log('Fetching prasadam info...');
-  //       const response = await prasadamService.getAll();
-  //       setPrasadamInfo(response.data);
-  //       setLoadingPrasadam(false);
-  //     } catch (err) {
-  //       handleApiError(err, setLoadingPrasadam, 'home.errors.prasadam');
-  //     }
-  //   };
-
-  //   fetchPrasadam();
-  // }, []);
-
-  // Fetch prasadam general information
-  // useEffect(() => {
-  //   const fetchPrasadamInfo = async () => {
-  //     try {
-  //       console.log('Fetching prasadam general info...');
-  //       const response = await prasadamService.getInfo();
-  //       setPrasadamGeneralInfo(response.data);
-  //       setLoadingPrasadamInfo(false);
-  //     } catch (err) {
-  //       handleApiError(err, setLoadingPrasadamInfo, 'home.errors.prasadamInfo');
-  //     }
-  //   };
-
-  //   fetchPrasadamInfo();
-  // }, []);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(i18n.language === "mr" ? "mr-IN" : "en-US", {
@@ -410,7 +363,7 @@ const Home: React.FC = () => {
     );
   }
 
-  const dummyAnnouncements = [
+  const dummyUpcomingEvents = [
     {
       id: 1,
       tag: "festival",
@@ -451,7 +404,50 @@ const Home: React.FC = () => {
         "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
     },
   ];
-
+  const dummyAnnouncements = [
+    {
+      id: 1,
+      tag: "Important",
+      date: "Dec 28, 2024",
+      title: "Special Aarti on New Year",
+      description:
+        "Join us for a special New Year blessing ceremony. Experience divine grace as we welcome 2025 with traditional prayers and prasadam distribution.",
+      color: "orange",
+      icon: <CampaignIcon fontSize="small" />,
+    },
+    {
+      id: 2,
+      tag: "Event",
+      date: "Dec 25, 2024",
+      title: "Donation Drive for Community Kitchen",
+      description:
+        "Help us serve free meals to devotees and the needy. Your contribution will help us expand our daily prasadam distribution program.",
+      color: "red",
+      icon: <EventNoteIcon fontSize="small" />,
+    },
+    {
+      id: 3,
+      tag: "Notice",
+      date: "Dec 20, 2024",
+      title: "Updated Temple Timings",
+      description:
+        "Please note the updated darshan timings for the winter season. Morning aarti starts at 6:00 AM and evening aarti at 7:00 PM.",
+      color: "yellow",
+      icon: <InfoIcon fontSize="small" />,
+    },
+  ];
+  const getColor = (tag: any) => {
+    switch (tag) {
+      case "Important":
+        return "#f97316";
+      case "Event":
+        return "#b91c1c";
+      case "Notice":
+        return "#facc15";
+      default:
+        return "#ccc";
+    }
+  };
   return (
     <Box sx={{ bgcolor: "#E2DFD2" }}>
       {/* Hero Banner */}
@@ -471,7 +467,7 @@ const Home: React.FC = () => {
               {templeInfo?.tagline || t("home.hero.subtitle")}
             </Typography>
             <Button
-              component={Link}
+              component={RouterLink}
               to="/about"
               variant="contained"
               sx={{
@@ -489,31 +485,7 @@ const Home: React.FC = () => {
         </HeroContent>
       </HeroBanner>
 
-      {/* Features Section */}
-      <Container sx={{ py: 8 }}>
-        <SectionTitle variant="h3">{t("home.features.title")}</SectionTitle>
-        <Grid container spacing={4}>
-          {/* {features.map((feature) => (
-            <Grid item xs={12} sm={6} md={4} key={feature._id}>
-              <StyledCard>
-                <StyledCardContent sx={{ textAlign: 'center' }}>
-                  <FeatureIcon>
-                    {getIconComponent(feature.icon)}
-                  </FeatureIcon>
-                  <Typography variant="h5" component="h3" gutterBottom>
-                    {feature.title}
-                  </Typography>
-                  <Typography>
-                    {feature.description}
-                  </Typography>
-                </StyledCardContent>
-              </StyledCard>
-            </Grid>
-          ))} */}
-        </Grid>
-      </Container>
-
-      {/* Announcements Section */}
+      {/* Upcoming Events */}
       {/* <Box sx={{ bgcolor: "#E2DFD2", py: 8, backgroundColor: "red" }}>
         <Container>
           <SectionTitle variant="h3">
@@ -560,7 +532,7 @@ const Home: React.FC = () => {
         <Container>
           <SectionTitle variant="h3">{t("home.events.title")}</SectionTitle>
           <Grid container spacing={4}>
-            {dummyAnnouncements.map((announcement) => (
+            {dummyUpcomingEvents.map((announcement) => (
               <Grid item xs={8} md={4} key={announcement.id}>
                 <Card
                   sx={{
@@ -654,9 +626,97 @@ const Home: React.FC = () => {
           </Grid>
         </Container>
       </Box>
+      {/* Announcement Sections */}
+      <Box sx={{ bgcolor: "#E2DFD2", py: 6 }}>
+        <Container>
+          <SectionTitle variant="h3">
+            {t("home.announcements.title")}
+          </SectionTitle>
+
+          <Grid container spacing={4}>
+            {dummyAnnouncements.map((item) => (
+              <Grid item xs={12} md={4} key={item.id}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    borderLeft: `4px solid ${getColor(item.tag)}`,
+                    borderRadius: 2,
+                    backgroundColor: "#fff7ed",
+                    px: 2,
+                    pt: 2,
+                    pb: 3,
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                    transition: "all 0.3s ease-in-out",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    },
+                  }}
+                >
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={1}
+                  >
+                    <Chip
+                      label={
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                          {item.icon}
+                          {item.tag}
+                        </Box>
+                      }
+                      size="small"
+                      sx={{
+                        backgroundColor: getColor(item.tag),
+                        color: "#fff",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        px: 1,
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {item.date}
+                    </Typography>
+                  </Box>
+                  <CardContent sx={{ px: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                      color="#7f1d1d"
+                    >
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" mb={2}>
+                      {item.description}
+                    </Typography>
+                    {/* <Link
+                      underline="hover"
+                      sx={{
+                        color: "#d35400",
+                        fontWeight: 600,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: "#b34700",
+                        },
+                      }}
+                    >
+                      Read More
+                    </Link> */}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
       {/* Upcoming Events Section */}
-      <Container sx={{ py: 8 }}>
+      {/* <Container sx={{ py: 8 }}>
         <SectionTitle variant="h3">{t("home.events.title")}</SectionTitle>
         <Grid container spacing={4}>
           {upcomingEvents.length === 0 ? (
@@ -697,7 +757,7 @@ const Home: React.FC = () => {
                     <Typography>{event.description}</Typography>
                     <Button
                       variant="text"
-                      component={Link}
+                      component={RouterLink}
                       to="/events"
                       sx={{
                         mt: 2,
@@ -715,72 +775,7 @@ const Home: React.FC = () => {
             ))
           )}
         </Grid>
-      </Container>
-
-      {/* Prasadam Section */}
-      {/* <Box sx={{ bgcolor: '#E2DFD2', py: 8 }}>
-        <Container>
-          <SectionTitle variant="h3">
-            {t('home.prasadam.title')}
-          </SectionTitle>
-          {prasadamGeneralInfo && (
-            <Typography paragraph sx={{ color: '#4a4a4a', textAlign: 'center', mb: 4 }}>
-              {prasadamGeneralInfo.description}
-            </Typography>
-          )}
-          <Grid container spacing={4}>
-            {prasadamInfo.length === 0 ? (
-              <Grid item xs={12}>
-                <Alert severity="info">{t('home.prasadam.noPrasadam')}</Alert>
-              </Grid>
-            ) : (
-              prasadamInfo.map((day) => (
-                <Grid item xs={12} md={6} key={day._id}>
-                  <StyledCard>
-                    <StyledCardHeader
-                      title={t(`common.days.${day.dayOfWeek.toLowerCase()}`)}
-                      subheader={day.isAvailable ? t('home.prasadam.available') : t('home.prasadam.unavailable')}
-                    />
-                    <StyledCardContent>
-                      <List>
-                        {day.items.map((item, index) => (
-                          <React.Fragment key={index}>
-                            <ListItem>
-                              <ListItemText
-                                primary={item.name}
-                                secondary={item.description}
-                                primaryTypographyProps={{ color: '#4a4a4a' }}
-                                secondaryTypographyProps={{ color: '#666666' }}
-                              />
-                              {item.specialItem && (
-                                <Chip
-                                  label={t('home.prasadam.special')}
-                                  sx={{ 
-                                    bgcolor: '#E2DFD2',
-                                    color: '#d35400',
-                                    fontWeight: 'bold'
-                                  }}
-                                  size="small"
-                                />
-                              )}
-                            </ListItem>
-                            {index < day.items.length - 1 && <Divider />}
-                          </React.Fragment>
-                        ))}
-                      </List>
-                      {day.notes && (
-                        <Typography variant="body2" sx={{ mt: 2, color: '#666666' }}>
-                          {t('home.prasadam.notes')}: {day.notes}
-                        </Typography>
-                      )}
-                    </StyledCardContent>
-                  </StyledCard>
-                </Grid>
-              ))
-            )}
-          </Grid>
-        </Container>
-      </Box> */}
+      </Container> */}
     </Box>
   );
 };
