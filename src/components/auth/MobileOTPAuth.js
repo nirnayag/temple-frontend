@@ -325,7 +325,7 @@ const MobileOTPAuth = () => {
     setLoading(true);
 
     try {
-      const response = await authService.verifyOTPAndRegister(
+      const response = await authService.register(
         `91${mobileNumber}`,
         otp.join(""),
         userData
