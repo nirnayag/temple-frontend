@@ -19,7 +19,7 @@ const AboutTemple = () => {
         </Col>
         <Col lg={5}>
           <img
-            src="https://placehold.co/800x600/800020/FFFFFF?text=Temple+Building"
+            src="https://t4.ftcdn.net/jpg/12/55/70/67/360_F_1255706772_VN5ObaaNkgoTLgtAIqiBmpZFTLC45EO8.jpg"
             alt={t("about.templeBuilding")}
             className="img-fluid rounded shadow-sm"
           />
