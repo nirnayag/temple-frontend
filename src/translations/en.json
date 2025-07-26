@@ -162,10 +162,12 @@
   },
   "home": {
     "hero": {
-      "title": "Welcome to Sri Siva Vishnu Temple",
+      "title": "Shree Kalambadevi Temple",
       "subtitle": "Experience peace, spirituality and cultural richness",
-      "learnMore": "Learn More"
+      "learnMore": "Learn More",
+      "donate": "Donate"
     },
+
     "features": {
       "title": "Temple Features"
     },
@@ -299,4 +301,4 @@
       "community": "Community Event"
     }
   }
-} 
+}
