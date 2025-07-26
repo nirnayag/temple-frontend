@@ -28,7 +28,8 @@ import {
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { t } from "../utils/translationUtils";
-
+import RoomIcon from "@mui/icons-material/Room";
+import PeopleIcon from "@mui/icons-material/People";
 // Import services
 import {
   eventService,
@@ -409,6 +410,48 @@ const Home: React.FC = () => {
     );
   }
 
+  const dummyAnnouncements = [
+    {
+      id: 1,
+      tag: "festival",
+      date: "August 15, 2025",
+      time: "6:00 AM - 10:00 PM",
+      title: "Krishna Janmashtami",
+      description:
+        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
+      location: "Main Temple Hall",
+      attendees: "450 / 500 registered",
+      image:
+        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
+    },
+    {
+      id: 2,
+      tag: "spiritual",
+      date: "August 18, 2025",
+      time: "7:00 AM - 9:00 AM",
+      title: "Satsang & Meditation",
+      description:
+        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
+      location: "Meditation Hall",
+      attendees: "20 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
+    },
+    {
+      id: 3,
+      tag: "Festival",
+      date: "August 27, 2025",
+      time: "7:30 AM - 11:00 AM",
+      title: "Ganesh Chaturti",
+      description:
+        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
+      location: "Mandap",
+      attendees: "100 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
+    },
+  ];
+
   return (
     <Box sx={{ bgcolor: "#E2DFD2" }}>
       {/* Hero Banner */}
@@ -471,7 +514,7 @@ const Home: React.FC = () => {
       </Container>
 
       {/* Announcements Section */}
-      <Box sx={{ bgcolor: "#E2DFD2", py: 8 }}>
+      {/* <Box sx={{ bgcolor: "#E2DFD2", py: 8, backgroundColor: "red" }}>
         <Container>
           <SectionTitle variant="h3">
             {t("home.announcements.title")}
@@ -510,6 +553,104 @@ const Home: React.FC = () => {
                 </Grid>
               ))
             )}
+          </Grid>
+        </Container>
+      </Box> */}
+      <Box sx={{ bgcolor: "#E2DFD2", py: 8 }}>
+        <Container>
+          <SectionTitle variant="h3">{t("home.events.title")}</SectionTitle>
+          <Grid container spacing={4}>
+            {dummyAnnouncements.map((announcement) => (
+              <Grid item xs={8} md={4} key={announcement.id}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: 200,
+                      backgroundImage: `url(${announcement.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      borderRadius: "4px 4px 0 0",
+                    }}
+                  />
+                  <CardContent>
+                    <Chip
+                      label={announcement.tag}
+                      color="warning"
+                      size="small"
+                      sx={{ textTransform: "capitalize", mb: 1 }}
+                    />
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {announcement.date} • {announcement.time}
+                    </Typography>
+                    <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
+                      {announcement.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {announcement.description}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 2,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <EventIcon fontSize="small" />
+                      <Typography variant="body2">
+                        {announcement.date} | {announcement.time}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      <RoomIcon fontSize="small" />
+                      <Typography variant="body2">
+                        {announcement.location}
+                      </Typography>
+                    </Box>
+                    {/* <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      <PeopleIcon fontSize="small" />
+                      <Typography variant="body2">
+                        {announcement.attendees}
+                      </Typography>
+                    </Box> */}
+                    {/* <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        mt: 2,
+                        backgroundColor: "#f97316",
+                        "&:hover": {
+                          backgroundColor: "#ea580c",
+                        },
+                      }}
+                    >
+                      Register Now
+                    </Button> */}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>
