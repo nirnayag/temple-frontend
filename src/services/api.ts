@@ -1,9 +1,8 @@
 import axios from "axios";
 
 // API base path for all endpoints
-const API_URL = "http://localhost:4000/api";
-// "https://delightful-transformation-production-0697.up.railway.app/api";
-
+const API_URL =
+  "https://delightful-transformation-production-0697.up.railway.app/api";
 // "http://temple-backed-production.up.railway.app/api";
 
 // Create an axios instance with base URL
