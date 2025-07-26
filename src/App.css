@@ -4,7 +4,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .navbar-brand {
@@ -18,15 +18,15 @@
 /* Orange theme for Temple Management System */
 
 :root {
-  --temple-primary: #FF5722;
-  --temple-primary-light: #FF8A65;
-  --temple-primary-dark: #E64A19;
-  --temple-secondary: #FFC107;
-  --temple-secondary-light: #FFD54F;
-  --temple-secondary-dark: #FFA000;
-  --temple-background: #FFF3E0;
-  --temple-light: #FFF3E0; /* Light warm background */
-  --temple-dark: #3E2723; /* Dark brown */
+  --temple-primary: #ff5722;
+  --temple-primary-light: #ff8a65;
+  --temple-primary-dark: #e64a19;
+  --temple-secondary: #ffc107;
+  --temple-secondary-light: #ffd54f;
+  --temple-secondary-dark: #ffa000;
+  --temple-background: #fff3e0;
+  --temple-light: #fff3e0; /* Light warm background */
+  --temple-dark: #3e2723; /* Dark brown */
   --temple-text: #333333; /* Main text color */
   --temple-subtle: #6c757d; /* Subtle text color */
 }
@@ -99,7 +99,8 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.navbar-brand, .nav-link {
+.navbar-brand,
+.nav-link {
   color: var(--temple-primary) !important;
 }
 
@@ -215,7 +216,7 @@ body {
 
 .stat-box:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .stat-box .stat-value {
@@ -264,12 +265,12 @@ body {
   border: none;
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .event-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .event-card .card-header {
@@ -330,7 +331,7 @@ body {
 }
 
 .section-heading::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10px;
   left: 50%;
@@ -349,7 +350,7 @@ body {
   position: relative;
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   margin-bottom: 2rem;
   overflow: hidden;
@@ -399,17 +400,17 @@ body {
   .stat-box .stat-value {
     font-size: 1.8rem;
   }
-  
+
   .devotee-avatar {
     width: 96px;
     height: 96px;
   }
-  
+
   .priest-image {
     width: 120px;
     height: 120px;
   }
-  
+
   .home-banner {
     height: 300px;
   }
@@ -450,7 +451,7 @@ body {
   .timeline-line {
     left: 30px;
   }
-  
+
   .timeline-circle {
     margin: 0 0 20px 0;
   }

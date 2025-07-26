@@ -41,7 +41,7 @@ import {
 const HeroBanner = styled(Box)(({ theme }) => ({
   position: "relative",
   height: "500px",
-  backgroundImage: `url('https://placehold.co/1200x500/800020/FFFFFF?text=Sri+Siva+Gnana+Deepika+Mahotsavam')`,
+  backgroundImage: `url('/templeHero.jpg')`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   color: "#fff",
@@ -64,7 +64,7 @@ const HeroBanner = styled(Box)(({ theme }) => ({
 const HeroContent = styled(Box)(({ theme }) => ({
   position: "relative",
   zIndex: 1,
-  textAlign: "center",
+  textAlign: "left",
   width: "100%",
   padding: theme.spacing(3),
 }));
@@ -415,10 +415,16 @@ const Home: React.FC = () => {
       <HeroBanner>
         <HeroContent>
           <Container>
-            <Typography variant="h2" component="h1" gutterBottom>
-              {templeInfo?.name || t("home.hero.title")}
+            <Typography
+              mt={-6}
+              ml={-6}
+              variant="h2"
+              component="h1"
+              gutterBottom
+            >
+              {t("home.hero.title")}
             </Typography>
-            <Typography variant="h5" gutterBottom>
+            <Typography ml={-6} variant="h5" gutterBottom>
               {templeInfo?.tagline || t("home.hero.subtitle")}
             </Typography>
             <Button
@@ -427,13 +433,14 @@ const Home: React.FC = () => {
               variant="contained"
               sx={{
                 mt: 2,
+                ml: -6,
                 bgcolor: "#d35400",
                 "&:hover": {
                   bgcolor: "#b34700",
                 },
               }}
             >
-              {t("home.hero.learnMore")}
+              {t("home.hero.donate")}
             </Button>
           </Container>
         </HeroContent>
