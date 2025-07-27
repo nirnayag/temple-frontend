@@ -271,6 +271,27 @@
     "festivalHours": "Special Hours (Check Calendar)",
     "location": "Location"
   },
+  "donate": {
+    "support-our-temple": "Support Our Temple",
+    "support-hero-description": "Your generous contribution helps us maintain our sacred spaces, conduct spiritual ceremonies, and serve the community through various initiatives.",
+    "Donate Now": "Donate Now",
+    "Why Your Support Matters": "Why Your Support Matters",
+    "Support-Matters-description": "Your donations help us continue our spiritual mission, maintain our sacred spaces, and serve the community through various initiatives.",
+    "Temple Maintenance": "Temple Maintenance",
+    "Temple-maintaince-desciption": "Help us preserve and maintain our sacred temple spaces for current and future generations.",
+    "Religious Ceremonies": "Religious Ceremonies",
+    "Religious-ceremonies-desciption": "Support our daily pujas, festivals, and special religious ceremonies throughout the year.",
+    "Community Services": "Community Services",
+    "Community-service-desciption": "Fund our community outreach programs, education initiatives, and charitable activities.",
+    "Donation Amount": "Donation Amount (₹)",
+    "upi-note": "We currently only accept UPI payments. You will be redirected to your UPI app.",
+    "Why Donate": "Why Donate?",
+    "support-maintaince-message": "Support temple maintenance and daily rituals",
+    "charitable-activities": "Contribute to community services and charitable activities",
+    "spiritual traditions": "Help preserve and promote spiritual traditions",
+    "All Donations": "All donations are tax-exempt under section 80G",
+    "Proceed to Donate": "Proceed to Donate"
+  },
   "events": {
     "title": "Temple Events",
     "addNew": "Add New Event",

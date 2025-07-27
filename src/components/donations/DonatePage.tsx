@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { CSSProperties } from "styled-components";
 import DonationForm from "./DonationForm";
+import { t } from "../../utils/translationUtils";
 
 interface DonationFormData {
   fullName: string;
@@ -62,7 +63,8 @@ function DonatePage() {
             color: "#1d1d1d",
           }}
         >
-          Why Your Support Matters
+          {/* Why Your Support Matters */}
+          {`${t("donate.Why Your Support Matters")}`}
         </h2>
         <div
           style={{
@@ -81,8 +83,7 @@ function DonatePage() {
             lineHeight: "1.6",
           }}
         >
-          Your donations help us continue our spiritual mission, maintain our
-          sacred spaces, and serve the community through various initiatives.
+          {`${t("donate.Support-Matters-description")}`}
         </p>
 
         <div
@@ -127,11 +128,13 @@ function DonatePage() {
                 marginBottom: "10px",
               }}
             >
-              Temple Maintenance
+              {/* Temple Maintenance */}
+              {`${t("donate.Temple Maintenance")}`}
             </h4>
             <p style={{ fontSize: "0.95rem", color: "#444" }}>
-              Help us preserve and maintain our sacred temple spaces for current
-              and future generations.
+              {`${t("donate.Temple-maintaince-desciption")}`}
+              {/* Help us preserve and maintain our sacred temple spaces for current
+              and future generations. */}
             </p>
           </div>
 
@@ -169,11 +172,14 @@ function DonatePage() {
                 marginBottom: "10px",
               }}
             >
-              Religious Ceremonies
+              {/* Religious Ceremonies */}
+              {`${t("donate.Religious Ceremonies")}`}
             </h4>
             <p style={{ fontSize: "0.95rem", color: "#444" }}>
-              Support our daily pujas, festivals, and special religious
-              ceremonies throughout the year.
+              {`${t("donate.Religious-ceremonies-desciption")}`}
+
+              {/* Support our daily pujas, festivals, and special religious
+              ceremonies throughout the year. */}
             </p>
           </div>
 
@@ -211,11 +217,13 @@ function DonatePage() {
                 marginBottom: "10px",
               }}
             >
-              Community Services
+              {/* Community Services */}
+              {`${t("donate.Community Services")}`}
             </h4>
             <p style={{ fontSize: "0.95rem", color: "#444" }}>
-              Fund our community outreach programs, education initiatives, and
-              charitable activities.
+              {`${t("donate.Community-service-desciption")}`}
+              {/* Fund our community outreach programs, education initiatives, and
+              charitable activities. */}
             </p>
           </div>
         </div>
@@ -226,6 +234,12 @@ function DonatePage() {
 }
 
 function DonationHero() {
+  const handleScrollToForm = () => {
+    const formElement = document.getElementById("payment-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <div
       style={{
@@ -261,7 +275,9 @@ function DonationHero() {
             fontFamily: "'Comic Neue', cursive",
           }}
         >
-          Support Our Temple
+          {/* Support Our Temple */}
+          {`${t("donate.support-our-temple")}`}
+
           <div
             style={{
               width: "60px",
@@ -273,12 +289,14 @@ function DonationHero() {
         </h1>
 
         <p style={{ fontSize: "1.1rem", lineHeight: "1.8" }}>
-          Your generous contribution helps us maintain our sacred spaces,
+          {`${t("donate.support-hero-description")}`}
+          {/* Your generous contribution helps us maintain our sacred spaces,
           conduct spiritual ceremonies, and serve the community through various
-          initiatives.
+          initiatives. */}
         </p>
 
         <button
+          onClick={handleScrollToForm}
           style={{
             marginTop: "30px",
             padding: "12px 24px",
@@ -294,7 +312,8 @@ function DonationHero() {
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           }}
         >
-          <span style={{ marginRight: "8px" }}>❤️</span> Donate Now
+          <span style={{ marginRight: "8px" }}>❤️</span>{" "}
+          {`${t("donate.Donate Now")}`}
         </button>
       </div>
     </div>

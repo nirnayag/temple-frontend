@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { t } from "../../utils/translationUtils";
 
 const DonationForm: React.FC = () => {
   const [name, setName] = useState("");
@@ -31,6 +32,7 @@ const DonationForm: React.FC = () => {
 
   return (
     <div
+      id="payment-form"
       style={{
         backgroundColor: "#fff8f0",
         textAlign: "center",
@@ -44,11 +46,13 @@ const DonationForm: React.FC = () => {
               className="text-center mb-3  fw-bold"
               style={{ color: "#E46B17" }}
             >
-              Support Our Temple
+              {/* Support Our Temple */}
+              {`${t("donate.support-our-temple")}`}
             </h3>
             <p className="text-center text-muted mb-4">
-              Your generous contributions help us maintain our temple and
-              continue our spiritual and community services
+              {`${t("donate.support-hero-description")}`}
+              {/* Your generous contributions help us maintain our temple and
+              continue our spiritual and community services */}
             </p>
 
             <form>
@@ -77,7 +81,11 @@ const DonationForm: React.FC = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Donation Amount (₹)</label>
+                <label className="form-label">
+                  {" "}
+                  {`${t("donate.Donation Amount")}`}
+                  (₹)
+                </label>
                 <div className="d-flex flex-wrap gap-2 mb-2">
                   {donationOptions.map((amt) => (
                     <button
@@ -106,8 +114,9 @@ const DonationForm: React.FC = () => {
 
               <div className="alert alert-warning small mt-4">
                 <i className="bi bi-info-circle-fill me-2"></i>
-                We currently only accept UPI payments. You will be redirected to
-                your UPI app.
+                {`${t("donate.upi-note")}`}
+                {/* We currently only accept UPI payments. You will be redirected to
+                your UPI app. */}
               </div>
 
               <button
@@ -116,7 +125,8 @@ const DonationForm: React.FC = () => {
                 style={{ color: "#E46B17" }}
                 onClick={handleDonate}
               >
-                Proceed to Donate
+                {/* Proceed to Donate */}
+                {`${t("donate.Proceed to Donate")}`}
               </button>
             </form>
           </div>
@@ -136,32 +146,30 @@ const DonationForm: React.FC = () => {
               }}
             >
               <h6 className="fw-bold mb-3" style={{ color: "#E46B17" }}>
-                Why Donate?
+                {/* Why Donate? */}
+                {`${t("donate.Why Donate")}`}
               </h6>
               <ul className="mb-0 ps-3 small" style={{ color: "#333" }}>
                 <li className="mb-2">
                   <span style={{ color: "#E46B17", marginRight: "8px" }}>
                     🕉
                   </span>
-                  Support temple maintenance and daily rituals
+                  {`${t("donate.support-maintaince-message")}`}
+                  {/* Support temple maintenance and daily rituals */}
                 </li>
                 <li className="mb-2">
                   <span style={{ color: "#E46B17", marginRight: "8px" }}>
                     🙏
                   </span>
-                  Contribute to community services and charitable activities
+                  {`${t("donate.charitable-activities")}`}
+                  {/* Contribute to community services and charitable activities */}
                 </li>
                 <li className="mb-2">
                   <span style={{ color: "#E46B17", marginRight: "8px" }}>
                     🌱
                   </span>
-                  Help preserve and promote spiritual traditions
-                </li>
-                <li>
-                  <span style={{ color: "#E46B17", marginRight: "8px" }}>
-                    🧾
-                  </span>
-                  All donations are tax-exempt under section 80G
+                  {`${t("donate.spiritual traditions")}`}
+                  {/* Help preserve and promote spiritual traditions */}
                 </li>
               </ul>
             </div>
