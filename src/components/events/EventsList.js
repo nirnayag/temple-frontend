@@ -171,7 +171,47 @@ const EventsList = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
-
+  const dummyUpcomingEvents = [
+    {
+      id: 1,
+      tag: "festival",
+      date: "August 15, 2025",
+      time: "6:00 AM - 10:00 PM",
+      title: "Krishna Janmashtami",
+      description:
+        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
+      location: "Main Temple Hall",
+      attendees: "450 / 500 registered",
+      image:
+        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
+    },
+    {
+      id: 2,
+      tag: "spiritual",
+      date: "August 18, 2025",
+      time: "7:00 AM - 9:00 AM",
+      title: "Satsang & Meditation",
+      description:
+        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
+      location: "Meditation Hall",
+      attendees: "20 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
+    },
+    {
+      id: 3,
+      tag: "Festival",
+      date: "August 27, 2025",
+      time: "7:30 AM - 11:00 AM",
+      title: "Ganesh Chaturti",
+      description:
+        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
+      location: "Mandap",
+      attendees: "100 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
+    },
+  ];
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -223,47 +263,6 @@ const EventsList = () => {
   const sortedEvents = getFilteredEvents().sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
-  const dummyUpcomingEvents = [
-    {
-      id: 1,
-      tag: "festival",
-      date: "August 15, 2025",
-      time: "6:00 AM - 10:00 PM",
-      title: "Krishna Janmashtami",
-      description:
-        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
-      location: "Main Temple Hall",
-      attendees: "450 / 500 registered",
-      image:
-        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
-    },
-    {
-      id: 2,
-      tag: "spiritual",
-      date: "August 18, 2025",
-      time: "7:00 AM - 9:00 AM",
-      title: "Satsang & Meditation",
-      description:
-        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
-      location: "Meditation Hall",
-      attendees: "20 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
-    },
-    {
-      id: 3,
-      tag: "Festival",
-      date: "August 27, 2025",
-      time: "7:30 AM - 11:00 AM",
-      title: "Ganesh Chaturti",
-      description:
-        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
-      location: "Mandap",
-      attendees: "100 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
-    },
-  ];
 
   if (loading) {
     return (
@@ -274,8 +273,6 @@ const EventsList = () => {
       </Container>
     );
   }
-
-  let FinalEvents = events ? events : dummyUpcomingEvents;
 
   return (
     <Container fluid style={{ backgroundColor: "#" }}>
@@ -339,7 +336,7 @@ const EventsList = () => {
             </Form.Select>
           </div>
 
-          {FinalEvents.length === 0 ? (
+          {events.length === 0 ? (
             <Alert
               variant="info"
               style={{
@@ -353,7 +350,7 @@ const EventsList = () => {
             </Alert>
           ) : (
             <EventsGrid>
-              {FinalEvents.map((event) => {
+              {events.map((event) => {
                 const isPast = new Date(event.date) < new Date();
                 return (
                   <Grid item xs={8} md={4} key={event.id}>

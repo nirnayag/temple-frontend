@@ -558,7 +558,7 @@ const Home: React.FC = () => {
           <SectionTitle variant="h3">{t("home.events.title")}</SectionTitle>
           <Grid container spacing={4}>
             {dummyUpcomingEvents.map((announcement) => (
-              <Grid item xs={8} md={4} key={announcement.id}>
+              <Grid item xs={12} sm={8} md={4} key={announcement.id}>
                 <Card
                   sx={{
                     height: "100%",

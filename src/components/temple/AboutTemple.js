@@ -211,8 +211,8 @@ const AboutTemple = () => {
           <Col md={6}>
             <h4>{t("about.location")}</h4>
             <p>{t("temple.address")}</p>
-            <p>{t("temple.phone")}: (123) 456-7890</p>
-            <p>{t("temple.email")}: info@temple.org</p>
+            <p>{t("temple.phone")}</p>
+            <p>{t("temple.email")}</p>
           </Col>
         </Row>
       </div>

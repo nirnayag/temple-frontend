@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import Divider from "@mui/material/Divider";
+
 import {
   AppBar,
   Box,
@@ -11,10 +14,28 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  ListItemIcon,
 } from "@mui/material";
+import { Fade } from "@mui/material";
+import {
+  Info as InfoIcon,
+  Language as LanguageIcon,
+  Login as LoginIcon,
+  Favorite as DonateIcon,
+  Celebration as EventIcon,
+  Translate as TranslateIcon,
+  AccountCircle,
+} from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+// import InfoIcon from "@mui/icons-material/Info";
+// import LanguageIcon from "@mui/icons-material/Language";
+// import LoginIcon from "@mui/icons-material/Login";
+import PersonIcon from "@mui/icons-material/Person";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import TranslateIcon from "@mui/icons-material/Translate";
+// import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import authService from "../services/auth";
@@ -147,7 +168,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9993;
                 </Box>
-                shreekalambadevi@org
+                {t("temple.email")}
               </Box>
             </Grid>
             <Grid
@@ -338,12 +359,184 @@ const Navbar: React.FC<NavbarProps> = ({
                 edge="end"
                 color="inherit"
                 aria-label="menu"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                onClick={() => setMobileMenuOpen(true)}
                 sx={{ color: "#4a4a4a" }}
               >
                 <MenuIcon />
               </IconButton>
             </Box>
+            <Drawer
+              anchor="right"
+              open={mobileMenuOpen}
+              onClose={() => setMobileMenuOpen(false)}
+              PaperProps={{
+                sx: {
+                  width: 280,
+                  bgcolor: "#f5e6d3",
+                  padding: 2,
+                },
+              }}
+            >
+              <Box>
+                {dropdownMenus.map((menu) => (
+                  <Box key={menu.id} sx={{ mb: 2 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: "bold", mb: 1 }}
+                    >
+                      {menu.title}
+                    </Typography>
+                    {menu.items.map((item) => (
+                      <MenuItem
+                        key={item.path}
+                        component={Link}
+                        to={item.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        sx={{
+                          borderRadius: 1,
+                          transition: "0.3s",
+                          "&:hover": {
+                            bgcolor: "#ecdcc8",
+                            transform: "translateX(5px)",
+                          },
+                        }}
+                      >
+                        <ListItemIcon>
+                          <EventIcon
+                            fontSize="small"
+                            sx={{ color: "#d35400" }}
+                          />
+                        </ListItemIcon>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Box>
+                ))}
+
+                <Divider sx={{ my: 2 }} />
+
+                <MenuItem
+                  component={Link}
+                  to="/donate"
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <DonateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  {t("common.donate")}
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <InfoIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  {t("common.about")}
+                </MenuItem>
+
+                <Divider sx={{ my: 2 }} />
+
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage("en");
+                    setMobileMenuOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <TranslateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  English
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage("mr");
+                    setMobileMenuOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <TranslateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  मराठी
+                </MenuItem>
+
+                {isAuthenticated ? (
+                  <MenuItem
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{
+                      borderRadius: 1,
+                      transition: "0.3s",
+                      "&:hover": {
+                        bgcolor: "#ecdcc8",
+                        transform: "translateX(5px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <AccountCircle
+                        fontSize="small"
+                        sx={{ color: "#d35400" }}
+                      />
+                    </ListItemIcon>
+                    {currentUser?.username}
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    component={Link}
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{
+                      borderRadius: 1,
+                      transition: "0.3s",
+                      "&:hover": {
+                        bgcolor: "#ecdcc8",
+                        transform: "translateX(5px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <LoginIcon fontSize="small" sx={{ color: "#d35400" }} />
+                    </ListItemIcon>
+                    {t("common.login")}
+                  </MenuItem>
+                )}
+              </Box>
+            </Drawer>
           </Toolbar>
         </Container>
       </AppBar>
