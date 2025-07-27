@@ -30,6 +30,7 @@ import AboutTemple from "./components/temple/AboutTemple";
 import MobileOTPAuth from "./components/auth/MobileOTPAuth";
 import UserDashboard from "./components/dashboard/UserDashboard";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import DonatePage from "components/donations/DonatePage";
 import {
   ProtectedRoute,
   AdminRoute,
@@ -70,6 +71,7 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/events" element={<EventsList />} />
               <Route path="/about" element={<AboutTemple />} />
+              <Route path="/donate" element={<DonatePage />} />
               <Route path="/priests" element={<PriestsList />} />
               <Route path="/services/puja" element={<PujaServices />} />
 

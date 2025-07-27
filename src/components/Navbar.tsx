@@ -47,8 +47,6 @@ const Navbar: React.FC<NavbarProps> = ({
   const [currentUser, setCurrentUser] = React.useState(
     authService.getCurrentUser()
   );
-  console.log("isAdminUser", isAdminUser);
-  console.log("currentUser", currentUser);
 
   const [anchorEl, setAnchorEl] = React.useState<{
     [key: string]: HTMLElement | null;
@@ -107,23 +105,18 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   const dropdownMenus: DropdownMenu[] = [
-    {
-      id: "religious",
-      title: t("temple.religious"),
-      items: [
-        { label: t("temple.pujaServices"), path: "/services/puja" },
-        { label: t("temple.priests"), path: "/priests" },
-      ],
-    },
+    // {
+    //   id: "religious",
+    //   title: t("temple.religious"),
+    //   items: [
+    //     { label: t("temple.pujaServices"), path: "/services/puja" },
+    //     { label: t("temple.priests"), path: "/priests" },
+    //   ],
+    // },
     {
       id: "calendar",
-      title: t("temple.calendar"),
+      title: t("temple.events"),
       items: [{ label: t("temple.currentEvents"), path: "/events" }],
-    },
-    {
-      id: "about",
-      title: t("common.about"),
-      items: [{ label: t("common.about"), path: "/about" }],
     },
   ];
 
@@ -148,13 +141,13 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9742;
                 </Box>
-                (123) 456-7890
+                +91 836 924 2065
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9993;
                 </Box>
-                info@temple.org
+                shreekalambadevi@org
               </Box>
             </Grid>
             <Grid
@@ -245,7 +238,32 @@ const Navbar: React.FC<NavbarProps> = ({
                   </Menu>
                 </Box>
               ))}
-
+              <Button
+                component={Link}
+                to="/donate"
+                sx={{
+                  color: "#4a4a4a",
+                  "&:hover": {
+                    color: "#d35400",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                {t("common.donate")}
+              </Button>
+              <Button
+                component={Link}
+                to="/about"
+                sx={{
+                  color: "#4a4a4a",
+                  "&:hover": {
+                    color: "#d35400",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                {t("common.about")}
+              </Button>
               {/* Language Button */}
               <Button
                 startIcon={<TranslateIcon />}
