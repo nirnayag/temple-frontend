@@ -30,14 +30,19 @@ import AboutTemple from "./components/temple/AboutTemple";
 import MobileOTPAuth from "./components/auth/MobileOTPAuth";
 import UserDashboard from "./components/dashboard/UserDashboard";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import DonatePage from "components/donations/DonatePage";
 import {
   ProtectedRoute,
   AdminRoute,
   PublicRoute,
 } from "./components/auth/ProtectedRoute";
 import ProfileEdit from "./components/profile/ProfileEdit";
+import authService from "services/auth";
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(
+    authService.isLoggedIn()
+  );
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -45,7 +50,10 @@ const App: React.FC = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
         >
-          <Navbar />
+          <Navbar
+            isAuthenticated={isAuthenticated || false}
+            setIsAuthenticated={setIsAuthenticated}
+          />
 
           {/* Main content */}
           <Box component="main" sx={{ flexGrow: 1 }}>
@@ -63,12 +71,18 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/events" element={<EventsList />} />
               <Route path="/about" element={<AboutTemple />} />
+              <Route path="/donate" element={<DonatePage />} />
               <Route path="/priests" element={<PriestsList />} />
               <Route path="/services/puja" element={<PujaServices />} />
 
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<UserDashboard />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <UserDashboard setIsAuthenticated={setIsAuthenticated} />
+                  }
+                />
                 <Route
                   path="/profile"
                   element={<Navigate to="/profile/edit" replace />}

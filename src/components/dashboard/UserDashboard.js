@@ -28,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import { eventService, devoteeService } from "../../services/api";
 import authService from "../../services/auth";
+import PropTypes from "prop-types";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: "#E2DFD2",
@@ -79,7 +80,7 @@ const EventCard = styled(Paper)(({ theme }) => ({
   },
 }));
 
-const UserDashboard = () => {
+const UserDashboard = ({ setIsAuthenticated }) => {
   const [user, setUser] = useState(null);
   const [devotee, setDevotee] = useState(null);
   const [events, setEvents] = useState([]);
@@ -87,6 +88,7 @@ const UserDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    setIsAuthenticated(authService.isLoggedIn());
     const fetchUserData = async () => {
       try {
         setLoading(true);
@@ -103,7 +105,6 @@ const UserDashboard = () => {
         setLoading(false);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -472,6 +473,9 @@ const UserDashboard = () => {
       </Container>
     </Box>
   );
+};
+UserDashboard.propTypes = {
+  setIsAuthenticated: PropTypes.func.isRequired,
 };
 
 export default UserDashboard;
