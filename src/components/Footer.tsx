@@ -45,23 +45,26 @@ const Footer: React.FC = () => {
               gutterBottom
               sx={{ color: "#f5e6d3", fontWeight: "bold" }}
             >
-              {t("temple.services")}
+              {t("temple.timings")}
             </Typography>
-            <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-              <Box component="li" sx={{ mb: 1 }}>
-                <StyledLink to="/services/puja">
-                  {t("temple.pujaServices")}
-                </StyledLink>
-              </Box>
-              <Box component="li" sx={{ mb: 1 }}>
-                <StyledLink to="/services/schedule">
-                  {t("temple.pujaSchedule")}
-                </StyledLink>
-              </Box>
-              <Box component="li" sx={{ mb: 1 }}>
-                <StyledLink to="/festivals">{t("temple.festivals")}</StyledLink>
-              </Box>
-            </Box>
+            <div className=" rounded text-white">
+              <div className="d-flex justify-content-between small mb-1">
+                <span>Morning Aarti:</span>
+                <span className="text-warning">6:00 AM</span>
+              </div>
+              <div className="d-flex justify-content-between small mb-1">
+                <span>Darshan:</span>
+                <span className="text-warning">6:30 AM - 8:30 PM</span>
+              </div>
+              <div className="d-flex justify-content-between small mb-1">
+                <span>Evening Aarti:</span>
+                <span className="text-warning">7:00 PM</span>
+              </div>
+              <div className="d-flex justify-content-between small">
+                <span>Prasadam:</span>
+                <span className="text-warning">12:00 - 2:00 PM</span>
+              </div>
+            </div>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <Typography
@@ -69,7 +72,7 @@ const Footer: React.FC = () => {
               gutterBottom
               sx={{ color: "#f5e6d3", fontWeight: "bold" }}
             >
-              {t("temple.onlineServices")}
+              {t("temple.services")}
             </Typography>
             <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
               <Box component="li" sx={{ mb: 1 }}>
@@ -96,13 +99,13 @@ const Footer: React.FC = () => {
               {t("common.contact")}
             </Typography>
             <Typography variant="body2" paragraph sx={{ color: "#f5e6d3" }}>
-              {t("temple.address")}
+              Address : {t("temple.address")}
             </Typography>
             <Typography variant="body2" paragraph sx={{ color: "#f5e6d3" }}>
-              {t("temple.phone")}: (123) 456-7890
+              Phone : {t("temple.phone")}
             </Typography>
             <Typography variant="body2" sx={{ color: "#f5e6d3" }}>
-              {t("temple.email")}: info@temple.org
+              Email : {t("temple.email")}
             </Typography>
           </Grid>
         </Grid>

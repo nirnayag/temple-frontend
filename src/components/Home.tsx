@@ -468,7 +468,7 @@ const Home: React.FC = () => {
             </Typography>
             <Button
               component={RouterLink}
-              to="/about"
+              to="/donate"
               variant="contained"
               sx={{
                 mt: 2,
