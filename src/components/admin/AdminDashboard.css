@@ -31,9 +31,6 @@
   --temple-subtle: #6c757d; /* Subtle text color */
 }
 
-
-
-
 body {
   background-color: var(--temple-background);
 }
@@ -420,7 +417,7 @@ body {
 }
 
 /* Timeline styling for AboutTemple page */
-.timeline-line {
+/* .timeline-line {
   position: absolute;
   left: 8.3%;
   top: 0;
@@ -428,8 +425,13 @@ body {
   width: 2px;
   background-color: var(--temple-primary);
   transform: translateX(-50%);
+<<<<<<< HEAD
 }
 
+=======
+} */
+/* 
+>>>>>>> Frontend/Bugs/paras/260725-1142
 .timeline-circle {
   width: 60px;
   height: 60px;
@@ -443,12 +445,12 @@ body {
   margin: 0 auto;
   position: relative;
   z-index: 2;
-}
+} */
 
-.timeline-item {
+/* .timeline-item {
   position: relative;
   padding-bottom: 20px;
-}
+} */
 
 @media (max-width: 767px) {
   .timeline-line {

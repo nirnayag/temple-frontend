@@ -9,6 +9,27 @@ import {
   Badge,
   Container,
 } from "react-bootstrap";
+import RoomIcon from "@mui/icons-material/Room";
+import {
+  Container as MuiContainer,
+  Grid,
+  Typography,
+  Card as MuiCard,
+  CardContent,
+  CardHeader,
+  Button as MuiButton,
+  Box,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  CircularProgress,
+  Alert as MuiAlert,
+  Chip,
+  TypographyProps,
+} from "@mui/material";
+import { styled as MuiStyled } from "@mui/material/styles";
 import { eventService } from "../../services/api";
 import authService from "../../services/auth";
 import { useTranslation } from "react-i18next";
@@ -150,7 +171,47 @@ const EventsList = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
-
+  const dummyUpcomingEvents = [
+    {
+      id: 1,
+      tag: "festival",
+      date: "August 15, 2025",
+      time: "6:00 AM - 10:00 PM",
+      title: "Krishna Janmashtami",
+      description:
+        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
+      location: "Main Temple Hall",
+      attendees: "450 / 500 registered",
+      image:
+        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
+    },
+    {
+      id: 2,
+      tag: "spiritual",
+      date: "August 18, 2025",
+      time: "7:00 AM - 9:00 AM",
+      title: "Satsang & Meditation",
+      description:
+        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
+      location: "Meditation Hall",
+      attendees: "20 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
+    },
+    {
+      id: 3,
+      tag: "Festival",
+      date: "August 27, 2025",
+      time: "7:30 AM - 11:00 AM",
+      title: "Ganesh Chaturti",
+      description:
+        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
+      location: "Mandap",
+      attendees: "100 / 100 registered",
+      image:
+        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
+    },
+  ];
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -214,29 +275,9 @@ const EventsList = () => {
   }
 
   return (
-    <Container fluid className="px-4">
-      <Card
-        className="border-0 shadow-sm mb-5"
-        style={{ backgroundColor: "#f5e6d3", borderRadius: "15px" }}
-      >
-        <Card.Header
-          className="bg-temple text-white"
-          style={{ backgroundColor: "#d35400", borderRadius: "15px 15px 0 0" }}
-        >
-          <div
-            className="d-flex justify-content-between align-items-center"
-            style={{ backgroundColor: "red" }}
-          >
-            <h3 className="mb-0">{t("events.title")}</h3>
-          </div>
-        </Card.Header>
-        <Card.Body
-          style={{
-            backgroundColor: "#f5e6d3",
-            color: "#4a4a4a",
-            padding: "2rem",
-          }}
-        >
+    <Container fluid style={{ backgroundColor: "#" }}>
+      <Card>
+        <Card.Body>
           {error && (
             <Alert variant="danger">
               {error}
@@ -251,27 +292,51 @@ const EventsList = () => {
             </Alert>
           )}
 
-          <FilterContainer>
-            <div className="d-flex align-items-center mb-3">
-              <FaFilter className="me-2" />
-              <h5 className="mb-0">{t("events.filter")}</h5>
-            </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <h4 style={{ margin: 0, fontWeight: "600", fontSize: "1.5rem" }}>
+              <span
+                style={{
+                  color: "#e05a00",
+                  borderBottom: "2px solid #e05a00",
+                  paddingBottom: "2px",
+                }}
+              >
+                Upcoming
+              </span>{" "}
+              Events
+            </h4>
+
             <Form.Select
               value={filter}
               onChange={handleFilterChange}
-              className="shadow-sm"
+              style={{
+                width: "160px",
+                fontSize: "0.9rem",
+                padding: "6px 10px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                backgroundColor: "#fff",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              }}
             >
-              <option value="all">{t("events.filters.all")}</option>
-              <option value="upcoming">{t("events.filters.upcoming")}</option>
-              <option value="past">{t("events.filters.past")}</option>
-              <option value="amavsya">{t("events.filters.amavsya")}</option>
-              <option value="festival">{t("events.filters.festival")}</option>
-              <option value="discourse">{t("events.filters.discourse")}</option>
-              <option value="community">{t("events.filters.community")}</option>
+              <option value="all">All Events</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="past">Past</option>
+              <option value="amavsya">Amavsya</option>
+              <option value="festival">Festival</option>
+              <option value="discourse">Discourse</option>
+              <option value="community">Community</option>
             </Form.Select>
-          </FilterContainer>
+          </div>
 
-          {sortedEvents.length === 0 ? (
+          {events.length === 0 ? (
             <Alert
               variant="info"
               style={{
@@ -285,85 +350,101 @@ const EventsList = () => {
             </Alert>
           ) : (
             <EventsGrid>
-              {sortedEvents.map((event) => {
+              {events.map((event) => {
                 const isPast = new Date(event.date) < new Date();
-
                 return (
-                  <StyledCard
-                    key={event._id}
-                    className={isPast ? "bg-light" : ""}
-                  >
-                    <Card.Header
-                      className={isPast ? "bg-secondary" : "bg-primary"}
-                      style={{
-                        backgroundColor: isPast ? "#e0c9a6" : "#d35400",
+                  <Grid item xs={8} md={4} key={event.id}>
+                    <MuiCard
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
                       }}
                     >
-                      <div className="d-flex justify-content-between align-items-start">
-                        <h5 className="mb-0">{event.title}</h5>
-                        <EventTypeBadge bg={getEventTypeColor(event.eventType)}>
-                          {t(`events.types.${event.eventType}`)}
-                        </EventTypeBadge>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <EventIcon>
-                        <FaCalendarAlt />
-                        <span>{new Date(event.date).toLocaleDateString()}</span>
-                      </EventIcon>
-                      <EventIcon>
-                        <FaClock />
-                        <span>
-                          {event.startTime} - {event.endTime}
-                        </span>
-                      </EventIcon>
-                      <EventIcon>
-                        <FaMapMarkerAlt />
-                        <span>{event.location}</span>
-                      </EventIcon>
-                      {event.priest && (
-                        <EventIcon>
-                          <FaUserAlt />
-                          <span>{event.priest}</span>
-                        </EventIcon>
-                      )}
-                      <p className="mt-3">{event.description}</p>
-
-                      <CardFooter>
-                        <div className="d-flex justify-content-between align-items-center">
-                          {!isPast && isLoggedIn && (
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              style={{
-                                backgroundColor: "#d35400",
-                                borderColor: "#d35400",
-                                borderRadius: "8px",
-                                padding: "0.5rem 1rem",
-                              }}
-                            >
-                              {t("events.register")}
-                            </Button>
-                          )}
-
-                          {isPast && (
-                            <Badge
-                              bg="secondary"
-                              style={{
-                                backgroundColor: "#f5e6d3",
-                                color: "#d35400",
-                                borderRadius: "8px",
-                                padding: "0.5rem 1rem",
-                                border: "1px solid #d35400",
-                              }}
-                            >
-                              {t("events.pastEvent")}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardFooter>
-                    </Card.Body>
-                  </StyledCard>
+                      <Box
+                        sx={{
+                          height: 200,
+                          backgroundImage: `url(${
+                            event.image ||
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNK7-n-r_w_qCEIjsnu8VXMBamUkSmLUr9Eg&s"
+                          })`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          borderRadius: "4px 4px 0 0",
+                        }}
+                      />
+                      <CardContent>
+                        <Chip
+                          label={event.tag}
+                          color="warning"
+                          size="small"
+                          sx={{ textTransform: "capitalize", mb: 1 }}
+                        />
+                        <Typography variant="subtitle2" color="text.secondary">
+                          {event.date} • {event.time}
+                        </Typography>
+                        <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
+                          {event.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {event.description}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mt: 2,
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          <EventIcon fontSize="small" />
+                          <Typography variant="body2">
+                            {event.date} | {event.time}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mt: 1,
+                          }}
+                        >
+                          <RoomIcon fontSize="small" />
+                          <Typography variant="body2">
+                            {event.location}
+                          </Typography>
+                        </Box>
+                        {/* <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      <PeopleIcon fontSize="small" />
+                      <Typography variant="body2">
+                        {announcement.attendees}
+                      </Typography>
+                    </Box> */}
+                        {/* <MuiButton
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        mt: 2,
+                        backgroundColor: "#f97316",
+                        "&:hover": {
+                          backgroundColor: "#ea580c",
+                        },
+                      }}
+                    >
+                      Register Now
+                    </MuiButton> */}
+                      </CardContent>
+                    </MuiCard>
+                  </Grid>
                 );
               })}
             </EventsGrid>

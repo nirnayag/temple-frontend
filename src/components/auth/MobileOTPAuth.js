@@ -111,6 +111,10 @@ const MobileOTPAuth = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
 
+  useEffect(() => {
+    console.log({ error });
+  }, [error]);
+
   const navigate = useNavigate();
   const otpInputRefs = [
     useRef(null),
@@ -250,7 +254,7 @@ const MobileOTPAuth = () => {
     setLoading(true);
 
     try {
-      const response = await authService.requestOTP(mobileNumber);
+      const response = await authService.requestOTP(`91${mobileNumber}`);
       setOtpSent(true);
       setSuccess(t("auth.otpSent", { mobile: mobileNumber }));
       setCurrentStep(AuthStep.VERIFY_OTP);
@@ -276,16 +280,18 @@ const MobileOTPAuth = () => {
     setLoading(true);
 
     try {
-      const response = await authService.verifyOTP(mobileNumber, otp.join(""));
-      console.log("response", response);
-      if (response.isNewUser) {
+      const response = await authService.verifyOTP(
+        `91${mobileNumber}`,
+        otp.join("")
+      );
+
+      if (response.requiresRegistration) {
         setCurrentStep(AuthStep.REGISTRATION);
         setSuccess(t("auth.otpVerified"));
       } else {
         setSuccess(t("auth.loginSuccessful"));
-
         setTimeout(() => {
-          if (response.user.role === "admin") {
+          if (response?.user?.role === "admin") {
             navigate("/admin/dashboard");
           } else {
             navigate("/dashboard");
@@ -294,7 +300,6 @@ const MobileOTPAuth = () => {
       }
     } catch (err) {
       console.error("Error verifying OTP:", err);
-
       if (err.response?.data?.requiresRegistration) {
         setCurrentStep(AuthStep.REGISTRATION);
       } else {
@@ -320,16 +325,14 @@ const MobileOTPAuth = () => {
     setLoading(true);
 
     try {
-      const response = await authService.verifyOTPAndRegister(
-        mobileNumber,
+      const response = await authService.register(
+        `91${mobileNumber}`,
         otp.join(""),
         userData
       );
-
       setSuccess(t("auth.registrationSuccessful"));
-
       setTimeout(() => {
-        if (response.user.role === "admin") {
+        if (response?.user?.role === "admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");
@@ -360,7 +363,9 @@ const MobileOTPAuth = () => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <PhoneIcon sx={{ color: "#d35400" }} />
+              <Typography sx={{ color: "#d35400", fontWeight: 500 }}>
+                +91
+              </Typography>
             </InputAdornment>
           ),
         }}
@@ -405,6 +410,11 @@ const MobileOTPAuth = () => {
           />
         ))}
       </Box>
+      {error && (
+        <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
+      )}
 
       <Typography
         variant="body2"
