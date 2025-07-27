@@ -408,8 +408,8 @@ const Home: React.FC = () => {
     {
       id: 1,
       tag: "Important",
-      date: "Dec 28, 2024",
-      title: "Special Aarti on New Year",
+      date: "Aug 27, 2024",
+      title: "Special Aarti on Ganesh chaturti",
       description:
         "Join us for a special New Year blessing ceremony. Experience divine grace as we welcome 2025 with traditional prayers and prasadam distribution.",
       color: "orange",
