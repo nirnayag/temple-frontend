@@ -455,25 +455,50 @@ const Home: React.FC = () => {
         <HeroContent>
           <Container>
             <Typography
-              mt={-6}
-              ml={-6}
               variant="h2"
               component="h1"
               gutterBottom
+              sx={{
+                fontSize: {
+                  xs: "2rem", // small screens
+                  sm: "2.5rem",
+                  md: "3rem", // medium screens
+                  lg: "4rem", // large screens
+                },
+                mb: 2,
+              }}
             >
               {t("home.hero.title")}
             </Typography>
-            <Typography ml={-6} variant="h5" gutterBottom>
+
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                fontSize: {
+                  xs: "1.1rem",
+                  sm: "1.25rem",
+                  md: "1.5rem",
+                },
+                mb: 3,
+              }}
+            >
               {templeInfo?.tagline || t("home.hero.subtitle")}
             </Typography>
+
             <Button
               component={RouterLink}
               to="/donate"
               variant="contained"
               sx={{
                 mt: 2,
-                ml: -6,
                 bgcolor: "#d35400",
+                px: 3,
+                py: 1.5,
+                fontSize: {
+                  xs: "0.9rem",
+                  sm: "1rem",
+                },
                 "&:hover": {
                   bgcolor: "#b34700",
                 },
