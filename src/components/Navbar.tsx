@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import Divider from "@mui/material/Divider";
+
 import {
   AppBar,
   Box,
@@ -11,10 +14,28 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  ListItemIcon,
 } from "@mui/material";
+import { Fade } from "@mui/material";
+import {
+  Info as InfoIcon,
+  Language as LanguageIcon,
+  Login as LoginIcon,
+  Favorite as DonateIcon,
+  Celebration as EventIcon,
+  Translate as TranslateIcon,
+  AccountCircle,
+} from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+// import InfoIcon from "@mui/icons-material/Info";
+// import LanguageIcon from "@mui/icons-material/Language";
+// import LoginIcon from "@mui/icons-material/Login";
+import PersonIcon from "@mui/icons-material/Person";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import TranslateIcon from "@mui/icons-material/Translate";
+// import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import authService from "../services/auth";
@@ -30,20 +51,23 @@ interface DropdownMenu {
   }[];
 }
 
-const Navbar: React.FC = () => {
-  const { i18n } = useTranslation();
-  const [isAuthenticated, setIsAuthenticated] = React.useState(
-    authService.isLoggedIn()
-  );
+interface NavbarProps {
+  isAuthenticated: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  console.log("isAuthenticated", isAuthenticated);
+const Navbar: React.FC<NavbarProps> = ({
+  isAuthenticated,
+  setIsAuthenticated,
+}) => {
+  const { i18n } = useTranslation();
+
+  console.log("isAuthenticated from navbar");
 
   const [isAdminUser, setIsAdminUser] = React.useState(authService.isAdmin());
   const [currentUser, setCurrentUser] = React.useState(
     authService.getCurrentUser()
   );
-  console.log("isAdminUser", isAdminUser);
-  console.log("currentUser", currentUser);
 
   const [anchorEl, setAnchorEl] = React.useState<{
     [key: string]: HTMLElement | null;
@@ -53,6 +77,8 @@ const Navbar: React.FC = () => {
     React.useState<null | HTMLElement>(null);
 
   React.useEffect(() => {
+    console.log("useEffectsruns from 56");
+
     const updateAuthState = () => {
       setIsAuthenticated(authService.isLoggedIn());
       setIsAdminUser(authService.isAdmin());
@@ -100,23 +126,18 @@ const Navbar: React.FC = () => {
   };
 
   const dropdownMenus: DropdownMenu[] = [
-    {
-      id: "religious",
-      title: t("temple.religious"),
-      items: [
-        { label: t("temple.pujaServices"), path: "/services/puja" },
-        { label: t("temple.priests"), path: "/priests" },
-      ],
-    },
+    // {
+    //   id: "religious",
+    //   title: t("temple.religious"),
+    //   items: [
+    //     { label: t("temple.pujaServices"), path: "/services/puja" },
+    //     { label: t("temple.priests"), path: "/priests" },
+    //   ],
+    // },
     {
       id: "calendar",
-      title: t("temple.calendar"),
+      title: t("temple.events"),
       items: [{ label: t("temple.currentEvents"), path: "/events" }],
-    },
-    {
-      id: "about",
-      title: t("common.about"),
-      items: [{ label: t("common.about"), path: "/about" }],
     },
   ];
 
@@ -141,13 +162,13 @@ const Navbar: React.FC = () => {
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9742;
                 </Box>
-                (123) 456-7890
+                +91 836 924 2065
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9993;
                 </Box>
-                info@temple.org
+                {t("temple.email")}
               </Box>
             </Grid>
             <Grid
@@ -238,7 +259,32 @@ const Navbar: React.FC = () => {
                   </Menu>
                 </Box>
               ))}
-
+              <Button
+                component={Link}
+                to="/donate"
+                sx={{
+                  color: "#4a4a4a",
+                  "&:hover": {
+                    color: "#d35400",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                {t("common.donate")}
+              </Button>
+              <Button
+                component={Link}
+                to="/about"
+                sx={{
+                  color: "#4a4a4a",
+                  "&:hover": {
+                    color: "#d35400",
+                    bgcolor: "transparent",
+                  },
+                }}
+              >
+                {t("common.about")}
+              </Button>
               {/* Language Button */}
               <Button
                 startIcon={<TranslateIcon />}
@@ -287,7 +333,7 @@ const Navbar: React.FC = () => {
                     },
                   }}
                 >
-                  {currentUser?.username || t("common.login")}
+                  {currentUser?.username}
                 </Button>
               ) : (
                 <Button
@@ -313,12 +359,184 @@ const Navbar: React.FC = () => {
                 edge="end"
                 color="inherit"
                 aria-label="menu"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                onClick={() => setMobileMenuOpen(true)}
                 sx={{ color: "#4a4a4a" }}
               >
                 <MenuIcon />
               </IconButton>
             </Box>
+            <Drawer
+              anchor="right"
+              open={mobileMenuOpen}
+              onClose={() => setMobileMenuOpen(false)}
+              PaperProps={{
+                sx: {
+                  width: 280,
+                  bgcolor: "#f5e6d3",
+                  padding: 2,
+                },
+              }}
+            >
+              <Box>
+                {dropdownMenus.map((menu) => (
+                  <Box key={menu.id} sx={{ mb: 2 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: "bold", mb: 1 }}
+                    >
+                      {menu.title}
+                    </Typography>
+                    {menu.items.map((item) => (
+                      <MenuItem
+                        key={item.path}
+                        component={Link}
+                        to={item.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        sx={{
+                          borderRadius: 1,
+                          transition: "0.3s",
+                          "&:hover": {
+                            bgcolor: "#ecdcc8",
+                            transform: "translateX(5px)",
+                          },
+                        }}
+                      >
+                        <ListItemIcon>
+                          <EventIcon
+                            fontSize="small"
+                            sx={{ color: "#d35400" }}
+                          />
+                        </ListItemIcon>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </Box>
+                ))}
+
+                <Divider sx={{ my: 2 }} />
+
+                <MenuItem
+                  component={Link}
+                  to="/donate"
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <DonateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  {t("common.donate")}
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <InfoIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  {t("common.about")}
+                </MenuItem>
+
+                <Divider sx={{ my: 2 }} />
+
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage("en");
+                    setMobileMenuOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <TranslateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  English
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage("mr");
+                    setMobileMenuOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 1,
+                    transition: "0.3s",
+                    "&:hover": {
+                      bgcolor: "#ecdcc8",
+                      transform: "translateX(5px)",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <TranslateIcon fontSize="small" sx={{ color: "#d35400" }} />
+                  </ListItemIcon>
+                  मराठी
+                </MenuItem>
+
+                {isAuthenticated ? (
+                  <MenuItem
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{
+                      borderRadius: 1,
+                      transition: "0.3s",
+                      "&:hover": {
+                        bgcolor: "#ecdcc8",
+                        transform: "translateX(5px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <AccountCircle
+                        fontSize="small"
+                        sx={{ color: "#d35400" }}
+                      />
+                    </ListItemIcon>
+                    {currentUser?.username}
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    component={Link}
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{
+                      borderRadius: 1,
+                      transition: "0.3s",
+                      "&:hover": {
+                        bgcolor: "#ecdcc8",
+                        transform: "translateX(5px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <LoginIcon fontSize="small" sx={{ color: "#d35400" }} />
+                    </ListItemIcon>
+                    {t("common.login")}
+                  </MenuItem>
+                )}
+              </Box>
+            </Drawer>
           </Toolbar>
         </Container>
       </AppBar>
