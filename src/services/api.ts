@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // API base path for all endpoints
-const API_URL = "https://temple-backed-production.up.railway.app/api";
+const API_URL = "https://api.shreekalambadevi.org/api";
 
 // Create an axios instance with base URL
 const api = axios.create({
