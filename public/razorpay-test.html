@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            background-color: #3399cc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Razorpay Integration Test</h1>
+    
+    <div>
+        <h3>Test Configuration:</h3>
+        <p><strong>Key ID:</strong> rzp_test_E9LEIWSCMKLygJ</p>
+        <p><strong>Environment:</strong> Test Mode</p>
+        <p><strong>Amount:</strong> ₹100 (10000 paise)</p>
+    </div>
+
+    <div>
+        <button onclick="testRazorpayScript()">1. Test Script Loading</button>
+        <button onclick="testRazorpayInstance()">2. Test Razorpay Instance</button>
+        <button onclick="testSimplePayment()">3. Test Simple Payment</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function addResult(message, isSuccess = true) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${isSuccess ? 'success' : 'error'}`;
+            div.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function testRazorpayScript() {
+            addResult('Testing Razorpay script loading...', true);
+            
+            if (typeof window.Razorpay !== 'undefined') {
+                addResult('✅ Razorpay script loaded successfully', true);
+                addResult(`✅ Razorpay constructor available: ${typeof window.Razorpay}`, true);
+            } else {
+                addResult('❌ Razorpay script not loaded', false);
+            }
+        }
+
+        function testRazorpayInstance() {
+            addResult('Testing Razorpay instance creation...', true);
+            
+            try {
+                if (!window.Razorpay) {
+                    throw new Error('Razorpay not available');
+                }
+
+                const testOptions = {
+                    key: 'rzp_test_E9LEIWSCMKLygJ',
+                    amount: 10000, // 100 INR in paise
+                    currency: 'INR',
+                    name: 'Test Merchant',
+                    description: 'Test payment',
+                    order_id: 'test_order_' + Date.now(),
+                    handler: function(response) {
+                        addResult('✅ Payment handler called successfully', true);
+                        console.log('Payment response:', response);
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            addResult('ℹ️ Payment modal dismissed', true);
+                        }
+                    }
+                };
+
+                const rzp = new window.Razorpay(testOptions);
+                addResult('✅ Razorpay instance created successfully', true);
+                addResult(`✅ Instance type: ${typeof rzp}`, true);
+                addResult(`✅ Open method available: ${typeof rzp.open}`, true);
+
+            } catch (error) {
+                addResult(`❌ Error creating Razorpay instance: ${error.message}`, false);
+                console.error('Razorpay instance error:', error);
+            }
+        }
+
+        function testSimplePayment() {
+            addResult('Testing Razorpay payment modal...', true);
+            
+            try {
+                if (!window.Razorpay) {
+                    throw new Error('Razorpay not available');
+                }
+
+                const options = {
+                    key: 'rzp_test_E9LEIWSCMKLygJ',
+                    amount: 10000, // 100 INR in paise
+                    currency: 'INR',
+                    name: 'Temple Management System',
+                    description: 'Test Event Registration',
+                    image: '/logo192.png',
+                    order_id: 'test_order_' + Date.now(),
+                    prefill: {
+                        name: 'Test User',
+                        email: 'test@example.com',
+                        contact: '9999999999'
+                    },
+                    notes: {
+                        address: 'Test Address'
+                    },
+                    theme: {
+                        color: '#d35400'
+                    },
+                    handler: function(response) {
+                        addResult('🎉 Payment completed successfully!', true);
+                        addResult(`✅ Payment ID: ${response.razorpay_payment_id}`, true);
+                        addResult(`✅ Order ID: ${response.razorpay_order_id}`, true);
+                        addResult(`✅ Signature: ${response.razorpay_signature}`, true);
+                        console.log('Payment success:', response);
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            addResult('ℹ️ Payment modal was closed', true);
+                        }
+                    }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+                addResult('✅ Razorpay modal opened successfully', true);
+
+            } catch (error) {
+                addResult(`❌ Error opening Razorpay: ${error.message}`, false);
+                console.error('Razorpay payment error:', error);
+            }
+        }
+
+        // Auto-run script test on page load
+        window.onload = function() {
+            addResult('🚀 Page loaded, starting automatic tests...', true);
+            setTimeout(testRazorpayScript, 1000);
+        };
+    </script>
+</body>
+</html> 

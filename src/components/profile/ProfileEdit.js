@@ -3,6 +3,7 @@ import { Container, Card, Form, Button, Row, Col, Alert, Spinner } from 'react-b
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../../services/auth';
 import { devoteeService } from '../../services/api';
+import { Box, CircularProgress, Typography, CardContent } from '@mui/material';
 
 const ProfileEdit = () => {
   const [user, setUser] = useState(null);
@@ -114,12 +115,39 @@ const ProfileEdit = () => {
   
   if (loading) {
     return (
-      <div className="text-center py-5">
-        <Spinner animation="border" role="status" variant="primary">
+      <Container sx={{ py: 4, minHeight: "100vh", bgcolor: "#E2DFD2" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          <CircularProgress sx={{ color: "#d35400" }} />
           <span className="visually-hidden">Loading...</span>
-        </Spinner>
-        <p className="mt-3">Loading your profile...</p>
-      </div>
+        </Box>
+        <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
+          Loading your profile...
+        </Typography>
+        <Card sx={{ maxWidth: 600, mx: "auto" }}>
+          <CardContent>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+              <Box sx={{ height: 56, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+              <Box sx={{ height: 56, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+              <Box sx={{ height: 56, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+              <Box sx={{ height: 56, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+            </Box>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ flex: 1, height: 48, backgroundColor: "#f0f0f0", borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+              <Box sx={{ flex: 1, height: 48, backgroundColor: "#f0f0f0", borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+            </Box>
+          </CardContent>
+        </Card>
+      </Container>
     );
   }
   
