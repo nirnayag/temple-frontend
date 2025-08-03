@@ -1,42 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
+  Container,
   Card,
+  Row,
+  Col,
   Button,
   Alert,
   Form,
-  Row,
-  Col,
   Badge,
-  Container,
+  Spinner,
 } from "react-bootstrap";
-import RoomIcon from "@mui/icons-material/Room";
-import {
-  Container as MuiContainer,
-  Grid,
-  Typography,
-  Card as MuiCard,
-  CardContent,
-  CardHeader,
-  Button as MuiButton,
-  Box,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  CircularProgress,
-  Alert as MuiAlert,
-  Chip,
-  TypographyProps,
-} from "@mui/material";
-import { styled as MuiStyled } from "@mui/material/styles";
 import { eventService } from "../../services/api";
 import authService from "../../services/auth";
-import { useTranslation } from "react-i18next";
+import {
+  Container as MuiContainer,
+  Typography,
+  Box,
+  Grid,
+  Card as MuiCard,
+  CardContent,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
 import {
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
+  FaUsers,
+  FaEdit,
+  FaTrash,
   FaUserAlt,
   FaFilter,
 } from "react-icons/fa";
@@ -167,51 +161,12 @@ const EventsList = () => {
   const [filter, setFilter] = useState("all");
   const isLoggedIn = authService.isLoggedIn();
   const isAdmin = authService.isAdmin();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEvents();
   }, []);
-  const dummyUpcomingEvents = [
-    {
-      id: 1,
-      tag: "festival",
-      date: "August 15, 2025",
-      time: "6:00 AM - 10:00 PM",
-      title: "Krishna Janmashtami",
-      description:
-        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
-      location: "Main Temple Hall",
-      attendees: "450 / 500 registered",
-      image:
-        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
-    },
-    {
-      id: 2,
-      tag: "spiritual",
-      date: "August 18, 2025",
-      time: "7:00 AM - 9:00 AM",
-      title: "Satsang & Meditation",
-      description:
-        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
-      location: "Meditation Hall",
-      attendees: "20 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
-    },
-    {
-      id: 3,
-      tag: "Festival",
-      date: "August 27, 2025",
-      time: "7:30 AM - 11:00 AM",
-      title: "Ganesh Chaturti",
-      description:
-        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
-      location: "Mandap",
-      attendees: "100 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
-    },
-  ];
+  
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -269,6 +224,30 @@ const EventsList = () => {
       <Container className="text-center py-5">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">{t("common.loading")}</span>
+        </div>
+        <div className="mt-3">
+          <div className="row">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="col-md-6 col-lg-4 mb-4">
+                <div className="card">
+                  <div 
+                    className="card-img-top" 
+                    style={{ 
+                      height: "200px", 
+                      backgroundColor: "#f0f0f0",
+                      animation: "pulse 1.5s ease-in-out infinite"
+                    }}
+                  />
+                  <div className="card-body">
+                    <div style={{ height: "20px", backgroundColor: "#f0f0f0", marginBottom: "10px", borderRadius: "4px" }} />
+                    <div style={{ height: "16px", backgroundColor: "#f0f0f0", marginBottom: "10px", borderRadius: "4px" }} />
+                    <div style={{ height: "24px", backgroundColor: "#f0f0f0", marginBottom: "10px", borderRadius: "4px" }} />
+                    <div style={{ height: "60px", backgroundColor: "#f0f0f0", borderRadius: "4px" }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     );
@@ -360,6 +339,8 @@ const EventsList = () => {
                         display: "flex",
                         flexDirection: "column",
                       }}
+                      onClick={() => navigate(`/events/${event._id}`)}
+                      style={{ cursor: "pointer" }}
                     >
                       <Box
                         sx={{
@@ -411,7 +392,7 @@ const EventsList = () => {
                             mt: 1,
                           }}
                         >
-                          <RoomIcon fontSize="small" />
+                          <FaMapMarkerAlt />
                           <Typography variant="body2">
                             {event.location}
                           </Typography>

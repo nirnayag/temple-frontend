@@ -39,7 +39,53 @@ const DevoteesList = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-5">Loading devotees...</div>;
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <div className="mt-3">
+          <div className="card">
+            <div className="card-header">
+              <h3 className="mb-0">Devotees List</h3>
+            </div>
+            <div className="card-body">
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Membership</th>
+                      <th>Member Since</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <tr key={index}>
+                        <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                        <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                        <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                        <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                        <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                        <td>
+                          <div style={{ display: "flex", gap: "8px" }}>
+                            <div style={{ height: "32px", width: "60px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} />
+                            <div style={{ height: "32px", width: "60px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
