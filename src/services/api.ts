@@ -2,6 +2,7 @@ import axios from "axios";
 
 // API base path for all endpoints
 const API_URL = "http://localhost:4000/api";
+// "https://api.shreekalambadevi.org/api";
 
 // Create an axios instance with base URL
 const api = axios.create({
@@ -14,7 +15,7 @@ const api = axios.create({
 // Add request interceptor to include auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
