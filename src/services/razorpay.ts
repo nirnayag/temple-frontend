@@ -6,6 +6,7 @@ const RAZORPAY_KEY_SECRET = "xfTNEoWz8EKEKoijNYjjkhFH";
 
 // API base path for payment endpoints
 const API_URL = "http://localhost:4000/api";
+// "https://api.shreekalambadevi.org/api";
 
 // Create an axios instance for payment API
 const paymentApi = axios.create({
@@ -18,7 +19,7 @@ const paymentApi = axios.create({
 // Add request interceptor to include auth token
 paymentApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -49,7 +50,11 @@ paymentApi.interceptors.response.use(
 // Payment service
 export const razorpayService = {
   // Create payment order
-  createOrder: async (amount: number, eventId: string, description?: string) => {
+  createOrder: async (
+    amount: number,
+    eventId: string,
+    description?: string
+  ) => {
     try {
       const response = await paymentApi.post("/razorpay/create-order", {
         amount: amount,
@@ -64,7 +69,12 @@ export const razorpayService = {
   },
 
   // Verify payment signature
-  verifyPayment: async (razorpayOrderId: string, razorpayPaymentId: string, razorpaySignature: string, paymentId: string) => {
+  verifyPayment: async (
+    razorpayOrderId: string,
+    razorpayPaymentId: string,
+    razorpaySignature: string,
+    paymentId: string
+  ) => {
     try {
       const response = await paymentApi.post("/razorpay/verify-payment", {
         razorpayOrderId,
@@ -82,7 +92,9 @@ export const razorpayService = {
   // Get payment status
   getPaymentStatus: async (paymentId: string) => {
     try {
-      const response = await paymentApi.get(`/razorpay/payment-status/${paymentId}`);
+      const response = await paymentApi.get(
+        `/razorpay/payment-status/${paymentId}`
+      );
       return response.data;
     } catch (error) {
       console.error("Error getting payment status:", error);
@@ -122,4 +134,4 @@ export const razorpayConfig = {
   },
 };
 
-export default razorpayService; 
+export default razorpayService;

@@ -136,10 +136,42 @@ const authService = {
   },
 
   // Legacy methods - redirect to OTP auth
-  register: async (): Promise<never> => {
-    throw new Error(
-      "Traditional registration is not supported. Please use OTP authentication."
-    );
+  register: async (userData: {
+    mobileNumber: string;
+    name: string;
+    email?: string;
+    role?: string; // default will be "user" if not passed
+  }): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/auth/register", {
+      ...userData,
+      role: userData.role || "user", // ensure role is always sent
+    });
+
+    if (response.data.token) {
+      setToken(response.data.token);
+      setUser(response.data.user);
+    }
+
+    return response.data;
+  },
+
+  registerUser: async (userData: {
+    mobileNumber: string;
+    name: string;
+    email?: string;
+    role?: string; // default will be "user" if not passed
+  }): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/otp-auth/register", {
+      ...userData,
+      role: userData.role || "user", // ensure role is always sent
+    });
+
+    if (response.data.token) {
+      setToken(response.data.token);
+      setUser(response.data.user);
+    }
+
+    return response.data;
   },
 
   login: async (): Promise<never> => {
