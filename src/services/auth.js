@@ -84,6 +84,9 @@ const authService = {
   logout: () => {
     removeToken();
     removeUser();
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 100);
   },
 
   // Get current user profile

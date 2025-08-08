@@ -182,15 +182,18 @@ const authService = {
 
   // Logout user
   logout: (redirect: boolean = true): void => {
-    removeToken();
-    removeUser();
-
+    // removeToken();
+    // removeUser();
+    console.log({ redirect });
     // Optionally redirect to home page after logout
-    if (redirect) {
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 100);
-    }
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 100);
+    // if (redirect) {
+    //   setTimeout(() => {
+    //     window.location.href = "/";
+    //   }, 100);
+    // }
   },
 
   // Get current user profile
