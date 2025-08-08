@@ -67,7 +67,10 @@ export const eventService = {
   getAll: () => api.get("/events"),
   getUpcoming: () => api.get("/events/upcoming"),
   getById: (id: string) => api.get(`/events/${id}`),
-  create: (data: any) => api.post("/events", data),
+  create: (data: any) =>
+    api.post("/events", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
   update: (id: string, data: any) => api.patch(`/events/${id}`, data),
   delete: (id: string) => api.delete(`/events/${id}`),
   register: (id: string) => api.post(`/events/${id}/register`),

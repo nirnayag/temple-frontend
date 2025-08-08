@@ -83,9 +83,7 @@ const ProfileEdit = () => {
         await devoteeService.update(devotee._id, {
           phone: formData.phone,
         });
-
         setSuccess("Profile updated successfully");
-
         // Wait a moment then redirect to dashboard
         setTimeout(() => {
           navigate("/dashboard");
