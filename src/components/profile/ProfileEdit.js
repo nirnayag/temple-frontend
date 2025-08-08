@@ -25,12 +25,6 @@ const ProfileEdit = () => {
     name: "",
     email: "",
     phone: "",
-    address: "",
-    city: "",
-    state: "",
-    country: "USA",
-    preferredDeity: "",
-    preferredLanguage: "",
   });
 
   const navigate = useNavigate();
@@ -40,23 +34,15 @@ const ProfileEdit = () => {
       try {
         setLoading(true);
         const profileData = await authService.getProfile();
-
         if (profileData) {
           setUser(profileData.user);
           setDevotee(profileData.devotee);
-
           if (profileData.devotee) {
             // Populate form with existing data
             setFormData({
-              name: profileData.devotee.name || "",
+              name: profileData.user.username || "",
               email: profileData.user.email || "",
-              phone: profileData.devotee.phone || "",
-              address: profileData.devotee.address || "",
-              city: profileData.devotee.city || "",
-              state: profileData.devotee.state || "",
-              country: profileData.devotee.country || "USA",
-              preferredDeity: profileData.devotee.preferredDeity || "",
-              preferredLanguage: profileData.devotee.preferredLanguage || "",
+              phone: profileData.user.mobileNumber?.slice(2) || "",
             });
           }
         }
@@ -95,14 +81,7 @@ const ProfileEdit = () => {
       if (devotee) {
         // Update devotee information
         await devoteeService.update(devotee._id, {
-          name: formData.name,
           phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          country: formData.country,
-          preferredDeity: formData.preferredDeity,
-          preferredLanguage: formData.preferredLanguage,
         });
 
         setSuccess("Profile updated successfully");
