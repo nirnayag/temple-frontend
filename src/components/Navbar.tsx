@@ -67,6 +67,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const [currentUser, setCurrentUser] = React.useState(
     authService.getCurrentUser()
   );
+  console.log({ currentUser });
+  console.log({ isAdminUser });
+
   const [anchorEl, setAnchorEl] = React.useState<{
     [key: string]: HTMLElement | null;
   }>({});
