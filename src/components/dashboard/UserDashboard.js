@@ -131,9 +131,32 @@ const UserDashboard = ({ setIsAuthenticated }) => {
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card sx={{ height: 200 }}>
                   <CardContent>
-                    <Box sx={{ height: 40, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
-                    <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 1, borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
-                    <Box sx={{ height: 60, backgroundColor: "#f0f0f0", borderRadius: 1, animation: "pulse 1.5s ease-in-out infinite" }} />
+                    <Box
+                      sx={{
+                        height: 40,
+                        backgroundColor: "#f0f0f0",
+                        mb: 2,
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 24,
+                        backgroundColor: "#f0f0f0",
+                        mb: 1,
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 60,
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
                   </CardContent>
                 </Card>
               </Grid>
@@ -227,7 +250,7 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                 ) : (
                   <Stack spacing={2}>
                     {events?.slice(0, 5).map((event) => (
-                      <EventCard 
+                      <EventCard
                         key={event?._id}
                         onClick={() => navigate(`/events/${event?._id}`)}
                         sx={{ cursor: "pointer" }}
@@ -359,6 +382,17 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                       </Grid>
                       <Grid item xs={4}>
                         <Typography variant="body2" sx={{ color: "#666666" }}>
+                          Phone
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Typography variant="body2">
+                          {user?.mobileNumber?.slice(2)}
+                        </Typography>
+                        {console.log({ user })}
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography variant="body2" sx={{ color: "#666666" }}>
                           Role
                         </Typography>
                       </Grid>
@@ -383,86 +417,6 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                       </Grid>
                     </Grid>
                   </Box>
-
-                  {/* Personal Information */}
-                  {devotee && (
-                    <Box>
-                      <Typography variant="h6" sx={{ color: "#d35400", mb: 1 }}>
-                        Personal Information
-                      </Typography>
-                      <Divider sx={{ borderColor: "#d35400", mb: 2 }} />
-                      <Grid container spacing={2}>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Name
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.name}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Phone
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.phone || "Not provided"}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Address
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.address ? (
-                              <>
-                                {devotee.address}
-                                {devotee.city && (
-                                  <>
-                                    <br />
-                                    {devotee.city}
-                                  </>
-                                )}
-                                {devotee.state && <>, {devotee.state}</>}
-                                {devotee.country && <> {devotee.country}</>}
-                              </>
-                            ) : (
-                              "Not provided"
-                            )}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Member Since
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {formatDate(devotee.memberSince)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Membership
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Chip
-                            label={
-                              devotee.membershipType?.charAt(0).toUpperCase() +
-                                devotee.membershipType?.slice(1) || "Regular"
-                            }
-                            sx={{ bgcolor: "#d35400", color: "#E2DFD2" }}
-                          />
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  )}
 
                   {/* Action Buttons */}
                   <Stack spacing={2}>
