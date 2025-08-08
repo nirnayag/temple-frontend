@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { t } from "../utils/translationUtils";
 import RoomIcon from "@mui/icons-material/Room";
 import PeopleIcon from "@mui/icons-material/People";
+import PaymentIcon from "@mui/icons-material/Payment";
 // Import services
 import {
   eventService,
@@ -159,7 +160,7 @@ interface EventProps {
   eventType?: string;
   registrationRequired?: boolean;
   description: string;
-  bannerImage?: string;
+  imageUrl?: string;
 }
 
 interface AnnouncementProps {
@@ -203,7 +204,7 @@ interface TempleProps {
   _id: string;
   name: string;
   tagline: string;
-  bannerImage: string;
+  imageUrl: string;
 }
 
 // Helper function to get appropriate icon component
@@ -234,7 +235,6 @@ const Home: React.FC = () => {
   // const [features, setFeatures] = useState<FeatureProps[]>([]);
   // const [sections, setSections] = useState<SectionProps[]>([]);
   const [templeInfo, setTempleInfo] = useState<TempleProps | null>(null);
-
   // Loading and error states
   const [loadingAnnouncements, setLoadingAnnouncements] =
     useState<boolean>(true);
@@ -366,8 +366,6 @@ const Home: React.FC = () => {
     );
   }
 
-
-
   const getColor = (tag: any) => {
     switch (tag) {
       case "Important":
@@ -493,7 +491,13 @@ const Home: React.FC = () => {
               // Shimmer loader for events
               Array.from({ length: 3 }).map((_, index) => (
                 <Grid item xs={12} sm={8} md={4} key={index}>
-                  <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                  <Card
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
                     <Box
                       sx={{
                         height: 200,
@@ -503,19 +507,44 @@ const Home: React.FC = () => {
                       }}
                     />
                     <CardContent>
-                      <Box sx={{ height: 20, backgroundColor: "#f0f0f0", mb: 1, borderRadius: 1 }} />
-                      <Box sx={{ height: 16, backgroundColor: "#f0f0f0", mb: 1, borderRadius: 1 }} />
-                      <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 1, borderRadius: 1 }} />
-                      <Box sx={{ height: 60, backgroundColor: "#f0f0f0", borderRadius: 1 }} />
+                      <Box
+                        sx={{
+                          height: 20,
+                          backgroundColor: "#f0f0f0",
+                          mb: 1,
+                          borderRadius: 1,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          height: 16,
+                          backgroundColor: "#f0f0f0",
+                          mb: 1,
+                          borderRadius: 1,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          height: 24,
+                          backgroundColor: "#f0f0f0",
+                          mb: 1,
+                          borderRadius: 1,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          height: 60,
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: 1,
+                        }}
+                      />
                     </CardContent>
                   </Card>
                 </Grid>
               ))
             ) : upcomingEvents.length === 0 ? (
               <Grid item xs={12}>
-                <Alert severity="info">
-                  {t("home.events.noEvents")}
-                </Alert>
+                <Alert severity="info">{t("home.events.noEvents")}</Alert>
               </Grid>
             ) : (
               upcomingEvents.map((event) => (
@@ -526,7 +555,8 @@ const Home: React.FC = () => {
                       display: "flex",
                       flexDirection: "column",
                       cursor: "pointer",
-                      transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+                      transition:
+                        "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
                       "&:hover": {
                         transform: "translateY(-4px)",
                         boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
@@ -537,7 +567,10 @@ const Home: React.FC = () => {
                     <Box
                       sx={{
                         height: 200,
-                        backgroundImage: `url(${event.bannerImage || "https://via.placeholder.com/400x200?text=Event"})`,
+                        backgroundImage: `url(${
+                          event.imageUrl ||
+                          "http://localhost:4000/uploads/events/event-175469175965461546597.jpg"
+                        })`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         borderRadius: "4px 4px 0 0",
@@ -550,9 +583,9 @@ const Home: React.FC = () => {
                         size="small"
                         sx={{ textTransform: "capitalize", mb: 1 }}
                       />
-                      <Typography variant="subtitle2" color="text.secondary">
+                      {/* <Typography variant="subtitle2" color="text.secondary">
                         {formatDate(event.date)} • {formatTime(event.startTime)} - {formatTime(event.endTime)}
-                      </Typography>
+                      </Typography> */}
                       <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
                         {event.title}
                       </Typography>
@@ -570,7 +603,9 @@ const Home: React.FC = () => {
                       >
                         <EventIcon fontSize="small" />
                         <Typography variant="body2">
-                          {formatDate(event.date)} | {formatTime(event.startTime)} - {formatTime(event.endTime)}
+                          {formatDate(event.date)} |{" "}
+                          {formatTime(event.startTime)} -{" "}
+                          {formatTime(event.endTime)}
                         </Typography>
                       </Box>
                       <Box
@@ -587,6 +622,37 @@ const Home: React.FC = () => {
                         </Typography>
                       </Box>
                     </CardContent>
+                    <Box sx={{ mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        startIcon={<PaymentIcon />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/events/${event._id}/register`);
+                        }}
+                        sx={{
+                          background:
+                            "linear-gradient(90deg, #f97316, #f59e0b)", // saffron to golden
+                          color: "#fff",
+                          fontWeight: "bold",
+                          borderRadius: "8px",
+                          boxShadow: "0px 4px 10px rgba(0,0,0,0.15)",
+                          textTransform: "none",
+                          fontSize: "1rem",
+                          py: 1.2,
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(90deg, #ea580c, #d97706)",
+                            boxShadow: "0px 6px 16px rgba(249, 115, 22, 0.6)",
+                            transform: "translateY(-2px)",
+                          },
+                        }}
+                      >
+                        Register & Pay
+                      </Button>
+                    </Box>
                   </Card>
                 </Grid>
               ))
@@ -617,10 +683,37 @@ const Home: React.FC = () => {
                       pb: 3,
                     }}
                   >
-                    <Box sx={{ height: 20, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1 }} />
-                    <Box sx={{ height: 24, backgroundColor: "#f0f0f0", mb: 1, borderRadius: 1 }} />
-                    <Box sx={{ height: 60, backgroundColor: "#f0f0f0", mb: 2, borderRadius: 1 }} />
-                    <Box sx={{ height: 16, backgroundColor: "#f0f0f0", borderRadius: 1 }} />
+                    <Box
+                      sx={{
+                        height: 20,
+                        backgroundColor: "#f0f0f0",
+                        mb: 2,
+                        borderRadius: 1,
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 24,
+                        backgroundColor: "#f0f0f0",
+                        mb: 1,
+                        borderRadius: 1,
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 60,
+                        backgroundColor: "#f0f0f0",
+                        mb: 2,
+                        borderRadius: 1,
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 16,
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: 1,
+                      }}
+                    />
                   </Card>
                 </Grid>
               ))
@@ -637,7 +730,9 @@ const Home: React.FC = () => {
                     elevation={0}
                     sx={{
                       height: "100%",
-                      borderLeft: `4px solid ${getColor(announcement.type || "Notice")}`,
+                      borderLeft: `4px solid ${getColor(
+                        announcement.type || "Notice"
+                      )}`,
                       borderRadius: 2,
                       backgroundColor: "#fff7ed",
                       px: 2,
@@ -665,7 +760,9 @@ const Home: React.FC = () => {
                         }
                         size="small"
                         sx={{
-                          backgroundColor: getColor(announcement.type || "Notice"),
+                          backgroundColor: getColor(
+                            announcement.type || "Notice"
+                          ),
                           color: "#fff",
                           fontWeight: 600,
                           borderRadius: "8px",
