@@ -215,7 +215,8 @@ const Navbar: React.FC<NavbarProps> = ({
               {dropdownMenus.map((menu) => (
                 <Box key={menu.id}>
                   <Button
-                    endIcon={<KeyboardArrowDownIcon />}
+                    component={Link}
+                    to="/events"
                     onClick={(e) => handleOpenMenu(e, menu.id)}
                     sx={{
                       color: "#4a4a4a",
@@ -227,36 +228,6 @@ const Navbar: React.FC<NavbarProps> = ({
                   >
                     {menu.title}
                   </Button>
-                  <Menu
-                    anchorEl={anchorEl[menu.id]}
-                    open={Boolean(anchorEl[menu.id])}
-                    onClose={() => handleCloseMenu(menu.id)}
-                    PaperProps={{
-                      sx: {
-                        bgcolor: "#f5e6d3",
-                        "& .MuiMenuItem-root": {
-                          color: "#4a4a4a",
-                          "&:hover": {
-                            bgcolor: "#e0c9a6",
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    {menu.items.map((item) => (
-                      <MenuItem
-                        key={item.path}
-                        component={Link}
-                        to={item.path}
-                        onClick={() => {
-                          handleCloseMenu(menu.id);
-                          if (item.onClick) item.onClick();
-                        }}
-                      >
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </Menu>
                 </Box>
               ))}
               <Button
