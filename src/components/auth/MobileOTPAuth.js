@@ -314,7 +314,6 @@ const MobileOTPAuth = () => {
     setSuccess("");
 
     if (!validateRegistrationData()) {
-      console.log("line 322");
       return;
     }
 
