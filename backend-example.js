@@ -8,10 +8,10 @@ const crypto = require('crypto');
 const app = express();
 app.use(express.json());
 
-// Initialize Razorpay
+// Initialize Razorpay with updated keys
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_E9LEIWSCMKLygJ',
-  key_secret: 'xfTNEoWz8EKEKoijNYjjkhFH'
+  key_id: 'rzp_test_dZohG3RPiLcurf',
+  key_secret: 'ngHtEFjcnJZTKcFWt8T72Y3d'
 });
 
 // 1. Create Payment Order
@@ -47,7 +47,7 @@ app.post('/api/payments/verify', async (req, res) => {
     // Verify signature
     const text = orderId + '|' + paymentId;
     const generated_signature = crypto
-      .createHmac('sha256', 'xfTNEoWz8EKEKoijNYjjkhFH')
+      .createHmac('sha256', 'ngHtEFjcnJZTKcFWt8T72Y3d')
       .update(text)
       .digest('hex');
     
@@ -124,7 +124,7 @@ app.patch('/api/payments/:paymentId/status', async (req, res) => {
   }
 });
 
-// 4. Get Payment Details
+// 5. Get Payment Details
 app.get('/api/payments/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params;
@@ -145,14 +145,14 @@ app.get('/api/payments/:paymentId', async (req, res) => {
   }
 });
 
-// 5. Webhook for Payment Notifications (Optional)
+// 6. Webhook for Payment Notifications - UPDATED FOR AUTOMATIC STATUS UPDATE
 app.post('/api/payments/webhook', (req, res) => {
   try {
     const signature = req.headers['x-razorpay-signature'];
     const text = JSON.stringify(req.body);
     
     const generated_signature = crypto
-      .createHmac('sha256', 'xfTNEoWz8EKEKoijNYjjkhFH')
+      .createHmac('sha256', 'ngHtEFjcnJZTKcFWt8T72Y3d')
       .update(text)
       .digest('hex');
     
@@ -160,10 +160,31 @@ app.post('/api/payments/webhook', (req, res) => {
       // Payment is verified, process the webhook
       const event = req.body;
       
+      console.log('Webhook received:', event.event);
+      
       if (event.event === 'payment.captured') {
-        // Payment was successful
-        console.log('Payment captured:', event.payload.payment.entity.id);
-        // Update your database, send emails, etc.
+        // Payment was successful - UPDATE STATUS TO COMPLETED
+        const paymentEntity = event.payload.payment.entity;
+        
+        console.log('Payment captured:', paymentEntity.id);
+        
+        // Update payment status to completed in database
+        // This is where you automatically update the status
+        updatePaymentStatusInDB(paymentEntity.id, 'completed');
+        
+        // Send confirmation email to user
+        // sendPaymentConfirmationEmail(paymentEntity);
+        
+        // Update event registration if needed
+        // updateEventRegistration(paymentEntity);
+        
+      } else if (event.event === 'payment.failed') {
+        // Payment failed
+        const paymentEntity = event.payload.payment.entity;
+        console.log('Payment failed:', paymentEntity.id);
+        
+        // Update payment status to failed
+        updatePaymentStatusInDB(paymentEntity.id, 'failed');
       }
       
       res.json({ received: true });
@@ -176,9 +197,35 @@ app.post('/api/payments/webhook', (req, res) => {
   }
 });
 
+// Helper function to update payment status in database
+async function updatePaymentStatusInDB(paymentId, status) {
+  try {
+    // Example database update (replace with your actual database logic):
+    // await Payment.findOneAndUpdate(
+    //   { razorpayPaymentId: paymentId },
+    //   { status: status, updatedAt: new Date() }
+    // );
+    
+    console.log(`Payment ${paymentId} status updated to: ${status}`);
+    
+    // If payment is completed, you can also:
+    if (status === 'completed') {
+      // 1. Mark event registration as confirmed
+      // 2. Send confirmation SMS/Email
+      // 3. Generate receipt
+      // 4. Update inventory if needed
+      console.log(`Payment ${paymentId} completed - triggering post-payment actions`);
+    }
+    
+  } catch (error) {
+    console.error('Error updating payment status in DB:', error);
+  }
+}
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log('Razorpay webhook endpoint: /api/payments/webhook');
 });
 
 // Required npm packages:
