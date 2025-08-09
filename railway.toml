@@ -3,10 +3,10 @@ builder = "nixpacks"
 
 [variables]
 CI = "false"
-PORT = "3000"
+GENERATE_SOURCEMAP = "false"
 
 [deploy]
-startCommand = "npm run build && npm run start"
+startCommand = "npm run build:prod && serve -s build -p $PORT"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure" 
