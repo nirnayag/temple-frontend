@@ -17,6 +17,8 @@ import DescriptionIcon from "@mui/icons-material/Notes";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useCreateEvent, useEditEvent } from "tanstack/Queries/events_tanstack";
 
@@ -26,9 +28,12 @@ export default function EventDialogForm({ open, onClose, eventDataforEdit }) {
     description: "",
     startDate: "",
     endDate: "",
+    date: "",
     startTime: "",
     endTime: "",
+    eventType: "",
     location: "",
+    image: null,
   });
   const { mutate: createEvent, isPending: createEventIsPending } =
     useCreateEvent();
@@ -61,21 +66,46 @@ export default function EventDialogForm({ open, onClose, eventDataforEdit }) {
     }
   }, [eventDataforEdit]);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!eventDataforEdit) {
+  //     createEvent(formData, {
+  //       onSuccess: () => {
+  //         onClose();
+  //       },
+  //     });
+  //   } else {
+  //     EditEvent(
+  //       { id: eventDataforEdit._id, data: formData },
+  //       {
+  //         onSuccess: () => {
+  //           onClose();
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const dataToSend = new FormData();
+
+    // Append all formData keys
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== null && formData[key] !== undefined) {
+        dataToSend.append(key, formData[key]);
+      }
+    });
+
     if (!eventDataforEdit) {
-      createEvent(formData, {
-        onSuccess: () => {
-          onClose();
-        },
+      createEvent(dataToSend, {
+        onSuccess: onClose,
       });
     } else {
       EditEvent(
-        { id: eventDataforEdit._id, data: formData },
+        { id: eventDataforEdit._id, data: dataToSend },
         {
-          onSuccess: () => {
-            onClose();
-          },
+          onSuccess: onClose,
         }
       );
     }
@@ -171,29 +201,10 @@ export default function EventDialogForm({ open, onClose, eventDataforEdit }) {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Start Date"
-                name="startDate"
+                label="date"
+                name="date"
                 type="date"
-                value={formData.startDate}
-                onChange={handleInputChange}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                required
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarTodayIcon color="warning" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="End Date"
-                name="endDate"
-                type="date"
-                value={formData.endDate}
+                value={formData.date}
                 onChange={handleInputChange}
                 InputLabelProps={{ shrink: true }}
                 fullWidth
@@ -245,7 +256,7 @@ export default function EventDialogForm({ open, onClose, eventDataforEdit }) {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Location"
                 name="location"
@@ -261,6 +272,59 @@ export default function EventDialogForm({ open, onClose, eventDataforEdit }) {
                   ),
                 }}
               />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Event Type"
+                name="eventType"
+                value={formData.eventType}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              >
+                <MenuItem value="puja">Puja</MenuItem>
+                <MenuItem value="festival">Festival</MenuItem>
+                <MenuItem value="discourse">Discourse</MenuItem>
+                <MenuItem value="community">Community</MenuItem>
+                <MenuItem value="class">Class</MenuItem>
+                <MenuItem value="cultural">Cultural</MenuItem>
+                <MenuItem value="other">Other</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Button
+                variant="outlined"
+                component="label"
+                fullWidth
+                startIcon={<CloudUploadIcon color="warning" />}
+              >
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFormData({ ...formData, image: e.target.files[0] })
+                  }
+                />
+              </Button>
+
+              {/* Preview the image if selected */}
+              {formData.image && (
+                <Box mt={2}>
+                  <img
+                    src={URL.createObjectURL(formData.image)}
+                    alt="Preview"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: 8,
+                    }}
+                  />
+                </Box>
+              )}
             </Grid>
           </Grid>
         </DialogContent>

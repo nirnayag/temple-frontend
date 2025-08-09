@@ -28,6 +28,8 @@ import {
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 // import InfoIcon from "@mui/icons-material/Info";
 // import LanguageIcon from "@mui/icons-material/Language";
 // import LoginIcon from "@mui/icons-material/Login";
@@ -61,13 +63,12 @@ const Navbar: React.FC<NavbarProps> = ({
   setIsAuthenticated,
 }) => {
   const { i18n } = useTranslation();
-
-  console.log("isAuthenticated from navbar");
-
   const [isAdminUser, setIsAdminUser] = React.useState(authService.isAdmin());
   const [currentUser, setCurrentUser] = React.useState(
     authService.getCurrentUser()
   );
+  console.log({ currentUser });
+  console.log({ isAdminUser });
 
   const [anchorEl, setAnchorEl] = React.useState<{
     [key: string]: HTMLElement | null;
@@ -77,19 +78,16 @@ const Navbar: React.FC<NavbarProps> = ({
     React.useState<null | HTMLElement>(null);
 
   React.useEffect(() => {
-    console.log("useEffectsruns from 56");
-
     const updateAuthState = () => {
       setIsAuthenticated(authService.isLoggedIn());
       setIsAdminUser(authService.isAdmin());
       setCurrentUser(authService.getCurrentUser());
     };
-
     updateAuthState();
     window.addEventListener("auth_state_change", updateAuthState);
     return () =>
       window.removeEventListener("auth_state_change", updateAuthState);
-  }, []);
+  }, [isAuthenticated]);
 
   const handleOpenMenu = (
     event: React.MouseEvent<HTMLElement>,
@@ -109,6 +107,8 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleLogout = () => {
+    console.log("logout calleds");
+
     authService.logout(true);
   };
 
@@ -215,7 +215,8 @@ const Navbar: React.FC<NavbarProps> = ({
               {dropdownMenus.map((menu) => (
                 <Box key={menu.id}>
                   <Button
-                    endIcon={<KeyboardArrowDownIcon />}
+                    component={Link}
+                    to="/events"
                     onClick={(e) => handleOpenMenu(e, menu.id)}
                     sx={{
                       color: "#4a4a4a",
@@ -227,36 +228,6 @@ const Navbar: React.FC<NavbarProps> = ({
                   >
                     {menu.title}
                   </Button>
-                  <Menu
-                    anchorEl={anchorEl[menu.id]}
-                    open={Boolean(anchorEl[menu.id])}
-                    onClose={() => handleCloseMenu(menu.id)}
-                    PaperProps={{
-                      sx: {
-                        bgcolor: "#f5e6d3",
-                        "& .MuiMenuItem-root": {
-                          color: "#4a4a4a",
-                          "&:hover": {
-                            bgcolor: "#e0c9a6",
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    {menu.items.map((item) => (
-                      <MenuItem
-                        key={item.path}
-                        component={Link}
-                        to={item.path}
-                        onClick={() => {
-                          handleCloseMenu(menu.id);
-                          if (item.onClick) item.onClick();
-                        }}
-                      >
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </Menu>
                 </Box>
               ))}
               <Button
@@ -321,7 +292,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <MenuItem onClick={() => changeLanguage("mr")}>मराठी</MenuItem>
               </Menu>
 
-              {isAuthenticated ? (
+              {/* {isAuthenticated ? (
                 <Button
                   endIcon={<KeyboardArrowDownIcon />}
                   onClick={(e) => handleOpenMenu(e, "account")}
@@ -335,6 +306,70 @@ const Navbar: React.FC<NavbarProps> = ({
                 >
                   {currentUser?.username}
                 </Button>
+              ) : (
+                <Button
+                  component={Link}
+                  to="/login"
+                  sx={{
+                    color: "#4a4a4a",
+                    "&:hover": {
+                      color: "#d35400",
+                      bgcolor: "transparent",
+                    },
+                  }}
+                >
+                  {t("common.login")}
+                </Button>
+              )} */}
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    endIcon={<KeyboardArrowDownIcon />}
+                    onClick={(e) => handleOpenMenu(e, "account")}
+                    sx={{
+                      color: "#4a4a4a",
+                      "&:hover": {
+                        color: "#d35400",
+                        bgcolor: "transparent",
+                      },
+                    }}
+                  >
+                    {currentUser?.username}
+                  </Button>
+
+                  <Menu
+                    anchorEl={anchorEl["account"]}
+                    open={Boolean(anchorEl["account"])}
+                    onClose={() => handleCloseMenu("account")}
+                    PaperProps={{
+                      sx: {
+                        bgcolor: "#f5e6d3",
+                        "& .MuiMenuItem-root": {
+                          color: "#4a4a4a",
+                          "&:hover": {
+                            bgcolor: "#e0c9a6",
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem
+                      component={Link}
+                      to="/dashboard"
+                      onClick={() => handleCloseMenu("account")}
+                    >
+                      View Profile
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseMenu("account");
+                        handleLogout();
+                      }}
+                    >
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </>
               ) : (
                 <Button
                   component={Link}
@@ -495,7 +530,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   मराठी
                 </MenuItem>
 
-                {isAuthenticated ? (
+                {/* {isAuthenticated ? (
                   <MenuItem
                     onClick={() => setMobileMenuOpen(false)}
                     sx={{
@@ -515,6 +550,73 @@ const Navbar: React.FC<NavbarProps> = ({
                     </ListItemIcon>
                     {currentUser?.username}
                   </MenuItem>
+                ) : (
+                  <MenuItem
+                    component={Link}
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{
+                      borderRadius: 1,
+                      transition: "0.3s",
+                      "&:hover": {
+                        bgcolor: "#ecdcc8",
+                        transform: "translateX(5px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <LoginIcon fontSize="small" sx={{ color: "#d35400" }} />
+                    </ListItemIcon>
+                    {t("common.login")}
+                  </MenuItem>
+                )} */}
+                {isAuthenticated ? (
+                  <>
+                    <MenuItem
+                      component={Link}
+                      to="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      sx={{
+                        borderRadius: 1,
+                        transition: "0.3s",
+                        "&:hover": {
+                          bgcolor: "#ecdcc8",
+                          transform: "translateX(5px)",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <AccountCircle
+                          fontSize="small"
+                          sx={{ color: "#d35400" }}
+                        />
+                      </ListItemIcon>
+                      View Profile
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      sx={{
+                        borderRadius: 1,
+                        transition: "0.3s",
+                        "&:hover": {
+                          bgcolor: "#ecdcc8",
+                          transform: "translateX(5px)",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon
+                          fontSize="small"
+                          sx={{ color: "#d35400" }}
+                        />
+                      </ListItemIcon>
+                      Logout
+                    </MenuItem>
+                  </>
                 ) : (
                   <MenuItem
                     component={Link}
