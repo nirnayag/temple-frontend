@@ -230,58 +230,6 @@ const Register = () => {
                       />
                     </Form.Group>
                   </Col>
-
-                  <Col md={6}>
-                    <Form.Group className="mb-3" controlId="address">
-                      <Form.Label>{t("auth.address")}</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="address"
-                        value={userData.address}
-                        onChange={handleChange}
-                        placeholder={t("auth.enterAddress")}
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={4}>
-                    <Form.Group className="mb-3" controlId="city">
-                      <Form.Label>{t("auth.city")}</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="city"
-                        value={userData.city}
-                        onChange={handleChange}
-                        placeholder={t("auth.enterCity")}
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={4}>
-                    <Form.Group className="mb-3" controlId="state">
-                      <Form.Label>{t("auth.state")}</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="state"
-                        value={userData.state}
-                        onChange={handleChange}
-                        placeholder={t("auth.enterState")}
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={4}>
-                    <Form.Group className="mb-3" controlId="country">
-                      <Form.Label>{t("auth.country")}</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="country"
-                        value={userData.country}
-                        onChange={handleChange}
-                        placeholder={t("auth.enterCountry")}
-                      />
-                    </Form.Group>
-                  </Col>
                 </Row>
 
                 <Row className="mt-4">

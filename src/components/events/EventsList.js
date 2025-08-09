@@ -1,47 +1,45 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
+  Container,
   Card,
+  Row,
+  Col,
   Button,
   Alert,
   Form,
-  Row,
-  Col,
   Badge,
-  Container,
+  Spinner,
 } from "react-bootstrap";
-import RoomIcon from "@mui/icons-material/Room";
-import {
-  Container as MuiContainer,
-  Grid,
-  Typography,
-  Card as MuiCard,
-  CardContent,
-  CardHeader,
-  Button as MuiButton,
-  Box,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  CircularProgress,
-  Alert as MuiAlert,
-  Chip,
-  TypographyProps,
-} from "@mui/material";
-import { styled as MuiStyled } from "@mui/material/styles";
+import { Button as MuiButton } from "@mui/material";
 import { eventService } from "../../services/api";
 import authService from "../../services/auth";
-import { useTranslation } from "react-i18next";
+import {
+  Container as MuiContainer,
+  Typography,
+  Box,
+  Grid,
+  Card as MuiCard,
+  CardContent,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
 import {
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
+  FaUsers,
+  FaEdit,
+  FaTrash,
   FaUserAlt,
   FaFilter,
 } from "react-icons/fa";
 import styled from "styled-components";
-
+import useHelpers from "components/helpers/useHelpers";
+import RoomIcon from "@mui/icons-material/Room";
+import PeopleIcon from "@mui/icons-material/People";
+import PaymentIcon from "@mui/icons-material/Payment";
 // Styled components for enhanced UI
 const StyledCard = styled(Card)`
   transition: transform 0.2s, box-shadow 0.2s;
@@ -167,51 +165,13 @@ const EventsList = () => {
   const [filter, setFilter] = useState("all");
   const isLoggedIn = authService.isLoggedIn();
   const isAdmin = authService.isAdmin();
+  const { formatDate, formatTime } = useHelpers();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEvents();
   }, []);
-  const dummyUpcomingEvents = [
-    {
-      id: 1,
-      tag: "festival",
-      date: "August 15, 2025",
-      time: "6:00 AM - 10:00 PM",
-      title: "Krishna Janmashtami",
-      description:
-        " Gokulashtami, is an annual Hindu festival that celebrates the birth of Krishna, the eighth avatar of Vishnu. Krishna has been identified as supreme God and the source of all avatars.",
-      location: "Main Temple Hall",
-      attendees: "450 / 500 registered",
-      image:
-        "https://i.pinimg.com/736x/5f/d7/38/5fd73819e1f731b6d80edf848e439d5d.jpg",
-    },
-    {
-      id: 2,
-      tag: "spiritual",
-      date: "August 18, 2025",
-      time: "7:00 AM - 9:00 AM",
-      title: "Satsang & Meditation",
-      description:
-        "Join our weekly spiritual gathering for meditation, devotional singing, and enlightening discussions on ancient wisdom and modern living.",
-      location: "Meditation Hall",
-      attendees: "20 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/holy-man-sadhu-sitting-meditating-260nw-2383039899.jpg",
-    },
-    {
-      id: 3,
-      tag: "Festival",
-      date: "August 27, 2025",
-      time: "7:30 AM - 11:00 AM",
-      title: "Ganesh Chaturti",
-      description:
-        "Ganesh Chaturthi is a vibrant and widely celebrated Hindu festival marking the birth of Lord Ganesha, a divine being known as the remover of obstacles and the god of wisdom, prosperity, and good fortune. ",
-      location: "Mandap",
-      attendees: "100 / 100 registered",
-      image:
-        "https://www.shutterstock.com/image-vector/ganesh-chaturthi-marathi-hindi-calligraphy-260nw-2358015643.jpg",
-    },
-  ];
+
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -232,9 +192,7 @@ const EventsList = () => {
 
   const getFilteredEvents = () => {
     if (filter === "all") return events;
-
     const now = new Date();
-
     if (filter === "upcoming") {
       return events.filter((event) => new Date(event.date) >= now);
     } else if (filter === "past") {
@@ -269,6 +227,57 @@ const EventsList = () => {
       <Container className="text-center py-5">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">{t("common.loading")}</span>
+        </div>
+        <div className="mt-3">
+          <div className="row">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="col-md-6 col-lg-4 mb-4">
+                <div className="card">
+                  <div
+                    className="card-img-top"
+                    style={{
+                      height: "200px",
+                      backgroundColor: "#f0f0f0",
+                      animation: "pulse 1.5s ease-in-out infinite",
+                    }}
+                  />
+                  <div className="card-body">
+                    <div
+                      style={{
+                        height: "20px",
+                        backgroundColor: "#f0f0f0",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: "16px",
+                        backgroundColor: "#f0f0f0",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: "24px",
+                        backgroundColor: "#f0f0f0",
+                        marginBottom: "10px",
+                        borderRadius: "4px",
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: "60px",
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     );
@@ -353,20 +362,28 @@ const EventsList = () => {
               {events.map((event) => {
                 const isPast = new Date(event.date) < new Date();
                 return (
-                  <Grid item xs={8} md={4} key={event.id}>
-                    <MuiCard
+                  <Grid item xs={12} sm={8} md={4} key={event._id}>
+                    <Card
                       sx={{
                         height: "100%",
                         display: "flex",
                         flexDirection: "column",
+                        cursor: "pointer",
+                        transition:
+                          "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+                        "&:hover": {
+                          transform: "translateY(-4px)",
+                          boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+                        },
                       }}
+                      onClick={() => navigate(`/events/${event._id}`)}
                     >
                       <Box
                         sx={{
                           height: 200,
                           backgroundImage: `url(${
-                            event.image ||
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNK7-n-r_w_qCEIjsnu8VXMBamUkSmLUr9Eg&s"
+                            event.imageUrl ||
+                            "https://imexpert.au/wp-content/uploads/2023/08/image-not-found.png"
                           })`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
@@ -375,14 +392,14 @@ const EventsList = () => {
                       />
                       <CardContent>
                         <Chip
-                          label={event.tag}
+                          label={event.eventType || "event"}
                           color="warning"
                           size="small"
                           sx={{ textTransform: "capitalize", mb: 1 }}
                         />
-                        <Typography variant="subtitle2" color="text.secondary">
-                          {event.date} • {event.time}
-                        </Typography>
+                        {/* <Typography variant="subtitle2" color="text.secondary">
+                                         {formatDate(event.date)} • {formatTime(event.startTime)} - {formatTime(event.endTime)}
+                                       </Typography> */}
                         <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
                           {event.title}
                         </Typography>
@@ -400,7 +417,9 @@ const EventsList = () => {
                         >
                           <EventIcon fontSize="small" />
                           <Typography variant="body2">
-                            {event.date} | {event.time}
+                            {formatDate(event.date)} |{" "}
+                            {formatTime(event.startTime)} -{" "}
+                            {formatTime(event.endTime)}
                           </Typography>
                         </Box>
                         <Box
@@ -416,34 +435,39 @@ const EventsList = () => {
                             {event.location}
                           </Typography>
                         </Box>
-                        {/* <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mt: 1,
-                      }}
-                    >
-                      <PeopleIcon fontSize="small" />
-                      <Typography variant="body2">
-                        {announcement.attendees}
-                      </Typography>
-                    </Box> */}
-                        {/* <MuiButton
-                      variant="contained"
-                      fullWidth
-                      sx={{
-                        mt: 2,
-                        backgroundColor: "#f97316",
-                        "&:hover": {
-                          backgroundColor: "#ea580c",
-                        },
-                      }}
-                    >
-                      Register Now
-                    </MuiButton> */}
                       </CardContent>
-                    </MuiCard>
+                      <Box sx={{ mt: 2 }}>
+                        <MuiButton
+                          variant="contained"
+                          fullWidth
+                          startIcon={<PaymentIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/events/${event._id}/register`);
+                          }}
+                          sx={{
+                            background:
+                              "linear-gradient(90deg, #f97316, #f59e0b)", // saffron to golden
+                            color: "#fff",
+                            fontWeight: "bold",
+                            borderRadius: "8px",
+                            boxShadow: "0px 4px 10px rgba(0,0,0,0.15)",
+                            textTransform: "none",
+                            fontSize: "1rem",
+                            py: 1.2,
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(90deg, #ea580c, #d97706)",
+                              boxShadow: "0px 6px 16px rgba(249, 115, 22, 0.6)",
+                              transform: "translateY(-2px)",
+                            },
+                          }}
+                        >
+                          Register & Pay
+                        </MuiButton>
+                      </Box>
+                    </Card>
                   </Grid>
                 );
               })}

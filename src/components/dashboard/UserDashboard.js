@@ -1,32 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
+  Typography,
+  Box,
   Grid,
   Card,
   CardContent,
   CardHeader,
-  Typography,
-  Button,
-  Box,
   Alert,
-  CircularProgress,
+  Button,
+  Stack,
   Chip,
+  CircularProgress,
   Divider,
   Paper,
-  Stack,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import {
   Edit as EditIcon,
   Event as EventIcon,
+  AccessTime as TimeIcon,
+  LocationOn as LocationIcon,
+  CalendarToday as CalendarIcon,
   Person as PersonIcon,
   AdminPanelSettings as AdminIcon,
-  CalendarMonth as CalendarIcon,
-  LocationOn as LocationIcon,
-  AccessTime as TimeIcon,
 } from "@mui/icons-material";
-import { eventService, devoteeService } from "../../services/api";
+import { eventService } from "../../services/api";
 import authService from "../../services/auth";
 import PropTypes from "prop-types";
 
@@ -86,6 +86,7 @@ const UserDashboard = ({ setIsAuthenticated }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsAuthenticated(authService.isLoggedIn());
@@ -124,6 +125,44 @@ const UserDashboard = ({ setIsAuthenticated }) => {
         <Typography sx={{ mt: 2, color: "#4a4a4a" }}>
           Loading your dashboard...
         </Typography>
+        <Box sx={{ mt: 4, width: "100%", maxWidth: 800 }}>
+          <Grid container spacing={3}>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ height: 200 }}>
+                  <CardContent>
+                    <Box
+                      sx={{
+                        height: 40,
+                        backgroundColor: "#f0f0f0",
+                        mb: 2,
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 24,
+                        backgroundColor: "#f0f0f0",
+                        mb: 1,
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        height: 60,
+                        backgroundColor: "#f0f0f0",
+                        borderRadius: 1,
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
       </Box>
     );
   }
@@ -211,7 +250,11 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                 ) : (
                   <Stack spacing={2}>
                     {events?.slice(0, 5).map((event) => (
-                      <EventCard key={event?._id}>
+                      <EventCard
+                        key={event?._id}
+                        onClick={() => navigate(`/events/${event?._id}`)}
+                        sx={{ cursor: "pointer" }}
+                      >
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={8}>
                             <Typography
@@ -339,6 +382,17 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                       </Grid>
                       <Grid item xs={4}>
                         <Typography variant="body2" sx={{ color: "#666666" }}>
+                          Phone
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Typography variant="body2">
+                          {user?.mobileNumber?.slice(2)}
+                        </Typography>
+                        {console.log({ user })}
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography variant="body2" sx={{ color: "#666666" }}>
                           Role
                         </Typography>
                       </Grid>
@@ -363,86 +417,6 @@ const UserDashboard = ({ setIsAuthenticated }) => {
                       </Grid>
                     </Grid>
                   </Box>
-
-                  {/* Personal Information */}
-                  {devotee && (
-                    <Box>
-                      <Typography variant="h6" sx={{ color: "#d35400", mb: 1 }}>
-                        Personal Information
-                      </Typography>
-                      <Divider sx={{ borderColor: "#d35400", mb: 2 }} />
-                      <Grid container spacing={2}>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Name
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.name}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Phone
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.phone || "Not provided"}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Address
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {devotee.address ? (
-                              <>
-                                {devotee.address}
-                                {devotee.city && (
-                                  <>
-                                    <br />
-                                    {devotee.city}
-                                  </>
-                                )}
-                                {devotee.state && <>, {devotee.state}</>}
-                                {devotee.country && <> {devotee.country}</>}
-                              </>
-                            ) : (
-                              "Not provided"
-                            )}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Member Since
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Typography variant="body2">
-                            {formatDate(devotee.memberSince)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography variant="body2" sx={{ color: "#666666" }}>
-                            Membership
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <Chip
-                            label={
-                              devotee.membershipType?.charAt(0).toUpperCase() +
-                                devotee.membershipType?.slice(1) || "Regular"
-                            }
-                            sx={{ bgcolor: "#d35400", color: "#E2DFD2" }}
-                          />
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  )}
 
                   {/* Action Buttons */}
                   <Stack spacing={2}>

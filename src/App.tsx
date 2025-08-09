@@ -23,6 +23,7 @@ import Footer from "./components/Footer";
 import Home from "./components/Home";
 import DevoteesList from "./components/devotees/DevoteesList";
 import EventsList from "./components/events/EventsList";
+import EventDetail from "./components/events/EventDetail";
 import DonationsList from "./components/donations/DonationsList";
 import PriestsList from "./components/temple/PriestsList";
 import PujaServices from "./components/temple/PujaServices";
@@ -70,6 +71,7 @@ const App: React.FC = () => {
               {/* Routes accessible to everyone */}
               <Route path="/" element={<Home />} />
               <Route path="/events" element={<EventsList />} />
+              <Route path="/events/:id" element={<EventDetail />} />
               <Route path="/about" element={<AboutTemple />} />
               <Route path="/donate" element={<DonatePage />} />
               <Route path="/priests" element={<PriestsList />} />

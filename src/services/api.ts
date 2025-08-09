@@ -1,7 +1,9 @@
 import axios from "axios";
 
 // API base path for all endpoints
-const API_URL = "https://temple-backed-production.up.railway.app/api";
+const API_URL = "https://api.shreekalambadevi.org/api";
+
+// "http://localhost:4000/api";
 
 // Create an axios instance with base URL
 const api = axios.create({
@@ -10,6 +12,20 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Add a response interceptor
 api.interceptors.response.use(
@@ -41,8 +57,12 @@ export const devoteeService = {
   create: (data: any) => api.post("/devotees", data),
   update: (id: string, data: any) => api.patch(`/devotees/${id}`, data),
   delete: (id: string) => api.delete(`/devotees/${id}`),
-  search: (phone: number, name: string) =>
-    api.get(`/devotees/search/?name=${name}&mobileNumber=${phone}`),
+  search: (phone?: number, name?: string) => {
+    const params = new URLSearchParams();
+    if (name) params.append("name", name);
+    if (phone) params.append("mobileNumber", phone.toString());
+    return api.get(`/devotees/search/?${params.toString()}`);
+  },
   addDonation: (id: string, data: any) =>
     api.post(`/devotees/${id}/donations`, data),
 };
@@ -52,7 +72,10 @@ export const eventService = {
   getAll: () => api.get("/events"),
   getUpcoming: () => api.get("/events/upcoming"),
   getById: (id: string) => api.get(`/events/${id}`),
-  create: (data: any) => api.post("/events", data),
+  create: (data: any) =>
+    api.post("/events", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
   update: (id: string, data: any) => api.patch(`/events/${id}`, data),
   delete: (id: string) => api.delete(`/events/${id}`),
   register: (id: string) => api.post(`/events/${id}/register`),
@@ -86,10 +109,12 @@ export const templeService = {
 };
 
 export const paymentService = {
-  getAll: () => api.get("/payments/all"),
+  getAll: () => api.get("/payments"),
   getById: (id: string) => api.get(`/payments/${id}`),
   create: (data: any) => api.post("/payments", data),
   delete: (id: string) => api.delete(`/payments/${id}`),
+  updateStatus: (id: string, data: any) => api.patch(`/payments/${id}`, data),
+  getMyPayments: () => api.get("/payments/my-payments"),
 };
 
 export default api;
