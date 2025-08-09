@@ -41,6 +41,7 @@ import {
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import Link from "@mui/material/Link";
+import useHelpers from "./helpers/useHelpers";
 
 // Styled components for custom elements
 const HeroBanner = styled(Box)(({ theme }) => ({
@@ -225,6 +226,7 @@ const getIconComponent = (iconName: string) => {
 
 const Home: React.FC = () => {
   const { i18n } = useTranslation();
+  const { formatDate, formatTime } = useHelpers();
   const navigate = useNavigate();
 
   // State for data from backend
@@ -335,26 +337,6 @@ const Home: React.FC = () => {
 
     fetchEvents();
   }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(i18n.language === "mr" ? "mr-IN" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const formatTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(":");
-    const date = new Date();
-    date.setHours(parseInt(hours), parseInt(minutes));
-    return date.toLocaleTimeString(i18n.language === "mr" ? "mr-IN" : "en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
 
   if (error) {
     return (
