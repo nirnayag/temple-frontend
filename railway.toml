@@ -4,6 +4,8 @@ builder = "dockerfile"
 [variables]
 CI = "false"
 GENERATE_SOURCEMAP = "false"
+DISABLE_ESLINT_PLUGIN = "true"
+PORT = "3000"
 
 [deploy]
 healthcheckPath = "/"
