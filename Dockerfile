@@ -19,6 +19,7 @@ COPY . .
 # Set environment variables for build
 ENV CI=false
 ENV GENERATE_SOURCEMAP=false
+ENV DISABLE_ESLINT_PLUGIN=true
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # Build the application

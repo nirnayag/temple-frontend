@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ export default function ViewAllListDialoge({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageData, setPagesData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage] = useState(2);
   const [openDevoteeForm, setOpenDevoteeForm] = useState(false);

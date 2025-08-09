@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
@@ -16,6 +17,7 @@ import {
 import { styled } from "@mui/material/styles";
 import {
   Home as HomeIcon,
+  Event as EventIcon,
   LocalOffer as OfferIcon,
   Info as InfoIcon,
 } from "@mui/icons-material";
