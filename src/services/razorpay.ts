@@ -1,13 +1,11 @@
 import axios from "axios";
 
 // Razorpay configuration
-const RAZORPAY_KEY_ID = "rzp_test_E9LEIWSCMKLygJ";
-const RAZORPAY_KEY_SECRET = "xfTNEoWz8EKEKoijNYjjkhFH";
+const RAZORPAY_KEY_ID = "rzp_test_dZohG3RPiLcurf";
+const RAZORPAY_KEY_SECRET = "ngHtEFjcnJZTKcFWt8T72Y3d";
 
 // API base path for payment endpoints
 const API_URL = "https://api.shreekalambadevi.org/api";
-
-// ("http://localhost:4000/api");
 
 // Create an axios instance for payment API
 const paymentApi = axios.create({
@@ -16,20 +14,6 @@ const paymentApi = axios.create({
     "Content-Type": "application/json",
   },
 });
-
-// Add request interceptor to include auth token
-paymentApi.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Add a response interceptor
 paymentApi.interceptors.response.use(
@@ -51,16 +35,12 @@ paymentApi.interceptors.response.use(
 // Payment service
 export const razorpayService = {
   // Create payment order
-  createOrder: async (
-    amount: number,
-    eventId: string,
-    description?: string
-  ) => {
+  createOrder: async (amount: number, currency: string = "INR", receipt: string) => {
     try {
-      const response = await paymentApi.post("/razorpay/create-order", {
-        amount: amount,
-        eventId: eventId,
-        description: description,
+      const response = await paymentApi.post("/payments/create-order", {
+        amount: amount * 100, // Convert to paise
+        currency,
+        receipt,
       });
       return response.data;
     } catch (error) {
@@ -70,18 +50,12 @@ export const razorpayService = {
   },
 
   // Verify payment signature
-  verifyPayment: async (
-    razorpayOrderId: string,
-    razorpayPaymentId: string,
-    razorpaySignature: string,
-    paymentId: string
-  ) => {
+  verifyPayment: async (paymentId: string, orderId: string, signature: string) => {
     try {
-      const response = await paymentApi.post("/razorpay/verify-payment", {
-        razorpayOrderId,
-        razorpayPaymentId,
-        razorpaySignature,
+      const response = await paymentApi.post("/payments/verify", {
         paymentId,
+        orderId,
+        signature,
       });
       return response.data;
     } catch (error) {
@@ -90,26 +64,38 @@ export const razorpayService = {
     }
   },
 
-  // Get payment status
-  getPaymentStatus: async (paymentId: string) => {
+  // Update payment status
+  updatePaymentStatus: async (paymentId: string, status: string, eventId?: string) => {
     try {
-      const response = await paymentApi.get(
-        `/razorpay/payment-status/${paymentId}`
-      );
+      const response = await paymentApi.patch(`/payments/${paymentId}/status`, {
+        status,
+        eventId,
+      });
       return response.data;
     } catch (error) {
-      console.error("Error getting payment status:", error);
+      console.error("Error updating payment status:", error);
       throw error;
     }
   },
 
-  // Get user's payment history
-  getMyPayments: async () => {
+  // Get payment details
+  getPaymentDetails: async (paymentId: string) => {
     try {
-      const response = await paymentApi.get("/razorpay/my-payments");
+      const response = await paymentApi.get(`/payments/${paymentId}`);
       return response.data;
     } catch (error) {
-      console.error("Error getting payment history:", error);
+      console.error("Error getting payment details:", error);
+      throw error;
+    }
+  },
+
+  // Webhook handler for payment status updates
+  handleWebhook: async (webhookData: any) => {
+    try {
+      const response = await paymentApi.post("/payments/webhook", webhookData);
+      return response.data;
+    } catch (error) {
+      console.error("Error handling webhook:", error);
       throw error;
     }
   },
@@ -119,7 +105,7 @@ export const razorpayService = {
 export const razorpayConfig = {
   key: RAZORPAY_KEY_ID,
   currency: "INR",
-  name: "Temple Management System",
+  name: "Shree Kalamba Devi Temple",
   description: "Event Registration Payment",
   image: "/logo192.png", // You can update this to your temple logo
   prefill: {
@@ -128,7 +114,7 @@ export const razorpayConfig = {
     contact: "",
   },
   notes: {
-    address: "Temple Address",
+    address: "Shree Kalamba Devi Temple Address",
   },
   theme: {
     color: "#d35400", // Orange color matching your theme
