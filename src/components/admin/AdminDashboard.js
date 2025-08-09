@@ -29,6 +29,7 @@ import {
   usePaginatedDevotees,
   useEditDevotee,
 } from "tanstack/Queries/devotees_tanstack";
+import useHelpers from "components/helpers/useHelpers";
 const AdminDashboard = () => {
   const {
     data: adminProfile,
@@ -49,6 +50,7 @@ const AdminDashboard = () => {
     useDeleteEvent();
   const { mutate: deleteDevotee, isPending: deleteDevoteePending } =
     useDeleteDevotee();
+  const { formatDate, formatTime } = useHelpers();
 
   const isLoading = isAdminLoading || isEventsLoading || isDevoteesLoading;
   const error = adminError || eventsError || devoteesError;
@@ -211,9 +213,32 @@ const AdminDashboard = () => {
                 <div key={index} className="col-md-4 mb-4">
                   <div className="card">
                     <div className="card-body text-center">
-                      <div style={{ height: "40px", backgroundColor: "#f0f0f0", borderRadius: "4px", marginBottom: "10px", animation: "pulse 1.5s ease-in-out infinite" }} />
-                      <div style={{ height: "24px", backgroundColor: "#f0f0f0", borderRadius: "4px", marginBottom: "10px", animation: "pulse 1.5s ease-in-out infinite" }} />
-                      <div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} />
+                      <div
+                        style={{
+                          height: "40px",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "4px",
+                          marginBottom: "10px",
+                          animation: "pulse 1.5s ease-in-out infinite",
+                        }}
+                      />
+                      <div
+                        style={{
+                          height: "24px",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "4px",
+                          marginBottom: "10px",
+                          animation: "pulse 1.5s ease-in-out infinite",
+                        }}
+                      />
+                      <div
+                        style={{
+                          height: "16px",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "4px",
+                          animation: "pulse 1.5s ease-in-out infinite",
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -239,13 +264,61 @@ const AdminDashboard = () => {
                         <tbody>
                           {Array.from({ length: 5 }).map((_, index) => (
                             <tr key={index}>
-                              <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
-                              <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
-                              <td><div style={{ height: "16px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} /></td>
+                              <td>
+                                <div
+                                  style={{
+                                    height: "16px",
+                                    backgroundColor: "#f0f0f0",
+                                    borderRadius: "4px",
+                                    animation:
+                                      "pulse 1.5s ease-in-out infinite",
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <div
+                                  style={{
+                                    height: "16px",
+                                    backgroundColor: "#f0f0f0",
+                                    borderRadius: "4px",
+                                    animation:
+                                      "pulse 1.5s ease-in-out infinite",
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <div
+                                  style={{
+                                    height: "16px",
+                                    backgroundColor: "#f0f0f0",
+                                    borderRadius: "4px",
+                                    animation:
+                                      "pulse 1.5s ease-in-out infinite",
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <div style={{ display: "flex", gap: "8px" }}>
-                                  <div style={{ height: "32px", width: "60px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} />
-                                  <div style={{ height: "32px", width: "60px", backgroundColor: "#f0f0f0", borderRadius: "4px", animation: "pulse 1.5s ease-in-out infinite" }} />
+                                  <div
+                                    style={{
+                                      height: "32px",
+                                      width: "60px",
+                                      backgroundColor: "#f0f0f0",
+                                      borderRadius: "4px",
+                                      animation:
+                                        "pulse 1.5s ease-in-out infinite",
+                                    }}
+                                  />
+                                  <div
+                                    style={{
+                                      height: "32px",
+                                      width: "60px",
+                                      backgroundColor: "#f0f0f0",
+                                      borderRadius: "4px",
+                                      animation:
+                                        "pulse 1.5s ease-in-out infinite",
+                                    }}
+                                  />
                                 </div>
                               </td>
                             </tr>
@@ -569,8 +642,7 @@ const AdminDashboard = () => {
                     <thead>
                       <tr>
                         <th>Title</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
+                        <th>Date</th>
                         <th>Time</th>
                         <th>Location</th>
                         <th>Type</th>
@@ -582,15 +654,11 @@ const AdminDashboard = () => {
                       {eventData.slice(0, 5).map((event) => (
                         <tr key={event._id}>
                           <td>{event.title}</td>
-                          <td>
-                            {new Date(event.startDate).toLocaleDateString()}
-                          </td>
-                          <td>
-                            {new Date(event.endDate).toLocaleDateString()}
-                          </td>
+                          <td>{formatDate(event.date)}</td>
 
                           <td>
-                            {event.startTime} - {event.endTime}
+                            {formatTime(event.startTime)} -
+                            {formatTime(event.endTime)}
                           </td>
                           <td>{event.location}</td>
                           <td>
