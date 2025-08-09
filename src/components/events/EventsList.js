@@ -383,7 +383,7 @@ const EventsList = () => {
                           height: 200,
                           backgroundImage: `url(${
                             event.imageUrl ||
-                            "http://localhost:4000/uploads/events/event-175469175965461546597.jpg"
+                            "https://imexpert.au/wp-content/uploads/2023/08/image-not-found.png"
                           })`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",

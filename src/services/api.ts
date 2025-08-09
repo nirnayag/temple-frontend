@@ -1,8 +1,9 @@
 import axios from "axios";
 
 // API base path for all endpoints
-const API_URL = "http://localhost:4000/api";
-// "https://api.shreekalambadevi.org/api";
+const API_URL = "https://api.shreekalambadevi.org/api";
+
+// "http://localhost:4000/api";
 
 // Create an axios instance with base URL
 const api = axios.create({
