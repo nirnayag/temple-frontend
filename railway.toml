@@ -4,14 +4,7 @@ builder = "dockerfile"
 [variables]
 CI = "false"
 GENERATE_SOURCEMAP = "false"
-NODE_OPTIONS = "--max-old-space-size=4096"
 
 [deploy]
-startCommand = "serve -s build -p $PORT"
 healthcheckPath = "/"
-healthcheckTimeout = 300
-restartPolicyType = "on_failure"
-
-[resources]
-memory = "512Mi"
-cpu = "500m" 
+healthcheckTimeout = 300 
