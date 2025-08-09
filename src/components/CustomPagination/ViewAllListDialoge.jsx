@@ -96,6 +96,7 @@ export default function ViewAllListDialoge({
       const res = isPhoneSearch
         ? searchDevotee({ phone: Number(trimmedQuery) })
         : searchDevotee({ name: trimmedQuery });
+
       console.log("Search result:", res);
     } catch (e) {
       console.error("Error while getting search data:", e);
