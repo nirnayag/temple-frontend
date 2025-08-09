@@ -1,11 +1,23 @@
+[variables]
+CI = "false"
+GENERATE_SOURCEMAP = "false"
+NPM_CONFIG_PRODUCTION = "false"
+
+[providers.node]
+version = "18"
+
 [phases.setup]
-nixPkgs = ["nodejs_18", "npm-9_x"]
+nixPkgs = ["nodejs-18_x", "npm-9_x"]
 
 [phases.install]
-cmds = ["npm ci --legacy-peer-deps --no-audit"]
+cmds = [
+    "npm ci --legacy-peer-deps"
+]
 
 [phases.build]
-cmds = ["CI=false npm run build"]
+cmds = [
+    "npm run build:prod"
+]
 
 [start]
-cmd = "npm run start" 
+cmd = "npx serve -s build -p $PORT"
