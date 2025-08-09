@@ -9,12 +9,6 @@ import {
   CardHeader,
   Button,
   Box,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  CircularProgress,
   Alert,
   Chip,
   TypographyProps,
@@ -22,25 +16,19 @@ import {
 import { styled } from "@mui/material/styles";
 import {
   Home as HomeIcon,
-  Event as EventIcon,
   LocalOffer as OfferIcon,
   Info as InfoIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { t } from "../utils/translationUtils";
 import RoomIcon from "@mui/icons-material/Room";
-import PeopleIcon from "@mui/icons-material/People";
 import PaymentIcon from "@mui/icons-material/Payment";
 // Import services
 import {
   eventService,
   announcementService,
-  prasadamService,
   templeService,
 } from "../services/api";
-import EventNoteIcon from "@mui/icons-material/EventNote";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import Link from "@mui/material/Link";
 import useHelpers from "./helpers/useHelpers";
 
 // Styled components for custom elements

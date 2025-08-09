@@ -2,19 +2,13 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
-  DialogTitle,
   TextField,
   Button,
   IconButton,
   Typography,
-  Grid,
   InputAdornment,
-  Divider,
   Box,
   Pagination,
-  List,
-  ListItem,
-  ListItemText,
   Table,
   TableHead,
   TableRow,
@@ -27,10 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DevoteeDialogForm from "components/devotees/DevoteeDialogForm";
-import { useDeleteDevotee } from "tanstack/Queries/devotees_tanstack";
 import { toast } from "react-toastify";
 import { useSearchDevotee } from "tanstack/Queries/devotees_tanstack";
-import { devoteeService } from "services/api";
 export default function ViewAllListDialoge({
   open,
   onClose,
@@ -41,12 +33,10 @@ export default function ViewAllListDialoge({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageData, setPagesData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(2);
+  const [itemsPerPage] = useState(2);
   const [openDevoteeForm, setOpenDevoteeForm] = useState(false);
   const [editDevoteeFormData, setEditDevoteeFormData] = useState([]);
-  const [openeditEventForm, setOpenEditEventForm] = useState(false);
   const timerRef = useRef(null);
   const { data, isLoading, isError } = usePaginatedHook({
     page: currentPage,
