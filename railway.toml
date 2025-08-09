@@ -1,12 +1,11 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
 
 [variables]
 CI = "false"
 GENERATE_SOURCEMAP = "false"
 
 [deploy]
-startCommand = "npm run build:prod && serve -s build -p $PORT"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure" 
