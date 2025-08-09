@@ -146,10 +146,9 @@ const RazorpayPayment: React.FC<RazorpayPaymentProps> = ({
           try {
             // Verify payment on backend
             const verificationResponse = await razorpayService.verifyPayment(
-              response.razorpay_order_id,
               response.razorpay_payment_id,
-              response.razorpay_signature,
-              orderResponse.paymentId
+              response.razorpay_order_id,
+              response.razorpay_signature
             );
 
             if (verificationResponse.success) {
