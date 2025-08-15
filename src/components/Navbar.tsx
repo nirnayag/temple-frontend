@@ -144,26 +144,43 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       {/* Top Contact Bar */}
+      {/* Top Contact Bar */}
       <Box sx={{ bgcolor: "#d35400", color: "#f5e6d3", py: 1 }}>
         <Container>
-          <Grid container alignItems="center" justifyContent="space-between">
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            {/* Contact Info */}
             <Grid
               item
               xs={12}
               md={6}
               sx={{
                 display: "flex",
+                flexDirection: { xs: "column", sm: "row" }, // Stack on mobile, row on bigger screens
                 alignItems: "center",
                 justifyContent: { xs: "center", md: "flex-start" },
-                mb: { xs: 1, md: 0 },
+                textAlign: "center",
+                gap: { xs: 0.5, sm: 2 }, // Small gap for mobile
               }}
             >
-              <Box sx={{ mr: 3, display: "flex", alignItems: "center" }}>
+              {/* Phone + Name */}
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+              >
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9742;
                 </Box>
-                +91 836 924 2065
+                <span>+91 99234401883</span>
+                <Box component="span" sx={{ ml: 1, fontStyle: "italic" }}>
+                  (Prakhas Shibe)
+                </Box>
               </Box>
+
+              {/* Email */}
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box component="span" sx={{ mr: 1 }}>
                   &#9993;
@@ -171,6 +188,8 @@ const Navbar: React.FC<NavbarProps> = ({
                 {t("temple.email")}
               </Box>
             </Grid>
+
+            {/* Language Switcher */}
             <Grid
               item
               xs={12}
@@ -178,6 +197,7 @@ const Navbar: React.FC<NavbarProps> = ({
               sx={{
                 display: "flex",
                 justifyContent: { xs: "center", md: "flex-end" },
+                mt: { xs: 1, md: 0 },
               }}
             >
               <LanguageSwitcher />
