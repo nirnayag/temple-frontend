@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { toast } from 'react-toastify';
+import { RAZORPAY_KEY_ID } from '../../services/razorpay';
 
 declare global {
   interface Window {
@@ -8,20 +9,27 @@ declare global {
   }
 }
 
-const SimpleRazorpay: React.FC = () => {
+interface SimpleRazorpayProps {
+  amount?: number;
+  description?: string;
+}
+
+const SimpleRazorpay: React.FC<SimpleRazorpayProps> = ({
+  amount = 500,
+  description = 'Donation',
+}) => {
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    // Load Razorpay script
-    if (!window.Razorpay) {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => setScriptLoaded(true);
-      script.onerror = () => toast.error('Failed to load Razorpay');
-      document.body.appendChild(script);
-    } else {
+    if (window.Razorpay) {
       setScriptLoaded(true);
+      return;
     }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => setScriptLoaded(true);
+    script.onerror = () => toast.error('Failed to load Razorpay');
+    document.body.appendChild(script);
   }, []);
 
   const openRazorpay = () => {
@@ -30,32 +38,35 @@ const SimpleRazorpay: React.FC = () => {
       return;
     }
 
+    if (!RAZORPAY_KEY_ID) {
+      toast.error('Razorpay key not configured');
+      return;
+    }
+
     const options = {
-      key: 'rzp_test_E9LEIWSCMKLygJ',
-      amount: 50000, // ₹500 in paise
+      key: RAZORPAY_KEY_ID,
+      amount: amount * 100,
       currency: 'INR',
-      name: 'Temple Management System',
-      description: 'Test Payment',
+      name: 'Shree Kalamba Devi Temple',
+      description,
       image: '/logo192.png',
       prefill: {
-        name: 'Test User',
-        email: 'test@example.com',
-        contact: '9999999999'
+        name: '',
+        email: '',
+        contact: '',
       },
       theme: {
-        color: '#d35400'
+        color: '#d35400',
       },
-      handler: function(response: any) {
-        console.log('Payment Success:', response);
+      handler: function (response: any) {
         toast.success('Payment Successful!');
         alert(`Payment ID: ${response.razorpay_payment_id}`);
       },
       modal: {
-        ondismiss: function() {
-          console.log('Payment cancelled');
+        ondismiss: function () {
           toast.info('Payment cancelled');
-        }
-      }
+        },
+      },
     };
 
     try {
@@ -77,12 +88,12 @@ const SimpleRazorpay: React.FC = () => {
         '&:hover': { bgcolor: '#b34700' },
         padding: '12px 24px',
         fontSize: '16px',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
       }}
     >
-      {scriptLoaded ? 'Open Razorpay' : 'Loading...'}
+      {scriptLoaded ? `Pay ₹${amount}` : 'Loading...'}
     </Button>
   );
 };
 
-export default SimpleRazorpay; 
+export default SimpleRazorpay;

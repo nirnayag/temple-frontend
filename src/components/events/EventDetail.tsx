@@ -22,11 +22,8 @@ import {
   CalendarToday as CalendarIcon,
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
-import { eventService, paymentService } from '../../services/api';
+import { eventService } from '../../services/api';
 import RazorpayPayment from '../payments/RazorpayPayment';
-import PaymentTest from '../payments/PaymentTest';
-import RazorpayTest from '../payments/RazorpayTest';
-import SimpleRazorpay from '../payments/SimpleRazorpay';
 import IntegratedPayment from '../payments/IntegratedPayment';
 import { toast } from 'react-toastify';
 
@@ -278,25 +275,8 @@ const EventDetail: React.FC = () => {
             >
               View All Events
             </Button>
-            
-            {/* Test Payment Flow Button (for development) */}
-            <PaymentTest
-              eventId={id!}
-              eventTitle={event.title}
-              amount={registrationAmount}
-            />
-            
-            {/* Razorpay Diagnostic Tool */}
-            <RazorpayTest
-              eventId={id!}
-              eventTitle={event.title}
-              amount={registrationAmount}
-            />
-            
-            {/* Simple Razorpay Button */}
-            <SimpleRazorpay />
-            
-            {/* Integrated Payment with /payments endpoint */}
+
+            {/* Donate Button */}
             <IntegratedPayment
               eventId={id!}
               eventTitle={event.title}
