@@ -16,31 +16,16 @@ import {
   IconButton,
   ListItemIcon,
 } from "@mui/material";
-import { Fade } from "@mui/material";
 import {
   Info as InfoIcon,
-  Language as LanguageIcon,
-  Login as LoginIcon,
   Favorite as DonateIcon,
   Celebration as EventIcon,
   Translate as TranslateIcon,
-  AccountCircle,
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LogoutIcon from "@mui/icons-material/Logout";
-
-// import InfoIcon from "@mui/icons-material/Info";
-// import LanguageIcon from "@mui/icons-material/Language";
-// import LoginIcon from "@mui/icons-material/Login";
-import PersonIcon from "@mui/icons-material/Person";
-
 import MenuIcon from "@mui/icons-material/Menu";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-// import TranslateIcon from "@mui/icons-material/Translate";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
-import authService from "../services/auth";
 import { t } from "../utils/translationUtils";
 
 interface DropdownMenu {
@@ -53,22 +38,8 @@ interface DropdownMenu {
   }[];
 }
 
-interface NavbarProps {
-  isAuthenticated: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Navbar: React.FC<NavbarProps> = ({
-  isAuthenticated,
-  setIsAuthenticated,
-}) => {
+const Navbar: React.FC = () => {
   const { i18n } = useTranslation();
-  const [isAdminUser, setIsAdminUser] = React.useState(authService.isAdmin());
-  const [currentUser, setCurrentUser] = React.useState(
-    authService.getCurrentUser()
-  );
-  console.log({ currentUser });
-  console.log({ isAdminUser });
 
   const [anchorEl, setAnchorEl] = React.useState<{
     [key: string]: HTMLElement | null;
@@ -76,18 +47,6 @@ const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
   const [languageMenuAnchor, setLanguageMenuAnchor] =
     React.useState<null | HTMLElement>(null);
-
-  React.useEffect(() => {
-    const updateAuthState = () => {
-      setIsAuthenticated(authService.isLoggedIn());
-      setIsAdminUser(authService.isAdmin());
-      setCurrentUser(authService.getCurrentUser());
-    };
-    updateAuthState();
-    window.addEventListener("auth_state_change", updateAuthState);
-    return () =>
-      window.removeEventListener("auth_state_change", updateAuthState);
-  }, [isAuthenticated]);
 
   const handleOpenMenu = (
     event: React.MouseEvent<HTMLElement>,
@@ -106,12 +65,6 @@ const Navbar: React.FC<NavbarProps> = ({
     });
   };
 
-  const handleLogout = () => {
-    console.log("logout calleds");
-
-    authService.logout(true);
-  };
-
   const handleLanguageMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setLanguageMenuAnchor(event.currentTarget);
   };
@@ -126,14 +79,6 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   const dropdownMenus: DropdownMenu[] = [
-    // {
-    //   id: "religious",
-    //   title: t("temple.religious"),
-    //   items: [
-    //     { label: t("temple.pujaServices"), path: "/services/puja" },
-    //     { label: t("temple.priests"), path: "/priests" },
-    //   ],
-    // },
     {
       id: "calendar",
       title: t("temple.events"),
@@ -256,7 +201,6 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 {t("common.about")}
               </Button>
-              {/* Language Button */}
               <Button
                 startIcon={<TranslateIcon />}
                 onClick={handleLanguageMenuOpen}
@@ -291,100 +235,6 @@ const Navbar: React.FC<NavbarProps> = ({
                 </MenuItem>
                 <MenuItem onClick={() => changeLanguage("mr")}>मराठी</MenuItem>
               </Menu>
-
-              {/* {isAuthenticated ? (
-                <Button
-                  endIcon={<KeyboardArrowDownIcon />}
-                  onClick={(e) => handleOpenMenu(e, "account")}
-                  sx={{
-                    color: "#4a4a4a",
-                    "&:hover": {
-                      color: "#d35400",
-                      bgcolor: "transparent",
-                    },
-                  }}
-                >
-                  {currentUser?.username}
-                </Button>
-              ) : (
-                <Button
-                  component={Link}
-                  to="/login"
-                  sx={{
-                    color: "#4a4a4a",
-                    "&:hover": {
-                      color: "#d35400",
-                      bgcolor: "transparent",
-                    },
-                  }}
-                >
-                  {t("common.login")}
-                </Button>
-              )} */}
-              {isAuthenticated ? (
-                <>
-                  <Button
-                    endIcon={<KeyboardArrowDownIcon />}
-                    onClick={(e) => handleOpenMenu(e, "account")}
-                    sx={{
-                      color: "#4a4a4a",
-                      "&:hover": {
-                        color: "#d35400",
-                        bgcolor: "transparent",
-                      },
-                    }}
-                  >
-                    {currentUser?.username}
-                  </Button>
-
-                  <Menu
-                    anchorEl={anchorEl["account"]}
-                    open={Boolean(anchorEl["account"])}
-                    onClose={() => handleCloseMenu("account")}
-                    PaperProps={{
-                      sx: {
-                        bgcolor: "#f5e6d3",
-                        "& .MuiMenuItem-root": {
-                          color: "#4a4a4a",
-                          "&:hover": {
-                            bgcolor: "#e0c9a6",
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      component={Link}
-                      to="/dashboard"
-                      onClick={() => handleCloseMenu("account")}
-                    >
-                      View Profile
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleCloseMenu("account");
-                        handleLogout();
-                      }}
-                    >
-                      Logout
-                    </MenuItem>
-                  </Menu>
-                </>
-              ) : (
-                <Button
-                  component={Link}
-                  to="/login"
-                  sx={{
-                    color: "#4a4a4a",
-                    "&:hover": {
-                      color: "#d35400",
-                      bgcolor: "transparent",
-                    },
-                  }}
-                >
-                  {t("common.login")}
-                </Button>
-              )}
             </Box>
 
             {/* Mobile Navigation */}
@@ -529,114 +379,6 @@ const Navbar: React.FC<NavbarProps> = ({
                   </ListItemIcon>
                   मराठी
                 </MenuItem>
-
-                {/* {isAuthenticated ? (
-                  <MenuItem
-                    onClick={() => setMobileMenuOpen(false)}
-                    sx={{
-                      borderRadius: 1,
-                      transition: "0.3s",
-                      "&:hover": {
-                        bgcolor: "#ecdcc8",
-                        transform: "translateX(5px)",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <AccountCircle
-                        fontSize="small"
-                        sx={{ color: "#d35400" }}
-                      />
-                    </ListItemIcon>
-                    {currentUser?.username}
-                  </MenuItem>
-                ) : (
-                  <MenuItem
-                    component={Link}
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    sx={{
-                      borderRadius: 1,
-                      transition: "0.3s",
-                      "&:hover": {
-                        bgcolor: "#ecdcc8",
-                        transform: "translateX(5px)",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <LoginIcon fontSize="small" sx={{ color: "#d35400" }} />
-                    </ListItemIcon>
-                    {t("common.login")}
-                  </MenuItem>
-                )} */}
-                {isAuthenticated ? (
-                  <>
-                    <MenuItem
-                      component={Link}
-                      to="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      sx={{
-                        borderRadius: 1,
-                        transition: "0.3s",
-                        "&:hover": {
-                          bgcolor: "#ecdcc8",
-                          transform: "translateX(5px)",
-                        },
-                      }}
-                    >
-                      <ListItemIcon>
-                        <AccountCircle
-                          fontSize="small"
-                          sx={{ color: "#d35400" }}
-                        />
-                      </ListItemIcon>
-                      View Profile
-                    </MenuItem>
-
-                    <MenuItem
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      sx={{
-                        borderRadius: 1,
-                        transition: "0.3s",
-                        "&:hover": {
-                          bgcolor: "#ecdcc8",
-                          transform: "translateX(5px)",
-                        },
-                      }}
-                    >
-                      <ListItemIcon>
-                        <LogoutIcon
-                          fontSize="small"
-                          sx={{ color: "#d35400" }}
-                        />
-                      </ListItemIcon>
-                      Logout
-                    </MenuItem>
-                  </>
-                ) : (
-                  <MenuItem
-                    component={Link}
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    sx={{
-                      borderRadius: 1,
-                      transition: "0.3s",
-                      "&:hover": {
-                        bgcolor: "#ecdcc8",
-                        transform: "translateX(5px)",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      <LoginIcon fontSize="small" sx={{ color: "#d35400" }} />
-                    </ListItemIcon>
-                    {t("common.login")}
-                  </MenuItem>
-                )}
               </Box>
             </Drawer>
           </Toolbar>
