@@ -4,7 +4,7 @@ import axios from "axios";
 export const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID || "";
 
 // API base path for payment endpoints
-const API_URL = "https://api.shreekalambadevi.org/api";
+const API_URL = "http://test.api.nirnaysawant.in/api";
 
 // Create an axios instance for payment API
 const paymentApi = axios.create({

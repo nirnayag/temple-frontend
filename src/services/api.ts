@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // API base path for all endpoints
-const API_URL = "https://api.shreekalambadevi.org/api";
+const API_URL = "http://test.api.nirnaysawant.in/api";
 
 // "http://localhost:4000/api";
 
